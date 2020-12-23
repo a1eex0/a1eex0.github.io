@@ -2,44 +2,44 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on alee</title>
-    <link>http://www.a1ee.cn/tags/</link>
+    <link>http://a1ee.cn/tags/</link>
     <description>Recent content in Tags on alee</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 09 Sep 2020 13:48:07 +0800</lastBuildDate><atom:link href="http://www.a1ee.cn/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 09 Sep 2020 13:48:07 +0800</lastBuildDate><atom:link href="http://a1ee.cn/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>docker</title>
-      <link>http://www.a1ee.cn/tags/docker/</link>
+      <link>http://a1ee.cn/tags/docker/</link>
       <pubDate>Wed, 09 Sep 2020 13:48:07 +0800</pubDate>
       
-      <guid>http://www.a1ee.cn/tags/docker/</guid>
+      <guid>http://a1ee.cn/tags/docker/</guid>
       <description></description>
     </item>
     
     <item>
       <title>vulhub</title>
-      <link>http://www.a1ee.cn/tags/vulhub/</link>
+      <link>http://a1ee.cn/tags/vulhub/</link>
       <pubDate>Wed, 09 Sep 2020 13:48:07 +0800</pubDate>
       
-      <guid>http://www.a1ee.cn/tags/vulhub/</guid>
+      <guid>http://a1ee.cn/tags/vulhub/</guid>
       <description></description>
     </item>
     
     <item>
       <title>dvwa</title>
-      <link>http://www.a1ee.cn/tags/dvwa/</link>
+      <link>http://a1ee.cn/tags/dvwa/</link>
       <pubDate>Wed, 09 Sep 2020 11:37:04 +0800</pubDate>
       
-      <guid>http://www.a1ee.cn/tags/dvwa/</guid>
+      <guid>http://a1ee.cn/tags/dvwa/</guid>
       <description></description>
     </item>
     
     <item>
       <title>sqli-lab</title>
-      <link>http://www.a1ee.cn/tags/sqli-lab/</link>
+      <link>http://a1ee.cn/tags/sqli-lab/</link>
       <pubDate>Wed, 09 Sep 2020 11:37:04 +0800</pubDate>
       
-      <guid>http://www.a1ee.cn/tags/sqli-lab/</guid>
+      <guid>http://a1ee.cn/tags/sqli-lab/</guid>
       <description></description>
     </item>
     

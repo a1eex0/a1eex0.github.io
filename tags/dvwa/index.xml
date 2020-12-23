@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>dvwa on alee</title>
-    <link>http://www.a1ee.cn/tags/dvwa/</link>
+    <link>http://a1ee.cn/tags/dvwa/</link>
     <description>Recent content in dvwa on alee</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 09 Sep 2020 11:37:04 +0800</lastBuildDate><atom:link href="http://www.a1ee.cn/tags/dvwa/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 09 Sep 2020 11:37:04 +0800</lastBuildDate><atom:link href="http://a1ee.cn/tags/dvwa/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Build_lab</title>
-      <link>http://www.a1ee.cn/basic/build_lab/</link>
+      <link>http://a1ee.cn/basic/build_lab/</link>
       <pubDate>Wed, 09 Sep 2020 11:37:04 +0800</pubDate>
       
-      <guid>http://www.a1ee.cn/basic/build_lab/</guid>
+      <guid>http://a1ee.cn/basic/build_lab/</guid>
       <description>Ubuntu Server 安装 DVWA 和 SQLI-Lab 环境下载 本地虚拟机安装ubuntu server 20.04.1 LTS 然后使用xshell连接服务器，采用xftp上传一键下载环境的脚本，脚本内命令如下： #!/bin/sh</description>
     </item>
     
