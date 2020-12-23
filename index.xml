@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>alee</title>
+    <link>http://localhost:1313/</link>
+    <description>Recent content on alee</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Wed, 09 Sep 2020 13:48:07 +0800</lastBuildDate><atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Build_vulhub</title>
+      <link>http://localhost:1313/basic/build_vulhub/</link>
+      <pubDate>Wed, 09 Sep 2020 13:48:07 +0800</pubDate>
+      
+      <guid>http://localhost:1313/basic/build_vulhub/</guid>
+      <description>Ubuntu Server 安装 Vulhub 根据官方网站的说明，需要安装docker和docker-compose，需要用pip安装docker-compose，官方的演示视</description>
+    </item>
+    
+    <item>
+      <title>Build_lab</title>
+      <link>http://localhost:1313/basic/build_lab/</link>
+      <pubDate>Wed, 09 Sep 2020 11:37:04 +0800</pubDate>
+      
+      <guid>http://localhost:1313/basic/build_lab/</guid>
+      <description>Ubuntu Server 安装 DVWA 和 SQLI-Lab 环境下载 本地虚拟机安装ubuntu server 20.04.1 LTS 然后使用xshell连接服务器，采用xftp上传一键下载环境的脚本，脚本内命令如下： #!/bin/sh</description>
+    </item>
+    
+    <item>
+      <title>About Me</title>
+      <link>http://localhost:1313/about-me/</link>
+      <pubDate>Fri, 04 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/about-me/</guid>
+      <description>I am a bad scholar, learning because I am too boring.
+This is a blog that summarizes knowledge, I will record everything I learned here.
+Hereby declare:
+ Knowledge comes from the Internet, but I will try to avoid mistakes. I will try my best to make the method really work. Sometimes I will express some personal opinions, please stay rational. The most important thing is to hope this knowledge is useful to you.</description>
+    </item>
+    
+  </channel>
+</rss>

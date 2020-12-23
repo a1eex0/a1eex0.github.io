@@ -1,0 +1,151 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Basics on alee</title>
+		<link>http://localhost:1313/basic/</link>
+		<description>Recent content in Basics on alee</description>
+		<generator>Hugo -- gohugo.io</generator>
+		<language>zh-cn</language>
+		<lastBuildDate>Wed, 09 Sep 2020 13:48:07 +0800</lastBuildDate>
+		<atom:link href="http://localhost:1313/basic/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>Build_vulhub</title>
+			<link>http://localhost:1313/basic/build_vulhub/</link>
+			<pubDate>Wed, 09 Sep 2020 13:48:07 +0800</pubDate>
+			
+			<guid>http://localhost:1313/basic/build_vulhub/</guid>
+			<description>Ubuntu Server 安装 Vulhub 根据官方网站的说明，需要安装docker和docker-compose，需要用pip安装docker-compose，官方的演示视</description>
+			<content type="html"><![CDATA[<h1 id="ubuntu-server-安装-vulhub">Ubuntu Server 安装 Vulhub</h1>
+<p>根据<a href="https://vulhub.org/">官方网站</a>的说明，需要安装<code>docker</code>和<code>docker-compose</code>，需要用<code>pip</code>安装<code>docker-compose</code>，官方的演示视频中使用的命令如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># If you don&#39;t have a docker installed, you&#39;ll need to install docker</span>
+curl -s https://get.docker.com/ <span class="p">|</span> sh
+
+<span class="c1"># If you don&#39;t have a pip installed, you&#39;ll need to install pip</span>
+curl -s https://bootstrap.pypa.io/get-pip.py <span class="p">|</span> python3
+
+<span class="c1"># Use pip to install docker-compose</span>
+pip install docker-compose
+
+<span class="c1"># git clone vulhub source</span>
+git clone https://github.com/vulhub/vulhub
+
+<span class="c1"># Entry vulnerability directory</span>
+<span class="nb">cd</span> /path/to/vuln/
+
+<span class="c1"># Compile (optional)</span>
+docker-compose build
+
+<span class="c1"># Run</span>
+docker-compose up -d
+</code></pre></div><p><strong>注：由于网络环境的问题，部分命令采用了等级处理，详见下文。</strong></p>
+<p>本地搭建的<code>Ubuntu Server</code>实机演示截图如下：
+安装<code>docker</code>，命令：<code>curl -s https://get.docker.com/ | sh</code>
+<img src="/_v_images/20200826174153268_13222.png" alt=""></p>
+<p>安装<code>pip</code>，命令：<code>curl -s https://bootstrap.pypa.io/get-pip.py | python3</code>，在本地网络环境下的<code>Ubuntu 18.04.5</code>中，很遗憾的无法正常执行该命令，取消-s参数后，将看到并未进行下载安装（猜测是网络原因导致的问题）：
+<img src="/_v_images/20200827090852112_9538.png" alt=""></p>
+<p>于是只能采用apt命令安装，具体命令如下：</p>
+<pre><code>apt-get install python3-pip
+</code></pre><p>安装完成以后的pip版本如下：
+<img src="/_v_images/20200827100049007_28795.png" alt=""></p>
+<p>安装<code>docker-compose</code>，命令：<code>pip3 install docker-compose</code>，你可能会因为网络原因而失败很多次，我没有很好的建议，因为我的做法是不断的重复执行该条命令，由于pip安装的时候会将下载的包缓存到本地，所以我就利用这个特性，慢慢的把整个安装所需的包下载到了本地最后成功安装了，当前安装的版本如下：
+<img src="/_v_images/20200827104943518_10737.png" alt=""></p>
+<p>安装好<code>docker</code>后就需要<code>git</code>下载<code>vulhub</code>源码了:<code>git clone https://github.com/vulhub/vulhub</code>
+现在实验环境搭建完成。</p>
+]]></content>
+		</item>
+		
+		<item>
+			<title>Build_lab</title>
+			<link>http://localhost:1313/basic/build_lab/</link>
+			<pubDate>Wed, 09 Sep 2020 11:37:04 +0800</pubDate>
+			
+			<guid>http://localhost:1313/basic/build_lab/</guid>
+			<description>Ubuntu Server 安装 DVWA 和 SQLI-Lab 环境下载 本地虚拟机安装ubuntu server 20.04.1 LTS 然后使用xshell连接服务器，采用xftp上传一键下载环境的脚本，脚本内命令如下： #!/bin/sh</description>
+			<content type="html"><![CDATA[<h1 id="ubuntu-server-安装-dvwa-和-sqli-lab">Ubuntu Server 安装 DVWA 和 SQLI-Lab</h1>
+<h2 id="环境下载">环境下载</h2>
+<p>本地虚拟机安装<code>ubuntu server 20.04.1 LTS</code>
+然后使用<code>xshell</code>连接服务器，采用<code>xftp</code>上传一键下载环境的脚本，脚本内命令如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/sh
+</span><span class="cp"></span><span class="nb">echo</span> <span class="s1">&#39;\n1、新增ppa源\n&#39;</span><span class="p">;</span>
+add-apt-repository ppa:ondrej/php<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n2、更新本地源\n&#39;</span><span class="p">;</span>
+apt-get update <span class="o">&amp;&amp;</span> apt-get upgrade<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n3、安装git\n&#39;</span><span class="p">;</span>
+apt-get install git<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n4、安装php(5.6)\n&#39;</span><span class="p">;</span>
+apt-get install php5.6<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n5、安装必要的php依赖库\n&#39;</span><span class="p">;</span>
+apt-get install php5.6-mysql libapache2-mod-php5.6 php5.6-gd<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n6、安装apache2服务\n&#39;</span><span class="p">;</span>
+apt-get install apache2<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n7、设置环境为php5.6\n&#39;</span><span class="p">;</span>
+a2enmod php5.6<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n8重启apache2服务\n&#39;</span><span class="p">;</span>
+/etc/init.d/apache2 restart<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n9、安装mysql服务\n&#39;</span><span class="p">;</span>
+apt-get install mysql-server<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n10、切换到web服务目录，并删除默认页面\n&#39;</span><span class="p">;</span>
+<span class="nb">cd</span> /var/www/html/<span class="p">;</span>
+rm index.html<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n11、git下载DVWA源文件到本地\n&#39;</span><span class="p">;</span>
+git clone https://github.com/digininja/DVWA.git<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n12、git下载SQLI-Lab源文件到本地\n&#39;</span><span class="p">;</span>
+git clone https://github.com/Audi-1/sqli-labs.git<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n=========环境下载结束，请开始配置环境=========\n&#39;</span><span class="p">;</span>
+ehco <span class="s1">&#39;\n========web服务路径为：/var/www/html/========\n&#39;</span><span class="p">;</span>
+</code></pre></div><h2 id="环境配置">环境配置</h2>
+<h3 id="1php-56-环境配置">1、PHP 5.6 环境配置</h3>
+<p>首先使用<code>root</code>权限打开<code>php</code>中关于<code>apache2</code>的配置文件</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">vim /etc/php/5.6/apache2/php.ini
+</code></pre></div><p>然后在命令模式下输入：<code>/allow_url_include</code> 将后面的值，按如下方式修改：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">allow_url_include</span> <span class="o">=</span> On
+</code></pre></div><h3 id="2mysql-数据库配置">2、MYSQL 数据库配置</h3>
+<p>本次安装的是最新版本的<code>mysql 8.0.21</code>，在终端直接输入<code>mysql</code>即可登录，因为密码是空！
+创建一个用于dvwa操作的数据库，命令如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">mysql&gt; create database dvwa<span class="p">;</span>
+</code></pre></div><p><strong>特别说明：如果按照上面的操作，在老版本的mysql数据库中，就满足要求并可以正常连接了，但由于版本更迭，mysql 8对数据库默认配置进行了更新，为了兼容老版本的php，还请进行以下修改！</strong>
+打开编辑mysqld配置文件：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">vim /etc/mysql/mysql.conf.d/mysqld.cnf
+</code></pre></div><p>在<code>[mysqld]</code>下方新增以下三行命令：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># 设置密码编码格式</span>
+<span class="nv">default_authentication_plugin</span><span class="o">=</span>mysql_native_password
+<span class="c1"># 设置编码格式</span>
+character-set-server <span class="o">=</span> utf8mb4
+collation-server <span class="o">=</span> utf8mb4_unicode_ci
+
+</code></pre></div><h3 id="3-dvwa-环境配置">3、 DVWA 环境配置</h3>
+<p>首先进入<code>DVWA</code>配置文件路径；</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> /var/www/html/DVWA/config/
+</code></pre></div><p>进行配置文件的创建；</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">cp config.inc.php.dist config.inc.php
+</code></pre></div><p>修改配置文件中的数据库连接项；</p>
+<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="c1">#####原始数据如下#####
+</span><span class="c1"></span><span class="nv">$_DVWA</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+<span class="nv">$_DVWA</span><span class="p">[</span> <span class="s1">&#39;db_server&#39;</span> <span class="p">]</span>   <span class="o">=</span> <span class="s1">&#39;127.0.0.1&#39;</span><span class="p">;</span>
+<span class="nv">$_DVWA</span><span class="p">[</span> <span class="s1">&#39;db_database&#39;</span> <span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;dvwa&#39;</span><span class="p">;</span>
+<span class="nv">$_DVWA</span><span class="p">[</span> <span class="s1">&#39;db_user&#39;</span> <span class="p">]</span>     <span class="o">=</span> <span class="s1">&#39;dvwa&#39;</span><span class="p">;</span>
+<span class="nv">$_DVWA</span><span class="p">[</span> <span class="s1">&#39;db_password&#39;</span> <span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;p@ssw0rd&#39;</span><span class="p">;</span>
+<span class="c1">#####本次修改内容如下#####
+</span><span class="c1"></span><span class="nv">$_DVWA</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+<span class="nv">$_DVWA</span><span class="p">[</span> <span class="s1">&#39;db_server&#39;</span> <span class="p">]</span>   <span class="o">=</span> <span class="s1">&#39;127.0.0.1&#39;</span><span class="p">;</span>
+<span class="nv">$_DVWA</span><span class="p">[</span> <span class="s1">&#39;db_database&#39;</span> <span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;dvwa&#39;</span><span class="p">;</span>
+<span class="nv">$_DVWA</span><span class="p">[</span> <span class="s1">&#39;db_user&#39;</span> <span class="p">]</span>     <span class="o">=</span> <span class="s1">&#39;root&#39;</span><span class="p">;</span>
+<span class="nv">$_DVWA</span><span class="p">[</span> <span class="s1">&#39;db_password&#39;</span> <span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</code></pre></div><p>设置文件夹可写权限：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">chmod <span class="m">777</span> -R /var/www/html/dvwa/hackable/uploads/
+chmod <span class="m">777</span> /var/www/html/dvwa/external/phpids/0.6/lib/IDS/tmp/phpids_log.txt
+chmod <span class="m">777</span> -R /var/www/html/dvwa/config
+</code></pre></div><p>关于<code>reCAPTCHA key: Missing</code>，是调用google的验证码接口，用来做安全测试，但是调用接口需要梯子，本地测试，可以不填写，如果想体验，可百度自行替换。</p>
+<h3 id="4sqli-lab环境配置">4、SQLI-Lab环境配置</h3>
+<p>编辑配置文件<code>vim /var/www/html/sqli-labs/sql-connections/db-creds.inc</code>，填写数据库的用户名（<code>$dbuser</code>）密码（<code>$dbpass</code>）。</p>
+<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="nv">$dbuser</span> <span class="o">=</span><span class="s1">&#39;root&#39;</span><span class="p">;</span>
+<span class="nv">$dbpass</span> <span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">;</span>
+<span class="nv">$dbname</span> <span class="o">=</span><span class="s2">&#34;security&#34;</span><span class="p">;</span>
+<span class="nv">$host</span> <span class="o">=</span> <span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+<span class="nv">$dbname1</span> <span class="o">=</span> <span class="s2">&#34;challenges&#34;</span><span class="p">;</span>
+</code></pre></div><p>浏览器输入ip地址，访问首页，逐步点击即可完成实验室搭建，但由于数据库版本采用的是最新的，所以老旧的历史漏洞不能成功复现。</p>
+]]></content>
+		</item>
+		
+	</channel>
+</rss>
