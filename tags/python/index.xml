@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>python on alee</title>
+    <link>https://www.a1ee.cn/tags/python/</link>
+    <description>Recent content in python on alee</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 28 Dec 2020 14:20:32 +0800</lastBuildDate><atom:link href="https://www.a1ee.cn/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python_tkinter_info</title>
+      <link>https://www.a1ee.cn/simaple/python_tkinter_info/</link>
+      <pubDate>Mon, 28 Dec 2020 14:20:32 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/simaple/python_tkinter_info/</guid>
+      <description>tkinter库说明 这是一个相对轻量化的GUI库，因为它是python的原生库，不需要额外的安装库文件，因此存在很强的可移植性。 但不建议用它</description>
+    </item>
+    
+    <item>
+      <title>Python_nmap_info</title>
+      <link>https://www.a1ee.cn/simaple/python_nmap_info/</link>
+      <pubDate>Mon, 28 Dec 2020 14:20:25 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/simaple/python_nmap_info/</guid>
+      <description>python-nmap库说明 python-nmap库的官方说明文档，作者给出了一个实例代码。 实践代码 参考这两个资料，写出了如下的功能代码： #</description>
+    </item>
+    
+    <item>
+      <title>Python_webdriver_selenium_info</title>
+      <link>https://www.a1ee.cn/simaple/python_webdriver_selenium_info/</link>
+      <pubDate>Mon, 28 Dec 2020 14:20:15 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/simaple/python_webdriver_selenium_info/</guid>
+      <description>webdriver_selenium库说明 原型 当遇到一些受动态防御系统保护的站点时，需要一个模拟登陆的脚本来进行爆破尝试。 模拟登陆的pyth</description>
+    </item>
+    
+    <item>
+      <title>Python_grammar_2</title>
+      <link>https://www.a1ee.cn/basic/python_grammar_2/</link>
+      <pubDate>Mon, 28 Dec 2020 14:15:00 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/basic/python_grammar_2/</guid>
+      <description>3.Python语法（二） 3.1.条件判断 Python程序语言指定任何非0和非空（null）值为true，0 或者 null为false。Pyt</description>
+    </item>
+    
+    <item>
+      <title>Python_grammar_1</title>
+      <link>https://www.a1ee.cn/basic/python_grammar_1/</link>
+      <pubDate>Mon, 28 Dec 2020 14:14:56 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/basic/python_grammar_1/</guid>
+      <description>2.Python语法（一） 2.1 转义字符 \ 在 print 中想要输出单双引号，可以使用转义字符 \ 来进行输出，当然了也可以直接分开使用，因为单引号和双引号配套</description>
+    </item>
+    
+    <item>
+      <title>Python_info</title>
+      <link>https://www.a1ee.cn/basic/python_info/</link>
+      <pubDate>Mon, 28 Dec 2020 14:11:37 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/basic/python_info/</guid>
+      <description>1. Python简介 1.1 Python环境搭建 在https://www.python.org/ python官方网站下载 python环境（推荐使用3</description>
+    </item>
+    
+  </channel>
+</rss>
