@@ -1,0 +1,896 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Simaples on alee</title>
+		<link>https://www.a1ee.cn/simaple/</link>
+		<description>Recent content in Simaples on alee</description>
+		<generator>Hugo -- gohugo.io</generator>
+		<language>zh-cn</language>
+		<lastBuildDate>Mon, 28 Dec 2020 14:20:32 +0800</lastBuildDate>
+		<atom:link href="https://www.a1ee.cn/simaple/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>Python_tkinter_info</title>
+			<link>https://www.a1ee.cn/simaple/python_tkinter_info/</link>
+			<pubDate>Mon, 28 Dec 2020 14:20:32 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/simaple/python_tkinter_info/</guid>
+			<description>tkinter库说明 这是一个相对轻量化的GUI库，因为它是python的原生库，不需要额外的安装库文件，因此存在很强的可移植性。 但不建议用它</description>
+			<content type="html"><![CDATA[<h1 id="tkinter库说明">tkinter库说明</h1>
+<p>这是一个相对轻量化的GUI库，因为它是python的原生库，不需要额外的安装库文件，因此存在很强的可移植性。</p>
+<p>但不建议用它来做很绚丽的GUI，这将会很麻烦，直接引用其他的三方库会更加方便，这个库更适合用来做简单的界面，将功能代码从终端中解放出来。</p>
+<p>在python标准库中，存在<a href="https://docs.python.org/zh-cn/3.8/library/tk.html">参考资料</a></p>
+<h2 id="1用例说明基础版">1.用例说明（基础版）</h2>
+<p>这个用例主要是实现了排版和，输入内容获取，然后输出到文本框，点击按键触发函数，以及弹窗</p>
+<pre><code>from tkinter import *
+import tkinter.messagebox
+
+class Main_GUI():
+	def __init__(self,window):
+		self.window = window
+
+	def set_window_ui(self):
+		self.window.title('basic demo 小工具 by alee')	# ui标题
+		self.window.geometry('600x400+700+350')	# ui坐标，*x*（长宽）；+*+*（屏幕显示位置）
+		self.window.attributes('-alpha',0.9)	# 窗口属性，alpha是透明度，后面的小数是透明度设置（0-1）
+		# grid方法:
+		# row 行号：
+		# column：列号
+		# rowspan：合并一列中的多个行单元
+		# columnspan：合并一个行中的多个列单元
+		# sticky：NSWE，上下左右对齐，左右居中则：E+W；上下居中则：N+S；全居中则：N+S+E+W
+		self.text_label_fill0 = Label(self.window, text='', width=1).grid(row=0, column=0)# 美化填充列
+		self.text_label1 = Label(self.window, text='input：',width=7, height=2).grid(row=0, column=1, sticky=E)# 显示文本
+		self.text_label_fill1 = Label(self.window, text='', width=1).grid(row=0, column=2)# 美化填充列
+		self.ip_addr_entry = Entry(self.window)# 输入框
+		self.ip_addr_entry.grid(row=0,column=3)# 格式在当前版本的库中必须换行，不然会报错
+		self.text_label_fill2 = Label(self.window, text='', width=1).grid(row=0, column=4)# 美化填充列
+		self.check_button1 = Button(self.window, text='output', command=self.Output).grid(row=0, column=5)
+		self.text_label_fill3 = Label(self.window, text='', width=1).grid(row=0, column=6)# 美化填充列
+		self.check_button2 = Button(self.window, text='message', command=self.Message).grid(row=0, column=7)
+		self.result_text = Text(self.window, width=60, height=20)# 文本输出框
+		self.result_text.grid(row=1, column=1, columnspan=7)# 格式在当前版本的库中必须换行，不然会报错
+
+	# 文本显示函数
+	def Output(self):
+		entry_data = self.ip_addr_entry.get()+'\n'
+		self.result_text.insert(END,entry_data)
+
+	# 弹窗函数
+	def Message(self):
+		tkinter.messagebox.showinfo('hi','This is a Demo Tool!')
+
+if __name__ == '__main__':
+	window = Tk()
+	GUI_HOME = Main_GUI(window)
+	GUI_HOME.set_window_ui()
+	window.mainloop()
+</code></pre><p>效果图：</p>
+<p><img src="/vx_images/4086159122069.png" alt=""></p>
+<h2 id="2用例说明下拉版">2.用例说明（下拉版）</h2>
+<p>这个用例主要是新增了下拉框，可选择模式。</p>
+<pre><code>from tkinter import *
+from tkinter import ttk
+import tkinter.messagebox
+import time
+
+class Main_GUI():
+	def __init__(self,window):
+		self.window = window
+
+	def set_window_ui(self):
+		self.window.title('easy demo 小工具 by alee')
+		self.window.geometry('500x500+700+350')
+		self.window.attributes('-alpha',0.9)
+		self.text_label_fill0 = Label(self.window, text='', width=1).grid(row=0, column=0)
+		self.text_label1 = Label(self.window, text='model:', height=3).grid(row=0, column=1, sticky=W+E)
+		self.cmb = ttk.Combobox(self.window, width=9)# 下拉菜单控件，需要先导入ttk库
+		self.cmb['value'] = ('model0','model1','model2','model3')# 下拉菜单列表内容
+		self.cmb.current(0)# 指定默认显示在下拉框中的内容
+		self.cmb.grid(row=0, column=2, sticky=W)# 格式在当前版本的库中必须换行，不然会报错
+		self.check_button1 = Button(self.window, text='message', command=self.Message).grid(row=0, column=3)
+		self.result_text = Text(self.window, width=50, height=20)
+		self.result_text.grid(row=1, column=1, columnspan=3)
+		self.result_text.insert(END,banner)
+		self.text_label2 = Label(self.window, text='command:', height=3).grid(row=2, column=1, sticky=W)
+		self.command_entry = Entry(self.window, width=30)
+		self.command_entry.grid(row=2,column=2)
+		self.check_button2 = Button(self.window, text='run', command=self.Run, width=5).grid(row=2, column=3, sticky=W+E)
+
+	def FuncA(self,cmd):
+		entry_data = 'model:'+self.cmb.get()+'\nhi, your command is '+cmd+'\n'+'================================\n'
+		self.result_text.insert(END,entry_data)
+
+
+	def Run(self):
+		cmd = self.command_entry.get()
+		if cmd =='':
+			cmd = 'Null'
+		current_time = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+		begin_data = '['+current_time+']'+'command: '+cmd+'\n'
+		self.result_text.insert(END,begin_data)
+		prt_funca = self.FuncA(cmd)
+
+	def Message(self):
+		tkinter.messagebox.showinfo('hi','This is a Demo Tool!')
+
+if __name__ == '__main__':
+	banner = '''
+================================
+    .___                     
+  __| _/____   _____   ____  
+ / __ |/ __ \\ /     \\ /  _ \\ 
+/ /_/ \\  ___/|  Y Y  (  &lt;_&gt; )
+\\____ |\\___  &gt;__|_|  /\\____/ 
+     \\/    \\/      \\/        
+================================
+'''
+	window = Tk()
+	GUI_HOME = Main_GUI(window)
+	GUI_HOME.set_window_ui()
+	window.mainloop()
+</code></pre><p>效果图：</p>
+<p><img src="/vx_images/1462311138119.png" alt=""></p>
+<h2 id="3用例说明文件路径版">3.用例说明（文件路径版）</h2>
+<p>该代码仅用于选择文件，并返回绝对路径</p>
+<pre><code>from tkinter import *
+from tkinter import filedialog
+import tkinter.messagebox
+
+class Main_GUI():
+	def __init__(self,window):
+		self.window = window
+
+	def set_window_ui(self):
+		self.window.title('file demo 小工具 by alee')
+		self.window.geometry('470x80+700+350')
+		self.window.attributes('-alpha',0.9)
+		self.text_label_fill0 = Label(self.window, text='', width=1).grid(row=0, column=0)
+		self.text_label1 = Label(self.window, text='filepath:', height=3).grid(row=0, column=1, sticky=W+E)
+		self.filepath_entry = Entry(self.window, width=30)
+		self.filepath_entry.grid(row=0, column=2)
+		self.text_label_fill0 = Label(self.window, text='', width=1).grid(row=0, column=3)
+		self.check_button1 = Button(self.window, text='open', command=self.OpenFile).grid(row=0, column=4)
+
+	def OpenFile(self):
+		self.file_path = filedialog.askopenfilename() # 获取本地文件路径，需要引入filedialog库
+		self.filepath_entry.delete(0,END)
+		self.filepath_entry.insert(END,self.file_path)
+
+if __name__ == '__main__':
+	window = Tk()
+	GUI_HOME = Main_GUI(window)
+	GUI_HOME.set_window_ui()
+	window.mainloop()
+</code></pre><p>效果图：</p>
+<p><img src="/vx_images/1106228134738.png" alt=""></p>
+]]></content>
+		</item>
+		
+		<item>
+			<title>Python_nmap_info</title>
+			<link>https://www.a1ee.cn/simaple/python_nmap_info/</link>
+			<pubDate>Mon, 28 Dec 2020 14:20:25 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/simaple/python_nmap_info/</guid>
+			<description>python-nmap库说明 python-nmap库的官方说明文档，作者给出了一个实例代码。 实践代码 参考这两个资料，写出了如下的功能代码： #</description>
+			<content type="html"><![CDATA[<h1 id="python-nmap库说明">python-nmap库说明</h1>
+<p>python-nmap库的<a href="http://xael.org/pages/python-nmap-en.html">官方说明文档</a>，作者给出了一个<a href="https://bitbucket.org/xael/python-nmap/src/master/example.py">实例代码</a>。</p>
+<h2 id="实践代码">实践代码</h2>
+<p>参考这两个资料，写出了如下的功能代码：</p>
+<pre><code># @Time : 2020/11/11 15:56
+# @Author : alee
+# @File : nmap_scanner.py
+# @Software : PyCharm
+# @Object : scanning with python-nmap
+import nmap,sys
+from time import time
+
+start_time = time()
+for i in range(1, len(sys.argv)):
+    flag = sys.argv[i].split('-')
+    if 'u' in flag:
+        scan_host = sys.argv[i + 1]
+    elif 'p' in flag:
+        scan_ports = sys.argv[i + 1]
+try:
+    nm = nmap.PortScanner()
+except:
+    print('python-nmap not found')
+    sys.exit(1)
+try:
+    nm.scan(scan_host,scan_ports)
+except:
+    print('usage: nmap_scanner.py -u ip -p port')
+    sys.exit(1)
+print(nm.scaninfo())
+run_time = (time() - start_time)
+print(&quot;running time: %0.2f seconds.&quot; % run_time)
+</code></pre><p>代码功能很简单，就是使用<code>-u</code>引入ip地址，<code>-p</code>引入扫描端口，然后就调用nmap进行扫描。</p>
+<h2 id="说明">说明</h2>
+<p>针对该库，主要需要了解如下的一些输出形式：(<code>nm = nmap.PortScanner()</code>)</p>
+<ul>
+<li>nm.command_line()            输出当前使用的命令</li>
+<li>nm.scaninfo()                      输出当前扫描的结果</li>
+<li>nm.all_hosts()                      输出所有扫描的ip</li>
+</ul>
+]]></content>
+		</item>
+		
+		<item>
+			<title>Python_webdriver_selenium_info</title>
+			<link>https://www.a1ee.cn/simaple/python_webdriver_selenium_info/</link>
+			<pubDate>Mon, 28 Dec 2020 14:20:15 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/simaple/python_webdriver_selenium_info/</guid>
+			<description>webdriver_selenium库说明 原型 当遇到一些受动态防御系统保护的站点时，需要一个模拟登陆的脚本来进行爆破尝试。 模拟登陆的pyth</description>
+			<content type="html"><![CDATA[<h1 id="webdriver_selenium库说明">webdriver_selenium库说明</h1>
+<h2 id="原型">原型</h2>
+<p>当遇到一些受动态防御系统保护的站点时，需要一个模拟登陆的脚本来进行爆破尝试。</p>
+<p>模拟登陆的python库是selenium，具体可看<a href="https://selenium-python.readthedocs.io/">官方的说明文档</a></p>
+<h2 id="驱动">驱动</h2>
+<p>selenium + webdriver的各个浏览器驱动下载：</p>
+<p>chrome：<a href="http://chromedriver.storage.googleapis.com/index.html">chrome驱动下载</a>
+不同的Chrome的版本对应的chromedriver.exe 版本也不一样，下载时不要搞错了。如果是最新的Chrome, 下载最新的chromedriver.exe 就可以了。把chromedriver的路径也加到环境变量里。</p>
+<p>firefox：<a href="https://github.com/mozilla/geckodriver/releases/">Firefox驱动下载</a>
+根据自己的操作系统下载对应的驱动即可，使用的话，需要把驱动的路径和火狐浏览器的路径加入到环境变量里面才可以</p>
+<p>ie：<a href="http://selenium-release.storage.googleapis.com/index.html">IE驱动下载</a>
+根据自己selenium版本下载对应版本的驱动即可，python的话，下载里面的IEDriverServerxxx.zip即可，这个是区分32和64位系统的，根据自己的系统下载即可，需要注意的是，如果要打开IE浏览器的话，需要在浏览器的Internet选项中的安全页里有4个安全选项，Internet、本地Internet、受信任的站点、受限制的站点，这4个里面都有一个启用保护模式，都需要勾选上才可以，还得把驱动的路径加入到环境变量中。</p>
+]]></content>
+		</item>
+		
+		<item>
+			<title>Xshell_6_plus</title>
+			<link>https://www.a1ee.cn/simaple/xshell_6_plus/</link>
+			<pubDate>Mon, 28 Dec 2020 14:08:52 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/simaple/xshell_6_plus/</guid>
+			<description>Xshell 6 plus 下载 官网下载 左边是需要输入注册码的，右边是30天的评估版，随意填写，使用临时邮箱就可以接收下载链接了，产品的下载链接路径是一样的，不同</description>
+			<content type="html"><![CDATA[<h1 id="xshell-6-plus">Xshell 6 plus</h1>
+<h2 id="下载">下载</h2>
+<p><a href="https://www.netsarang.com/en/xshell-plus-download/">官网下载</a></p>
+<p><img src="/_v_images/20200410101322924_26133.png" alt=""></p>
+<p>左边是需要输入注册码的，右边是30天的评估版，随意填写，使用临时邮箱就可以接收下载链接了，产品的下载链接路径是一样的，不同版本的xshell在于最后面附加标号（r、p）：</p>
+<pre><code>https://cdn.netsarang.net/30486508/Xshell-6.0.0193r.exe    plus版本
+https://cdn.netsarang.net/30486508/Xshell-6.0.0193.exe    评估版本
+https://cdn.netsarang.net/30486508/Xshell-6.0.0193p.exe    教育版
+</code></pre><p>这次针对的是plus版本的分析。</p>
+<h2 id="分析">分析</h2>
+<p>安装xshell，plus版本需要输入注册码才会安装，这里并没有计算注册码是否过期，主要是提取注册码的时间和一些其他标识信息。注册码只要是真是注册码即可，所以可以随意百度一个来使用，区别就是标识会有所不同，不影响功能正常使用。我就偷懒用了百度的第一个 <code>180807-116568-999990</code> 。
+输入序列号，进入下一步</p>
+<p><img src="/_v_images/20200410102723036_9387.png" alt="">
+如果不输入序列号是不让你进行下一步的，也就无法安装了，这里我就用默认安装路径了，也可以自行修改一下。</p>
+<p><img src="/_v_images/20200410102826402_26182.png" alt=""></p>
+<p>安装完成后，应该是这样的，如果你以前安装过的话。如果是第一次安装，运行一次后，关闭再运行即可，主要是触发本地校验程序，校验你的序列号为过期并提示你<strong>未激活</strong></p>
+<p><img src="/_v_images/20200410103812761_11155.png" alt=""></p>
+<p>这里的 <code>License Type</code> 、<code>Number of License</code> 、<code>Issue Date</code> 是根据序列号来的标识，所以使用不同的序列号，会呈现不一样的数据，目前没发现有啥影响的。</p>
+<p>从<code>License Type</code>后边的 <code>(Not Activated)</code>入手，用x32dbg调试（这是一个32位程序）<code>xshell.exe</code></p>
+<p><img src="/_v_images/20200410104759750_30397.png" alt=""></p>
+<p>在反汇编窗口查看上下文代码，得知是从上面的je跳转过来的，我们往上找到函数入口，下个断点，方便一会儿观察上下文。</p>
+<p><img src="/_v_images/20200410104939324_22462.png" alt=""></p>
+<p>点击关于触发断点，往下执行会发现 <code>(Registered)</code> 字样，这个时候还没有变成 <code>(Not Activated)</code>。继续往下单步步过。</p>
+<p><img src="/_v_images/20200410110002949_29237.png" alt=""></p>
+<p>这里就发现了一个长跳转，这个长跳转跳过了 <code>(Not Activated)</code> ，跳转上部是 <code>(Registered)</code> ，但这个跳转并未执行，那么就会到 <code>(Not Activated)</code> 赋值去。</p>
+<pre><code>00F8F401 | FFB5 ACFBFFFF              | push dword ptr ss:[ebp-454]             |
+00F8F407 | 8B9D 9CFBFFFF              | mov ebx,dword ptr ss:[ebp-464]          | [ebp-464]:&amp;L&quot;alee\r\nnature\r\nLicense Type: Xmanager Power Suite  (Registered)\r\nNumber of Licenses: 999\r\n\r\n&quot;
+00F8F40D | FFB5 B8FBFFFF              | push dword ptr ss:[ebp-448]             |
+00F8F413 | FFB5 A0FBFFFF              | push dword ptr ss:[ebp-460]             | [ebp-460]:L&quot;Number of Licenses: 999\r\n&quot;
+00F8F419 | FFB5 B0FBFFFF              | push dword ptr ss:[ebp-450]             | [ebp-450]:L&quot;Xmanager Power Suite  (Registered)&quot;
+00F8F41F | FFB5 A8FBFFFF              | push dword ptr ss:[ebp-458]             | [ebp-458]:L&quot;nature\r\n&quot;
+00F8F425 | FFB5 A4FBFFFF              | push dword ptr ss:[ebp-45C]             | [ebp-45C]:L&quot;alee\r\n&quot;
+00F8F42B | 68 00780501                | push xshell.1057800                     | 1057800:L&quot;%s%sLicense Type: %s\r\n%s%s\r\n%s&quot;
+00F8F430 | 53                         | push ebx                                | ebx:&amp;L&quot;alee\r\nnature\r\nLicense Type: Xmanager Power Suite  (Registered)\r\nNumber of Licenses: 999\r\n\r\n&quot;
+00F8F431 | FFD7                       | call edi                                |
+00F8F433 | 83C4 20                    | add esp,20                              |
+00F8F436 | FFD6                       | call esi                                |
+00F8F438 | 8B40 04                    | mov eax,dword ptr ds:[eax+4]            |
+00F8F43B | 83B8 2C010000 00           | cmp dword ptr ds:[eax+12C],0            |
+00F8F442 | 75 12                      | jne xshell.F8F456                       |
+00F8F444 | FFD6                       | call esi                                |
+00F8F446 | 8B40 04                    | mov eax,dword ptr ds:[eax+4]            |
+00F8F449 | 83B8 38010000 00           | cmp dword ptr ds:[eax+138],0            |
+00F8F450 | 0F85 C2000000              | jne xshell.F8F518                       | 关键跳转
+00F8F456 | 8D8D BCFBFFFF              | lea ecx,dword ptr ss:[ebp-444]          |
+00F8F45C | FF15 7C050401              | call dword ptr ds:[&lt;&amp;Ordinal#316&gt;]      |
+00F8F462 | 8D8D B4FBFFFF              | lea ecx,dword ptr ss:[ebp-44C]          |
+00F8F468 | FF15 7C050401              | call dword ptr ds:[&lt;&amp;Ordinal#316&gt;]      |
+00F8F46E | C645 FC 09                 | mov byte ptr ss:[ebp-4],9               | 9:'\t'
+00F8F472 | FFD6                       | call esi                                |
+00F8F474 | 8B40 04                    | mov eax,dword ptr ds:[eax+4]            |
+00F8F477 | 83B8 2C010000 00           | cmp dword ptr ds:[eax+12C],0            |
+00F8F47E | 74 38                      | je xshell.F8F4B8                        |
+00F8F480 | FFD6                       | call esi                                |
+00F8F482 | 8B40 04                    | mov eax,dword ptr ds:[eax+4]            |
+00F8F485 | 8D8D BCFBFFFF              | lea ecx,dword ptr ss:[ebp-444]          |
+00F8F48B | 83B8 30010000 01           | cmp dword ptr ds:[eax+130],1            |
+00F8F492 | 75 12                      | jne xshell.F8F4A6                       |
+00F8F494 | 68 40780501                | push xshell.1057840                     | 1057840:L&quot;(Activated Locally)&quot;
+00F8F499 | FF15 88050401              | call dword ptr ds:[&lt;&amp;Ordinal#1516&gt;]     |
+00F8F49F | 68 80780501                | push xshell.1057880                     | 1057880:L&quot;(Concurrent, Activated)&quot;
+00F8F4A4 | EB 28                      | jmp xshell.F8F4CE                       |
+00F8F4A6 | 68 68780501                | push xshell.1057868                     | 1057868:L&quot;(Activated)&quot;
+00F8F4AB | FF15 88050401              | call dword ptr ds:[&lt;&amp;Ordinal#1516&gt;]     |
+00F8F4B1 | 68 80780501                | push xshell.1057880                     | 1057880:L&quot;(Concurrent, Activated)&quot;
+00F8F4B6 | EB 16                      | jmp xshell.F8F4CE                       |
+00F8F4B8 | 68 B0780501                | push xshell.10578B0                     | 10578B0:L&quot;(Not Activated)&quot;
+00F8F4BD | 8D8D BCFBFFFF              | lea ecx,dword ptr ss:[ebp-444]          |
+00F8F4C3 | FF15 88050401              | call dword ptr ds:[&lt;&amp;Ordinal#1516&gt;]     |
+00F8F4C9 | 68 D0780501                | push xshell.10578D0                     | 10578D0:L&quot;(Concurrent, Not Activated)&quot;
+00F8F4CE | 8D8D B4FBFFFF              | lea ecx,dword ptr ss:[ebp-44C]          |
+00F8F4D4 | FF15 88050401              | call dword ptr ds:[&lt;&amp;Ordinal#1516&gt;]     |
+00F8F4DA | FFB5 BCFBFFFF              | push dword ptr ss:[ebp-444]             |
+00F8F4E0 | 8BCB                       | mov ecx,ebx                             | ebx:&amp;L&quot;alee\r\nnature\r\nLicense Type: Xmanager Power Suite  (Registered)\r\nNumber of Licenses: 999\r\n\r\n&quot;
+00F8F4E2 | 68 08790501                | push xshell.1057908                     | 1057908:L&quot;(Registered)&quot;
+00F8F4E7 | FF15 84060401              | call dword ptr ds:[&lt;&amp;Ordinal#12595&gt;]    |
+00F8F4ED | FFB5 B4FBFFFF              | push dword ptr ss:[ebp-44C]             |
+00F8F4F3 | 8BCB                       | mov ecx,ebx                             | ebx:&amp;L&quot;alee\r\nnature\r\nLicense Type: Xmanager Power Suite  (Registered)\r\nNumber of Licenses: 999\r\n\r\n&quot;
+00F8F4F5 | 68 24790501                | push xshell.1057924                     | 1057924:L&quot;(Concurrent Registered)&quot;
+00F8F4FA | FF15 84060401              | call dword ptr ds:[&lt;&amp;Ordinal#12595&gt;]    |
+00F8F500 | 8D8D B4FBFFFF              | lea ecx,dword ptr ss:[ebp-44C]          |
+00F8F506 | FF15 78050401              | call dword ptr ds:[&lt;&amp;Ordinal#1039&gt;]     |
+00F8F50C | 8D8D BCFBFFFF              | lea ecx,dword ptr ss:[ebp-444]          |
+00F8F512 | FF15 78050401              | call dword ptr ds:[&lt;&amp;Ordinal#1039&gt;]     |
+00F8F518 | 8D8D A8FBFFFF              | lea ecx,dword ptr ss:[ebp-458]          | [ebp-458]:L&quot;nature\r\n&quot;
+</code></pre><p>观察上下文，跳转判断来自 <code>cmp dword ptr ds:[eax+12C],0</code>，这里下断，将数据地址修改为1，再运行得出如下结果：</p>
+<p><img src="/_v_images/20200410111146785_7056.png" alt=""></p>
+<p>那么在这里下一个硬件存取断点，重载程序，观察断下的位置：
+第一处：这里看到了一大串置空操作，并没有类似判断函数加跳转这类操作，应该不是启动自检，更像是为自检提前准备空间，继续运行。</p>
+<p><img src="/_v_images/20200410111917056_25006.png" alt=""></p>
+<p>第二处：这里有一个 <code>NSACTIVATE_CheckOffline</code> 函数。字面意思很明显，离线检查，结果赋值给数据段，然后进行判断跳转。</p>
+<p><img src="/_v_images/20200410112244071_20897.png" alt=""></p>
+<p>修改数据值为1，然后运行程序</p>
+<p><img src="/_v_images/20200410112637287_23746.png" alt=""></p>
+<p>看来找对地方了。</p>
+<h2 id="形成补丁">形成补丁</h2>
+<p>进入函数，寻找eax的最后赋值点，修改为1，即可。</p>
+<p><img src="/_v_images/20200410113021956_27126.png" alt=""></p>
+<p>从图中可以看到eax本来就是1，但是esi为0，这里将eax赋值为0了，最小化修改：</p>
+<pre><code>10006DB5 | 8BC6                       | mov eax,esi                                        |
+修改为：
+10006DB5 | B0 01                      | mov al,1                                           |
+</code></pre><p>直接nop掉也是可以的，看个人习惯。
+<strong>保存补丁请注意补丁文件名为：<code>nsactivate.dll</code></strong></p>
+]]></content>
+		</item>
+		
+		<item>
+			<title>Awvs</title>
+			<link>https://www.a1ee.cn/simaple/awvs/</link>
+			<pubDate>Mon, 28 Dec 2020 14:04:14 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/simaple/awvs/</guid>
+			<description>AWVS 12 下载 下载试用版（2020-05-12：下载链接已失效，需要邮箱重新注册） 准备工作 安装好后，登录并扫描网站，在事件窗口会看到相关信息： 所有</description>
+			<content type="html"><![CDATA[<h1 id="awvs-12">AWVS 12</h1>
+<h2 id="下载">下载</h2>
+<p><del>下载</del><a href="https://www.acunetix.com/download-8991-2/">试用版</a><strong>（2020-05-12：下载链接已失效，需要邮箱重新注册）</strong></p>
+<p><img src="/_v_images/20200326192517013_23500.png" alt="demo下载页"></p>
+<h2 id="准备工作">准备工作</h2>
+<p>安装好后，登录并扫描网站，在事件窗口会看到相关信息：</p>
+<p><img src="/_v_images/20200328112525480_3618.png" alt="本地路径"></p>
+<p>所有的文件保存在本地的<code>file:///C:\\ProgramData\\Acunetix Trial\\shared\\scans\\2e0a7e18-0b84-4e2e-a85c-fc3358d06769.zip</code>压缩包下，切换到目录下，解压文件，可以看到三个文件：</p>
+<p><img src="/_v_images/20200328112741862_23809.png" alt="时间记录"></p>
+<p>用sublime打开<code>logfile.csv</code>文件，可以查看到命令：</p>
+<p><img src="/_v_images/20200328113847789_8944.png" alt="日志文件"></p>
+<p>观察上面的命令格式，可以提取命令，简化后的执行命令如下：</p>
+<pre><code>&quot;C:\Program Files (x86)\Acunetix Trial\12.0.190927120\wvsc.exe&quot; /scan https://www.baidu.com /log logfile.txt
+</code></pre><p>以及日志部分的关键字提示符：</p>
+<pre><code>running in demo mode
+</code></pre><h2 id="去掉-demo-版本的限制">去掉 demo 版本的限制</h2>
+<p>以管理员权限运行x64dbg，打开<code>wvsc.exe</code>程序，然后更改命令为上面的简化命令：</p>
+<p><img src="/_v_images/20200328114558368_21397.png" alt="更改命令行"></p>
+<p>然后运行至<code>EntryPoint</code>，搜索字符串 <code>running in demo mode</code>，在上面的切入点下断点：</p>
+<p><img src="/_v_images/20200328114851468_18485.png" alt="切入点"></p>
+<p>找到当前目标地址值为1，但是需要它为0才能不显示 <code>running in demo mode</code>：</p>
+<p><img src="/_v_images/20200328115110925_19755.png" alt="目标地址"></p>
+<p>查找一下 <code>[r13+8c8]</code>的引用：</p>
+<p><img src="/_v_images/20200328115608971_16757.png" alt="r13+8c8"></p>
+<p>观察引用情况，数据段赋值操作有两条</p>
+<pre><code>00007FF7FBF5AB4B | 8886 C8080000            | mov byte ptr ds:[rsi+8C8],al            |
+</code></pre><pre><code>00007FF7FC34C670 | C683 C8080000 01         | mov byte ptr ds:[rbx+8C8],1             |
+</code></pre><p>在两个地址下断，观察数据后，第一条 <code>al</code>中的值为0，第二条为赋值为1，因此找到关键点：</p>
+<p><img src="/_v_images/20200328120438467_6540.png" alt="关键点"></p>
+<p>修改代码，将数据值赋值为0后，运行到切入点，发现跳过 <code>running in demo mode</code>：</p>
+<p><img src="/_v_images/20200328120328582_815.png" alt="成功"></p>
+<p>查看扫描结果，是否存在请求信息：</p>
+<p><img src="/_v_images/20200328123615407_8616.png" alt="验证"></p>
+<h2 id="去掉时间限制">去掉时间限制</h2>
+<p>修改本地时间，使其与北京时间不同，但请注意不要超过 <code>license_info.json</code>中的时间，不然会有报错！（后期测试加：第一次更换时间，可以使用， 但是我后来重新更换了时间，发现web页面会报错，提示 <code>too many request</code> 显然这是一个暗桩，但我并没有什么方式可以绕过，本地使用 <code>wvsc</code> 进行扫描时，并未报错，那么就有可能是存在另一个校验程序。）</p>
+<p><img src="/_v_images/20200328124023114_28591.png" alt="日志"></p>
+<p>关键字符串：</p>
+<pre><code>system time moved back
+</code></pre><p>搜索字符串，找到切入点：</p>
+<p><img src="/_v_images/20200328124559405_15029.png" alt="切入点"></p>
+<p>进入函数下断，重载寻找 <code>al</code>的修改地址：</p>
+<p><img src="/_v_images/20200328124904432_16833.png" alt="修改点"></p>
+<p>手动修改时发现，多次调用该函数进行判断，所以直接修改代码为 <code>xor rax,rax</code>：</p>
+<p><img src="/_v_images/20200328125113107_7665.png" alt="修改代码"></p>
+<p>测试结果：</p>
+<p><img src="/_v_images/20200328125527330_30805.png" alt="破除时间限制"></p>
+<h2 id="去除-license-覆写">去除 license 覆写</h2>
+<p>功能 点上面已经破解的差不多了，接下来需要对 license 进行分析。</p>
+<p><img src="/_v_images/20200328132029724_4990.png" alt="license"></p>
+<p>找到了一些关键字：</p>
+<pre><code>&quot;license_info.json&quot;
+&quot;license_usage.json&quot;
+&quot;license_info.json&quot;
+&quot;license_usage.json&quot;
+&quot;failed to write License Info File&quot;
+</code></pre><p>在文件夹中搜索其中的字符串，</p>
+<p><img src="/_v_images/20200328132455963_7542.png" alt="license_info"></p>
+<p>接下来，在 <code>failed to write License Info File</code>上方函数下断点。编辑 <code>license_info.json</code>，尝试是否会断下：</p>
+<p><img src="/_v_images/20200328133536146_7650.png" alt="疑似"></p>
+<p>修改函数代码如下：</p>
+<p><img src="/_v_images/20200328134643347_14274.png" alt="函数修改"></p>
+<p>修改 <code>license_info.json</code>内容并刷新页面，显示如下：</p>
+<p><img src="/_v_images/20200328134519469_28566.png" alt="覆写"></p>
+<h2 id="生成-license">生成 license</h2>
+<p>打开火绒剑，在不启动扫描的情况下，上一步的页面，看到<code>opsrv.exe</code>进程一直在调用<code>wvsc.exe</code></p>
+<p><img src="/_v_images/20200328135954027_17620.png" alt="判断调用"></p>
+<p>猜测 <code>lincense</code> 的校验部分由该程序进行，将文件拖入x64dbg，进入到 <code>EntryPoint</code>，发现特征代码如下：</p>
+<p><img src="/_v_images/20200328141309673_2441.png" alt="OEP特征"></p>
+<p>入口OEP属于是 <code>pyinstaller</code> 构建的exe程序的OEP特征，
+这里用命令生成一个exe文件用来做对比，命令如下：</p>
+<pre><code>pyinstaller get_checksum.py
+</code></pre><p><img src="/_v_images/20200328141659389_25420.png" alt="oep"></p>
+<p>还有一个特征方式可以鉴别：搜索字符串 <code>pyinstall</code> ：</p>
+<p><img src="/_v_images/20200328142355367_15431.png" alt="特征"></p>
+<p>针对python打包的exe文件，可以使用 <code>pyinstxtractor + uncompyle6</code> 来进行反编译。
+<code>pyinstxtractor.py</code> <a href="https://github.com/extremecoders-re/pyinstxtractor">github下载</a> ，然后使用如下命令，拆解 <code>exe</code>为 <code>pyc</code>：</p>
+<pre><code>python pyinstxtractor.py opsrv.exe
+</code></pre><p>如果运行出现如下错误，请去<a href="https://sourceforge.net/projects/pyinstallerextractor/">sourceforge下载</a>，两个下载点下载的代码是不一样的，一个存在严格的版本校验，另一个则没有。</p>
+<p><img src="/_v_images/20200328142748577_19771.png" alt="报错截图"></p>
+<p>失败与成功截图对比如下：</p>
+<p><img src="/_v_images/20200328144515070_6819.png" alt="对比"></p>
+<p>在解压后的文件中，搜索 <code>license</code> 结果如下：</p>
+<p><img src="/_v_images/20200328144817268_30161.png" alt="licnese"></p>
+<p>根据名字判断 <code>helpers.licensing.licenses.on_premise.pyc</code> 和 <code>helpers.licensing.licenses.pyc</code> 可能性比较大，逐个打开看看。
+接下来用 <code>uncompyle6</code>反编译 <code>pyc</code>文件
+首先使用命令安装（管理员权限）：</p>
+<pre><code>pip install uncompyle6
+</code></pre><p>反编译命令如下：</p>
+<pre><code>uncompyle6 helpers.licensing.licenses.on_premise.pyc &gt;licenses.on_premise.py
+</code></pre><p>寻找关键函数：</p>
+<p><img src="/_v_images/20200328145531512_3461.png" alt="checksum"></p>
+<p>初步阅读代码，可以发现这是根据 <code>license_data</code>来拼凑一个字符串用来加密生成 <code>checksum</code> 文件，再与 <code>license_data</code> 中的 <code>checksum</code> 对比，如果不一样报错。 <code>license_data</code> 中的信息和 <code>license_info.json</code> 文件中的结构是一样的，估计是读取的这个文件，根据上下文定位判断函数内相关引用和调用来源：</p>
+<p><img src="/_v_images/20200328145841904_12385.png" alt="关键引用"></p>
+<p>查看上面的引用来源:</p>
+<p><img src="/_v_images/20200328150021633_6360.png" alt="引用"></p>
+<p>通过反编译两个 <code>pyc</code> 文件逐步获取加载 <code>license_data</code> 和生成 <code>checksum</code> 的 <code>md5</code> 算法，源代码最终结合的 <code>get_checksum.py</code> 代码如下：</p>
+<pre><code>&quot;&quot;&quot;
+get_checksum (Supports AWVS 12)
+Author : Alee
+Date   : 28-Mar-2020
+&quot;&quot;&quot;
+import hashlib
+import json
+
+class ActivationErrorCodes:
+    NO_WARNINGS = 0
+    SITE_CHANGED = 1
+    CHECKSUM_MISMATCH = 2
+    INVALID_EXPIRY_DATES = 4
+    EXPIRED = 8
+    MAINTENANCE_EXPIRED = 16
+    MAINTENANCE_WILL_EXPIRE = 32
+    WITHIN_GRACE = 64
+    MAC_CHANGED = 128
+    KEY_NOT_FOUND = 256
+    KEY_NOT_ENABLED = 512
+    KEY_VERSION_MISMATCH = 1024
+    ENGINE_COUNT_MISMATCH = 2048
+    TARGET_COUNT_MISMATCH = 4096
+    PRODUCT_CODE_NOT_FOUND = 8192
+    SYSTEM_TIME_MOVED_BACK = 16384
+    ERP_NOT_REACHED = 32768
+    ERP_RESPONSE_ERROR = 65536
+    CONCURRENT_REACT = 131072
+    ACUMONITOR_FAILED = 16384
+    ERROR_LOADING_ACTIVATION_JSON = 524288
+    FILE_MISSING_OR_CORRUPT = 1048576
+
+    @classmethod
+    def get_keys(cls, code):
+        result = []
+        for key in cls.__dict__.keys():
+            value = getattr(cls, key)
+            if key[:1] != '_' and not callable(value) and value &amp; code:
+                result.append(key)
+
+        return result
+
+
+def md5(value: str, salt: str=None) -&gt; str:
+    m = hashlib.md5()
+    if salt:
+        m.update(salt.encode('utf-8'))
+    m.update(value.encode('utf8'))
+    return m.hexdigest()
+
+def get_license_checksum(license_data):
+    activation_error = license_data.get('activation_error', 0)
+    if isinstance(activation_error, str):
+        activation_error = int(activation_error)
+    secret = '25128b0a92d51e6bf4ea7a40b91b33be911144f7'
+    canonical_form = ''.join((
+     secret,
+     license_data.get('license_key', ''),
+     license_data.get('product_code', ''),
+     '%06d' % (license_data.get('max_targets', 0),),
+     '%06d' % (license_data.get('max_engines', 0),),
+     license_data.get('bxss_user_id', ''),
+     license_data.get('bxss_api_key', ''),
+     'true' if license_data.get('offline', False) else 'false',
+     '%06d' % (license_data.get('major_version', 0),),
+     '%06d' % (license_data.get('minor_version', 0),),
+     '%06d' % (license_data.get('build_number', 0),),
+     'true' if license_data.get('expired') else 'false',
+     'true' if license_data.get('maintenance_expired') else 'false',
+     '%06d' % (activation_error,),
+     'true' if license_data.get('activated') else 'false',
+     'true' if license_data.get('scan') else 'false',
+     'true' if license_data.get('update') else 'false',
+     'true' if license_data.get('access') else 'false',
+     '%d' % (license_data.get('grace', 0),)))
+    checksum = md5(canonical_form)
+    print('canonical_form:'+canonical_form)
+    print('checksum:'+checksum)
+    print('license_data.get(\'checksum\'):'+license_data.get('checksum'))
+
+def get_license():
+    jsonPath = './license_info.json'
+    license_info = json.loads(open(jsonPath, 'rt', encoding='utf-8').read())
+    license_info = dict(license_info)
+    info = license_info.get('info')
+    if info is not None:
+        if isinstance(info, dict):
+            del license_info['info']
+            license_info.update(info)
+    license_info['offline'] = license_info.get('is_offline', False)
+    license_info['activation_error_codes'] = ActivationErrorCodes.get_keys(int(license_info.get('activation_error', '0')))
+    return license_info
+license_data = get_license()
+get_license_checksum(license_data)
+</code></pre><p>代码存在很大的优化空间。
+下面给出 <code>license_info.json</code> 文件的模板，其中 <code>AOPENT</code>为企业版标识，请不要修改。其他的内容，可以根据上方算法进行修改。</p>
+<pre><code>{
+ &quot;info&quot;: {
+  &quot;license_key&quot;: &quot;TRY-TO-CRAKED-ALEE&quot;,
+  &quot;company&quot;: &quot;REVERSE&quot;,
+  &quot;name&quot;: &quot;ALEE&quot;,
+  &quot;phone&quot;: &quot;666666&quot;,
+  &quot;email&quot;: &quot;crake@crake.com&quot;,
+  &quot;country&quot;: &quot;earth&quot;,
+  &quot;first_activated&quot;: &quot;2020-01-17T10:53:50&quot;,
+  &quot;expires&quot;: &quot;2100-01-31T10:53:50&quot;,
+  &quot;maintenance_expires&quot;: &quot;2100-01-31T10:53:50&quot;,
+  &quot;max_engines&quot;: 999999,
+  &quot;max_targets&quot;: 999999,
+  &quot;product_code&quot;: &quot;AOPENT&quot;,
+  &quot;bxss_user_id&quot;: &quot;&quot;,
+  &quot;bxss_api_key&quot;: &quot;&quot;,
+  &quot;is_offline&quot;: false,
+  &quot;is_worker&quot;: false
+ },
+ &quot;major_version&quot;: 12,
+ &quot;minor_version&quot;: 0,
+ &quot;build_number&quot;: 190927120,
+ &quot;expired&quot;: false,
+ &quot;maintenance_expired&quot;: false,
+ &quot;scan&quot;: true,
+ &quot;update&quot;: true,
+ &quot;access&quot;: true,
+ &quot;activation_error&quot;: 0,
+ &quot;activated&quot;: true,
+ &quot;checksum&quot;: &quot;17721cb9bc44780a55f52aedde975737&quot;,
+ &quot;grace&quot;: -1,
+ &quot;last_reactivated&quot;: &quot;2020-01-31T10:53:50&quot;
+}
+</code></pre><p>请将 <code>get_checksum.py</code> 和 <code>license_info.json</code> 放在同一文件夹下！运行结果如下：</p>
+<p><img src="/_v_images/20200328151700771_29132.png" alt="运行结果"></p>
+<h2 id="验收阶段">验收阶段</h2>
+<p>结束</p>
+<p><img src="/_v_images/20200328151903223_21711.png" alt="验收"></p>
+<h1 id="awvs-13">AWVS 13</h1>
+<p>+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2020-05-13                新增AWVS13专业版权限绕过方式
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</p>
+<h2 id="来源">来源</h2>
+<p>安装包来源于同事，同事来源与互联网，版本：13.0.200205121</p>
+<h2 id="准备工作-1">准备工作</h2>
+<p>调试命令：</p>
+<pre><code>&quot;C:\Program Files (x86)\Acunetix\13.0.200205121\wvsc.exe&quot; /scan https://www.baidu.com /profile Default /log C:\Users\Alee\Desktop\logfile.txt
+</code></pre><p>尝试过不加 <code>/profile Default</code> 不会正常进行扫描任务。</p>
+<h2 id="去掉license覆写">去掉license覆写</h2>
+<p>运行任务，报错信息返回在指定的日志文件中，信息如下：</p>
+<pre><code>2020-05-13T10:49:41.218516	INFO	MAIN	8952	command line &quot;C:\Program Files (x86)\Acunetix\13.0.200205121\wvsc.exe&quot; /scan https://www.baidu.com /profile Default /log C:\Users\Alee\Desktop\logfile.txt
+2020-05-13T10:55:37.513990	ERROR	activator	8952	Error: License File could not be loaded
+2020-05-13T10:55:39.435225	ERROR	MAIN	8952	Licensing Error
+2020-05-13T10:55:39.436958	INFO	MAIN	8952	application exiting
+</code></pre><p>在x64dbg中搜搜当前区域字符串引用 <code>License File could not be loaded</code>、<code>Licensing Error</code> 总共三处</p>
+<p><img src="/_v_images/20200513110543748_9642.png" alt=""></p>
+<p>观察license文件，提示 <code>Licensing Error</code>时，文件就会被重写。</p>
+<p><img src="/_v_images/20200513110519912_1695.png" alt=""></p>
+<p>配合搜索当前区域的字符串 <code>failed to write License Info File</code></p>
+<p><img src="/_v_images/20200513110917251_6450.png" alt=""></p>
+<p><img src="/_v_images/20200513111026290_22480.png" alt=""></p>
+<p>定位到 <code>call 0x00007FF79A429B70</code> 就是重写函数。
+将定位函数的代码重写为</p>
+<pre><code>mov eax,1
+ret
+</code></pre><h2 id="一石二鸟">一石二鸟</h2>
+<p>重写函数处理掉以后，就是第一条<code>License File could not be loaded</code>，搜索字符串下断，重新回到<code>Licensing Error</code>提示的上下文片段，发现了一个有趣的地方：</p>
+<p><img src="/_v_images/20200521101233740_13201.png" alt=""></p>
+<p>上方的条件call，竟然包含了<code>License File could not be loaded</code>的报错，还包含了很多的报错信息<code>could not decode / decrypt license data</code>
+可以推测就是证书校验函数了，重写尝试：</p>
+<pre><code>mov eax,1
+ret
+</code></pre><p>居然正常运行了，看来把鸡蛋放在一个篮子里，还是挺好的。</p>
+<h2 id="license改动">license改动</h2>
+<p>license的算法并未修改，不过需要修改一些版本地址之类的地方，提供一份可用license：</p>
+<pre><code>{
+ &quot;info&quot;: {
+  &quot;license_key&quot;: &quot;TRY-TO-CRAKED-ALEE&quot;,
+  &quot;company&quot;: &quot;REVERSE&quot;,
+  &quot;name&quot;: &quot;ALEE&quot;,
+  &quot;phone&quot;: &quot;666666&quot;,
+  &quot;email&quot;: &quot;crake@crake.com&quot;,
+  &quot;country&quot;: &quot;earth&quot;,
+  &quot;first_activated&quot;: &quot;2020-05-13T10:53:50&quot;,
+  &quot;expires&quot;: &quot;2100-05-13T10:53:50&quot;,
+  &quot;maintenance_expires&quot;: &quot;2100-05-13T10:53:50&quot;,
+  &quot;max_engines&quot;: 999999,
+  &quot;max_targets&quot;: 999999,
+  &quot;product_code&quot;: &quot;AOPENT&quot;,
+  &quot;bxss_user_id&quot;: &quot;&quot;,
+  &quot;bxss_api_key&quot;: &quot;&quot;,
+  &quot;is_offline&quot;: false,
+  &quot;is_worker&quot;: false
+ },
+ &quot;major_version&quot;: 13,
+ &quot;minor_version&quot;: 0,
+ &quot;build_number&quot;: 200205121,
+ &quot;expired&quot;: false,
+ &quot;maintenance_expired&quot;: false,
+ &quot;scan&quot;: true,
+ &quot;update&quot;: true,
+ &quot;access&quot;: true,
+ &quot;activation_error&quot;: 0,
+ &quot;activated&quot;: true,
+ &quot;checksum&quot;: &quot;31baf19e58d82c2c9f166371cc593a21&quot;,
+ &quot;grace&quot;: -1,
+ &quot;last_reactivated&quot;: &quot;2020-05-13T10:53:50&quot;
+}
+</code></pre><h2 id="结语">结语</h2>
+<p>没想到13不仅仅是丰富了漏洞库，优化了扫描界面，就连<code>注册</code>也更加方便了。</p>
+]]></content>
+		</item>
+		
+		<item>
+			<title>Winrar</title>
+			<link>https://www.a1ee.cn/simaple/winrar/</link>
+			<pubDate>Mon, 28 Dec 2020 14:02:45 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/simaple/winrar/</guid>
+			<description>WinRAR 官网下载WinRAR 寻找切入点 预览程序，寻找切入点： 两个点：一个是窗口上有 评估版本 字样，另一个是有广告弹窗。 我感觉从 setwindowtext 入手好像要简单一些。</description>
+			<content type="html"><![CDATA[<h1 id="winrar">WinRAR</h1>
+<p><a href="http://www.winrar.com.cn/download.htm">官网下载WinRAR</a></p>
+<h2 id="寻找切入点">寻找切入点</h2>
+<p>预览程序，寻找切入点：</p>
+<p><img src="/_v_images/20200401145140946_23758.png" alt="预览"></p>
+<p>两个点：一个是窗口上有 <strong>评估版本</strong> 字样，另一个是有广告弹窗。
+我感觉从 <code>setwindowtext</code> 入手好像要简单一些。</p>
+<h2 id="开始调试">开始调试</h2>
+<p>用x64dbg调试，运行到 <code>entrypoint</code> 切换到 <code>符号</code> 窗口，选择 <code>winrar.exe</code> ，搜索 <code>setwindowtext</code> 下断。</p>
+<p><img src="/_v_images/20200401150639641_20814.png" alt="setwindowtext"></p>
+<p>运行到断点位置，在栈窗口寻找函数调用地址</p>
+<p><img src="/_v_images/20200401151053979_8020.png" alt="寻找函数调用"></p>
+<p>返回到程序领空，此刻按 <code>ctrl+a</code> 分析当前函数块，来到函数开始位置下断</p>
+<p><img src="/_v_images/20200401151331038_28508.png" alt="函数起始"></p>
+<p>重载程序，运行到上述断点位置后，<code>F8</code> 单步跟进，很快便发现了一个带括号的字符，函数下方就是一个条件判断，再下方就是括号字符，留意这个数据段内存值，继续向下单步。</p>
+<p><img src="/_v_images/20200401151700927_23271.png" alt="疑似判断函数"></p>
+<p>很显然，这个函数是关键函数，目前程序还没有启动起来，这个函数应该就是启动时的一个注册与否的校验，数据段内存值也就是关键值。我们下一个存取硬件断点，来观察一下广告弹出是否也与之相关。</p>
+<p><img src="/_v_images/20200401152120511_10127.png" alt="确定函数"></p>
+<p>按 <code>F9</code> 观察硬件断点断下的位置，很快就发现了一个链接，上面有 <code>winrar</code> 的国区域名，广告链接应该来源于此。在函数开始位置下断，用来验证修改关键内存之值后，会不会跳过广告。</p>
+<p><img src="/_v_images/20200401152429399_27952.png" alt="广告链接"></p>
+<p>保持断点启用，重载程序，运行到第一个硬件断点处，发现了一个赋值操作。</p>
+<p><img src="/_v_images/20200401153325638_19760.png" alt="第一个赋值点"></p>
+<p>在上方call函数下断，手动将内存值改为1，然后运行下去，注意观察内存值是否变化。</p>
+<p><img src="/_v_images/20200401154100340_16243.png" alt="重置点"></p>
+<p>在上方call函数下断，手动将内存值改为1，继续运行下去，注意观察内存值是否变化。最后会发现在硬件断点处一直循环触发，观察下方程序窗口，发现已经有两个窗口出来了，禁用硬件断点，观察窗口结果如下：</p>
+<p><img src="/_v_images/20200401154336901_786.png" alt="结果"></p>
+<p>程序经过了两次赋值，然后窗口就都启动起来了，断点窗口观察：</p>
+<p><img src="/_v_images/20200401154711854_13678.png" alt="得出核心判断函数"></p>
+<p>重载程序，进入核心判断函数，发现整个函数很短，<code>mov al,1</code> 这条语句实在是很扎眼，上方的 <code>je</code> 也在诱惑着我，上方的 <code>call</code> 更是怂恿着我先来一次大胆的尝试。</p>
+<p><img src="/_v_images/20200401155358248_356.png" alt="找到关键修改点"></p>
+<p>修改 <code>je</code> 为 <code>jne</code>在此处下断，然后禁用除弹窗入口函数的断点以外的断点，包括硬件断点，运行程序。</p>
+<p><img src="/_v_images/20200401155608617_9297.png" alt="大胆的尝试"></p>
+<p>结果发现除了弹窗没有去掉，注册也没有显示非商业版了。</p>
+<p><img src="/_v_images/20200401160342015_22352.png" alt="结果"></p>
+<p>在刚才的运行过程中，发现弹窗函数入口地址的断点，仅经过了一次，程序就正常启动起来了，也就是说，<code>ret</code> 掉也没关系了吧。观察整个函数的内容，似乎也是用来提供广告弹窗这个功能的，不过在硬件断点处，和 <code>r15</code> 寄存器的比较，判断是否继续跳转广告，我觉得应该是某个地方引用 <code>r15</code> 来判断是否是合法注册用户的标识，既然函数功能单一，就没有必要继续追下去了。运行结果如下：</p>
+<p><img src="/_v_images/20200401161959152_6771.png" alt="完成"></p>
+<h2 id="结语">结语</h2>
+<p>个人认为应该只需要修改一处的，但我还是修改了两处，看来技术还不不过关啊</p>
+<p><img src="/_v_images/20200401162347840_28249.png" alt="补丁制作"></p>
+<p>因为制作的补丁360会报毒（滑稽脸），我就不分享了，我使用的是从<a href="https://www.ghpym.com/dup2.html">果核那边下载的dup2</a>制作的，我资历尚浅，并不知道有没有问题，另外大家有好用的补丁制作工具欢迎分享，偏移补丁的数据贴上了。</p>
+<p><img src="/_v_images/20200401162746723_17836.png" alt="补丁制作"></p>
+]]></content>
+		</item>
+		
+		<item>
+			<title>Sbulime_text3</title>
+			<link>https://www.a1ee.cn/simaple/sbulime_text3/</link>
+			<pubDate>Mon, 28 Dec 2020 13:58:30 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/simaple/sbulime_text3/</guid>
+			<description>Sublime Text3 入门级爆破 下载Sublime Text3 x64(3211)，需要的工具是看雪论坛的x64dbg。 讨厌的地方有两个：首页 、弹窗。 针对首页上的字样，在</description>
+			<content type="html"><![CDATA[<h1 id="sublime-text3">Sublime Text3</h1>
+<h2 id="入门级爆破">入门级爆破</h2>
+<p>下载<a href="https://download.sublimetext.com/Sublime%20Text%20Build%203211%20x64%20Setup.exe">Sublime Text3 x64(3211)</a>，需要的工具是<a href="https://tools.pediy.com/win/Debuggers/x64dbg/x64dbg_v25.zip">看雪论坛的x64dbg</a>。</p>
+<p>讨厌的地方有两个：首页 、弹窗。</p>
+<p><img src="/_v_images/20191224114347166_21263.png" alt="首页"></p>
+<p><img src="/_v_images/20191224114836044_14870.png" alt="弹窗"></p>
+<p>针对首页上的字样，在符号中搜索 <code>setwindowtext</code></p>
+<p><img src="/_v_images/20191224115402732_5529.png" alt="去首页一"></p>
+<p>跳转到函数位置下断点，重新载入程序，在栈区跳转到返回地址。</p>
+<p><img src="/_v_images/20191224150252635_30230.png" alt="定位setwindowtext函数"></p>
+<p>现在跳转到了调用 <code>setwindowtext</code> 函数的代码地址，向上寻找函数块起始位置。</p>
+<p><img src="/_v_images/20191224150527213_7743.png" alt="调用函数"></p>
+<p><img src="/_v_images/20191226143637137_8505.png" alt="函数块起始处"></p>
+<p>下断重载，逐条运行，发现关键点：</p>
+<p><img src="/_v_images/20191224171626205_30814.png" alt="关键点"></p>
+<p>这里应该知道，是第三个条件跳转语句是什么关键跳转了，根据跳转目的地判断，第三个跳转是正常显示的点。
+二进制修改如下：</p>
+<pre><code>000000013FCB3CC7   | 75 1E                 | jne sublime_text.13FCB3CE7         |
+修改为：
+000000013FCB3CC7   | EB 77                 | jmp sublime_text.13FCB3D40         |
+</code></pre><p><img src="/_v_images/20191224173133163_3088.png" alt="保存补丁"></p>
+<p>去掉首页后，需要该弹窗，弹窗内容可以使用字符搜索来进行。</p>
+<p><img src="/_v_images/20191224173647162_18475.png" alt="搜索字符串"></p>
+<p>搜索<code>hello</code></p>
+<p><img src="/_v_images/20191224174111513_15972.png" alt="关键字符串"></p>
+<p>下断点，触发并执行过来</p>
+<p><img src="/_v_images/20191224174617929_31014.png" alt="关键位置"></p>
+<p>触发了断点，说明位置是正确的，观察上下文</p>
+<pre><code>000000013F38098D   | 48:83EC 28            | sub rsp,28                         |
+000000013F380991   | 48:8D15 B6D95C00      | lea rdx,qword ptr ds:[13F94E34E]   | 000000013F94E34E:&quot;Hello! Thanks for trying out Sublime Text.\n\nThis is an unregistered evaluation version, and although the trial is untimed, a license must be purchased for continued use.\n\nWould you like to purchase a license now?&quot;
+000000013F380998   | 4C:8D05 B1DC5B00      | lea r8,qword ptr ds:[13F93E650]    | 000000013F93E650:&quot;This is an unregistered copy&quot;
+000000013F38099F   | 4C:8D0D 91675C00      | lea r9,qword ptr ds:[13F947137]    | 000000013F947137:&quot;Purchase&quot;
+000000013F3809A6   | 31C9                  | xor ecx,ecx                        |
+000000013F3809A8   | E8 9F9E1000           | call sublime_text_s.13F48A84C      |
+000000013F3809AD   | 84C0                  | test al,al                         |
+000000013F3809AF   | 74 10                 | je sublime_text_s.13F3809C1        |
+000000013F3809B1   | 48:8D0D 62D95B00      | lea rcx,qword ptr ds:[13F93E31A]   | 000000013F93E31A:&quot;https://www.sublimetext.com/buy&quot;
+000000013F3809B8   | 48:83C4 28            | add rsp,28                         |
+000000013F3809BC   | E9 AD581000           | jmp sublime_text_s.13F48626E       |
+</code></pre><p>发现整段代码都是用来进行弹窗的，那么直接在代码起始地ret，就可以实现最小化修改了4</p>
+<p><img src="/_v_images/20191224175149768_9258.png" alt="最小化修改"></p>
+<p>至此爆破就结束了。</p>
+<h2 id="最小化特征码替换">最小化特征码替换</h2>
+<p>版本：x64“Sublime Text Version 3.2.2 Buile 3211”</p>
+<p><img src="/_v_images/20191231155733014_5896.png" alt=""></p>
+<p>特征码是：</p>
+<pre><code>66 83 25 F0 CF 6F 00 00
+</code></pre><p>修改为：</p>
+<pre><code>C6 05 F1 CF 6F 00 01 90
+</code></pre><h2 id="追码过程记录">追码过程记录</h2>
+<p>如果针对特定功能点进行爆破的话，改动的地方会很多，打补丁的话也不太方便。所以为了实现最小化修改， 进行追码。随便寻找一个关键点进行追码，这里从 <code>title</code> 上的 <code>（unregistered）</code> 入手。</p>
+<p>第一步：对 <code>setwindowtextw</code> 下断；</p>
+<p><img src="/_v_images/20191231161536694_8093.png" alt="第一步"></p>
+<p>第二步：重载，找到关键跳转；</p>
+<p><img src="/_v_images/20191231162016189_2744.png" alt="第二步"></p>
+<p>第三步：这里知道 <code>r15</code>寄存器的值是关键值，现在开始向上追码；</p>
+<p><img src="/_v_images/20191231162322382_10174.png" alt="第三步"></p>
+<p>第四步：继续追码 <code>r9</code> ；</p>
+<p><img src="/_v_images/20191231194453001_6819.png" alt="第四步"></p>
+<p>第五步：发现 <code>r13</code> 与 1 进行了异或运算；</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">命令</th>
+<th style="text-align:left">二进制数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">A</td>
+<td style="text-align:left">1010</td>
+</tr>
+<tr>
+<td style="text-align:left">1</td>
+<td style="text-align:left">0001</td>
+</tr>
+<tr>
+<td style="text-align:left">or A,1</td>
+<td style="text-align:left">1011</td>
+</tr>
+<tr>
+<td style="text-align:left">B</td>
+<td style="text-align:left">1011</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/_v_images/20191231195132774_20902.png" alt="第五步"></p>
+<p>第六步：找到关键内存地址；</p>
+<p><img src="/_v_images/20191231195445476_15990.png" alt="第六步"></p>
+<p>第七步：现在知道了整个过程是如何影响最终走向的，接下来梳理一下算法过程：</p>
+<pre><code>
+mov rax,qword ptr ds:[r15+4E8] ;关键内存地址赋值给rax
+xor ebx,ebx                    ;将ebx制空
+xor ecx,ecx                    ;将ecx制空
+cmp byte ptr ds:[rax],bl       ;将rax地址中的值与0比较
+sete cl                        ;rax地址中的值为0，则cl为1，否则cl为0
+lea edx,qword ptr ds:[rcx+rcx] ;将rcx+rcx的值赋值给edx
+cmp byte ptr ds:[rax+1],bl     ;对比[rax+1]的值是否为0，用来影响cmove赋值。
+lea edi,qword ptr ds:[rcx+rcx+4];将edx+4赋值给edi
+cmove edi,edx                  ;此时如果zf为1，则将edx的值赋给edi，否则跳过该条命令。
+lea r13d,qword ptr ds:[rdi+8]  ;将rdi+8的值赋值给r13
+or r13d,eax                    ;将r13与eax进行异或运算
+mov r9d,r13d                   ;将r13的值赋值给r9
+mov r15d,r9d                   ;将r9的值赋值给r15
+test r15b,2                    ;r15的值是关键
+jne sublime_text.13F8A3CE7
+test r15b,4
+jne sublime_text.13F8A3D30
+test r15b,10
+je sublime_text.13F8A3D40      ;here
+</code></pre><p>从截取的代码来看，要进行到最后的跳转，需要满足以下条件：</p>
+<pre><code>r15 and 0010b = 1
+r15 and 0100b = 1
+r15 and 10000b = 1
+</code></pre><p><strong>抛开最后 &lsquo;r13&rsquo; 与 &lsquo;eax&rsquo; 进行异或操作，观察 &lsquo;r13&rsquo; 的来源值为' rdi+8' ，&lsquo;rdi&rsquo; 等于 &lsquo;edx+4&rsquo; ，或者 &lsquo;edx&rsquo; ，&lsquo;edx&rsquo; 则等于 &lsquo;2h&rsquo; 或者 &lsquo;0h&rsquo; ，简单测试一下 &lsquo;[rax] = 1h&rsquo; ，则满足以下所有条件，且在异或操作时，&lsquo;eax&rsquo; 的值被赋值为了 &lsquo;0h&rsquo; ，对 &lsquo;r13&rsquo; 没有影响。</strong></p>
+<p>第八步：给关键地址下硬件写入断点，来定位它最开始被修改的地址；</p>
+<p><img src="/_v_images/20191231220024707_2155.png" alt="第八步"></p>
+<p>第九步：重载、运行；</p>
+<p><img src="/_v_images/20191231220255356_26508.png" alt="第九步"></p>
+<p>第十步：修改汇编代码，并测试是否有效：
+先在此处将关键地址修改为1，运行查看情况：</p>
+<p><img src="/_v_images/20191231220941087_2205.png" alt="仅修改"></p>
+<p>按如下方式修改代码：</p>
+<pre><code>000000013F701FA8 | 66:8325 F0CF6F00 00     | and word ptr ds:[13FDFEFA0],0      | 将关键地址赋值为1h
+修改为：
+000000013F701FA8 | C605 F1CF6F00 01        | mov byte ptr ds:[13FDFEFA0],1      | 将关键地址赋值为1h
+000000013F701FAF | 90                      | nop                                |
+</code></pre><p><img src="/_v_images/20191231221142150_18876.png" alt="修改代码"></p>
+<p><strong>最后总结得出最小特征码</strong></p>
+<pre><code>66 83 25 F0 CF 6F 00 00
+</code></pre><p><strong>修改为：</strong></p>
+<pre><code>C6 05 F1 CF 6F 00 01 90
+</code></pre><p>++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</p>
+<h2 id="2020年3月28日更新制作补丁">2020年3月28日更新：制作补丁</h2>
+<p>++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</p>
+<p>偶然间的到了一个补丁编写软件<a href="https://www.ghpym.com/dup2.html">（dup2）</a>，然后就试着用它来制作了一个patch补丁。另外修改一个隐藏的校验。
+在以往的经验中，发现关于上显示的 <code>&quot;Unregistered&quot;</code> 上面的判断跳转是根据内存地址来的，搜索字符串 <code>&quot;Unregistered&quot;</code> ：</p>
+<p><img src="/_v_images/20200328085104078_25759.png" alt="字符串搜索"></p>
+<p>找到上面的判断跳转：</p>
+<p><img src="/_v_images/20200328085425946_20527.png" alt="关键点"></p>
+<p>结果显示如下：</p>
+<p><img src="/_v_images/20200328085543272_8871.png" alt="显示结果"></p>
+<p>在刚才的rsi内存地址处，下一个硬件读取断点，重载程序：</p>
+<p><img src="/_v_images/20200328090915363_23736.png" alt="目标"></p>
+<p>在硬件断点停留的位置，可以看到and运算将目标地址置零了，修改方式就很简单了：
+原始代码：</p>
+<pre><code>00007FF681F31FA8 | 66:8325 F0CF6F00 00      | and word ptr ds:[7FF68262EFA0],0        | 第一个修改点
+00007FF681F31FB0 | 8325 EDCF6F00 00         | and dword ptr ds:[7FF68262EFA4],0       |
+</code></pre><p>修改方案一：</p>
+<pre><code>00007FF681F31FA8 | C605 F1CF6F00 01         | mov byte ptr ds:[7FF68262EFA0],1        | 第一个修改点
+00007FF681F31FAF | 90                       | nop                                     |
+00007FF681F31FB0 | 8325 EDCF6F00 00         | and dword ptr ds:[7FF68262EFA4],0       |
+</code></pre><p>修改方案二：</p>
+<pre><code>00007FF681F31FA8 | 66:8325 F0CF6F00 00      | and word ptr ds:[7FF68262EFA0],0        | 第一个修改点
+00007FF681F31FB0 | C605 E9CF6F00 01         | mov byte ptr ds:[7FF68262EFA0],1        |
+</code></pre><p>方案一改的多，方案二改的少，因为<code>7FF68262EFA4</code>的值本来就是0，这里的置零是无意义代码，为了修改少我选择的是方案二进行修改。
+删除当前硬件断点，在目标地址重新下一个硬件写入断点，运行程序，逐个点击功能点，尝试触发隐藏校验函数。
+过了一段时间后，隐藏校验点触发，在尝试了不同的点击顺序后，貌似这是一个基于时间的校验点，</p>
+<p><img src="/_v_images/20200328101518044_13976.png" alt="隐藏"></p>
+<pre><code>00007FF70B29EB28 | C601 01                  | mov byte ptr ds:[rcx],1                 | 隐藏校验
+00007FF70B29EB2B | C3                       | ret                                     |
+</code></pre><p><img src="/_v_images/20200328101722123_2883.png" alt="补丁"></p>
+<p>这样爆破就算结束了。
+制作补丁：</p>
+<p><img src="/_v_images/20200328102450486_21458.png" alt=""></p>
+<p>将原始文件和破解后的文件进行偏移对比，得出要修改替换的字节，点击保存，在点击方案-创建补丁-就可以生成path文件。
+<strong>注：在目标文件处加上绝对路径，就可以直接打开目标文件，未加路劲的话，默认为当前patch文件目录，未找到会提示用户自行选取。</strong></p>
+]]></content>
+		</item>
+		
+	</channel>
+</rss>

