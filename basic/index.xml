@@ -365,10 +365,10 @@ dict_values(['this is demo', 'this is one'])
 			<pubDate>Mon, 28 Dec 2020 14:11:37 +0800</pubDate>
 			
 			<guid>https://www.a1ee.cn/basic/python_info/</guid>
-			<description>1. Python简介 1.1 Python环境搭建 在https://www.python.org/ python官方网站下载 python环境（推荐使用3</description>
+			<description>1. Python简介 1.1 Python环境搭建 在python官方网站下载 python环境（推荐使用3.x版本），python2 已经在2020年停止</description>
 			<content type="html"><![CDATA[<h1 id="1-python简介">1. Python简介</h1>
 <h2 id="11-python环境搭建">1.1 Python环境搭建</h2>
-<p>在<a href="python%E5%AE%98%E6%96%B9%E7%BD%91%E7%AB%99">https://www.python.org/</a> <code>python</code>官方网站下载 <code>python</code>环境（推荐使用3.x版本），<code>python2</code> 已经在2020年停止更新了！
+<p>在<a href="https://www.python.org/">python官方网站</a>下载 <code>python</code>环境（推荐使用3.x版本），<code>python2</code> 已经在2020年停止更新了！
 无论是下载zip包还是安装包，都需要配置环境变量，（本机的 <code>python</code>安装地址为：<code>C:\Program Files\Python38\python.exe</code>）配置过程如下：</p>
 <p>配置环境变量：打开 <code>此电脑 &gt; 属性 &gt; 高级系统设置 &gt; 环境变量 &gt; 系统变量 path &gt; 新建</code></p>
 <p><img src="/_v_images/20200109104736092_25962.png" alt="配置如下"></p>
