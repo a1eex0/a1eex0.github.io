@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>alee</title>
+    <link>https://www.a1ee.cn/</link>
+    <description>Recent content on alee</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 28 Dec 2020 14:20:32 +0800</lastBuildDate><atom:link href="https://www.a1ee.cn/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python_tkinter_info</title>
+      <link>https://www.a1ee.cn/simaple/python_tkinter_info/</link>
+      <pubDate>Mon, 28 Dec 2020 14:20:32 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/simaple/python_tkinter_info/</guid>
+      <description>tkinter库说明 这是一个相对轻量化的GUI库，因为它是python的原生库，不需要额外的安装库文件，因此存在很强的可移植性。 但不建议用它</description>
+    </item>
+    
+    <item>
+      <title>Python_nmap_info</title>
+      <link>https://www.a1ee.cn/simaple/python_nmap_info/</link>
+      <pubDate>Mon, 28 Dec 2020 14:20:25 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/simaple/python_nmap_info/</guid>
+      <description>python-nmap库说明 python-nmap库的官方说明文档，作者给出了一个实例代码。 实践代码 参考这两个资料，写出了如下的功能代码： #</description>
+    </item>
+    
+    <item>
+      <title>Python_webdriver_selenium_info</title>
+      <link>https://www.a1ee.cn/simaple/python_webdriver_selenium_info/</link>
+      <pubDate>Mon, 28 Dec 2020 14:20:15 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/simaple/python_webdriver_selenium_info/</guid>
+      <description>webdriver_selenium库说明 原型 当遇到一些受动态防御系统保护的站点时，需要一个模拟登陆的脚本来进行爆破尝试。 模拟登陆的pyth</description>
+    </item>
+    
+    <item>
+      <title>Python_grammar_2</title>
+      <link>https://www.a1ee.cn/basic/python_grammar_2/</link>
+      <pubDate>Mon, 28 Dec 2020 14:15:00 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/basic/python_grammar_2/</guid>
+      <description>3.Python语法（二） 3.1.条件判断 Python程序语言指定任何非0和非空（null）值为true，0 或者 null为false。Pyt</description>
+    </item>
+    
+    <item>
+      <title>Python_grammar_1</title>
+      <link>https://www.a1ee.cn/basic/python_grammar_1/</link>
+      <pubDate>Mon, 28 Dec 2020 14:14:56 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/basic/python_grammar_1/</guid>
+      <description>2.Python语法（一） 2.1 转义字符 \ 在 print 中想要输出单双引号，可以使用转义字符 \ 来进行输出，当然了也可以直接分开使用，因为单引号和双引号配套</description>
+    </item>
+    
+    <item>
+      <title>Python_info</title>
+      <link>https://www.a1ee.cn/basic/python_info/</link>
+      <pubDate>Mon, 28 Dec 2020 14:11:37 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/basic/python_info/</guid>
+      <description>1. Python简介 1.1 Python环境搭建 在python官方网站下载 python环境（推荐使用3.x版本），python2 已经在2020年停止</description>
+    </item>
+    
+    <item>
+      <title>Xshell_6_plus</title>
+      <link>https://www.a1ee.cn/simaple/xshell_6_plus/</link>
+      <pubDate>Mon, 28 Dec 2020 14:08:52 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/simaple/xshell_6_plus/</guid>
+      <description>Xshell 6 plus 下载 官网下载 左边是需要输入注册码的，右边是30天的评估版，随意填写，使用临时邮箱就可以接收下载链接了，产品的下载链接路径是一样的，不同</description>
+    </item>
+    
+    <item>
+      <title>Awvs</title>
+      <link>https://www.a1ee.cn/simaple/awvs/</link>
+      <pubDate>Mon, 28 Dec 2020 14:04:14 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/simaple/awvs/</guid>
+      <description>AWVS 12 下载 下载试用版（2020-05-12：下载链接已失效，需要邮箱重新注册） 准备工作 安装好后，登录并扫描网站，在事件窗口会看到相关信息： 所有</description>
+    </item>
+    
+    <item>
+      <title>Winrar</title>
+      <link>https://www.a1ee.cn/simaple/winrar/</link>
+      <pubDate>Mon, 28 Dec 2020 14:02:45 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/simaple/winrar/</guid>
+      <description>WinRAR 官网下载WinRAR 寻找切入点 预览程序，寻找切入点： 两个点：一个是窗口上有 评估版本 字样，另一个是有广告弹窗。 我感觉从 setwindowtext 入手好像要简单一些。</description>
+    </item>
+    
+    <item>
+      <title>Sbulime_text3</title>
+      <link>https://www.a1ee.cn/simaple/sbulime_text3/</link>
+      <pubDate>Mon, 28 Dec 2020 13:58:30 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/simaple/sbulime_text3/</guid>
+      <description>Sublime Text3 入门级爆破 下载Sublime Text3 x64(3211)，需要的工具是看雪论坛的x64dbg。 讨厌的地方有两个：首页 、弹窗。 针对首页上的字样，在</description>
+    </item>
+    
+    <item>
+      <title>Dvwa_xss</title>
+      <link>https://www.a1ee.cn/basic/dvwa_xss/</link>
+      <pubDate>Mon, 28 Dec 2020 13:46:53 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/basic/dvwa_xss/</guid>
+      <description>DVWA_Xss（跨站脚本攻击） 前言 这是一个简单又复杂的话题，简单是因为它的利用方式异常简单：插入一条引用外部js的代码即可；复杂是因为想要</description>
+    </item>
+    
+    <item>
+      <title>Dvwa_weak_session_ids</title>
+      <link>https://www.a1ee.cn/basic/dvwa_weak_session_ids/</link>
+      <pubDate>Mon, 28 Dec 2020 13:43:06 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/basic/dvwa_weak_session_ids/</guid>
+      <description>DVWA_Weak_Session_IDs（会话id伪造） 这个常见于越权（未授权）访问，身份伪造等。一些权限校验不严谨，读取cookie中的</description>
+    </item>
+    
+    <item>
+      <title>Dvwa_file_upload</title>
+      <link>https://www.a1ee.cn/basic/dvwa_file_upload/</link>
+      <pubDate>Mon, 28 Dec 2020 13:37:52 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/basic/dvwa_file_upload/</guid>
+      <description>DVWA_File Upload（文件上传） LOW 上传的，当然是webshell，但是为了演示，我就传个输出phpinfo的代码吧 &amp;lt;?php phpinfo(); ?&amp;gt; 访问路径，返回信息。 鉴于完</description>
+    </item>
+    
+    <item>
+      <title>Dvwa_file_inclusion</title>
+      <link>https://www.a1ee.cn/basic/dvwa_file_inclusion/</link>
+      <pubDate>Mon, 28 Dec 2020 13:35:26 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/basic/dvwa_file_inclusion/</guid>
+      <description>DVWA_File Inclusion（文件包含） 可分为本地文件包含和远程文件包含： 本地文件包含可以将本地的文件包含到当前页面，适用于上传的webshell无</description>
+    </item>
+    
+    <item>
+      <title>Dvwa_csrf</title>
+      <link>https://www.a1ee.cn/basic/dvwa_csrf/</link>
+      <pubDate>Mon, 28 Dec 2020 13:25:07 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/basic/dvwa_csrf/</guid>
+      <description>DVWA_CSRF（跨站请求伪造） 有一次有个人问我，csrf的最佳防护方式是什么，但是很遗憾，我虽然知道csrf的危害，但从未遇到过真实可用</description>
+    </item>
+    
+    <item>
+      <title>Dvwa_command_injection</title>
+      <link>https://www.a1ee.cn/basic/dvwa_command_injection/</link>
+      <pubDate>Mon, 28 Dec 2020 13:19:13 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/basic/dvwa_command_injection/</guid>
+      <description>DVWA_Command Injection（命令注入） LOW 按要求输入ip地址，返回结果如下： 那么功能就是调用了一个ping的功能，如果是直接将输入内容取出来拼接在命</description>
+    </item>
+    
+    <item>
+      <title>Dvwa_brute_force</title>
+      <link>https://www.a1ee.cn/basic/dvwa_brute_force/</link>
+      <pubDate>Mon, 28 Dec 2020 13:16:25 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/basic/dvwa_brute_force/</guid>
+      <description>DVWA_Brute Force（暴力破解） 这是一个有登录功能，也就是数据库校验功能的页面，从页面上不难看出，可能的漏洞点是暴力破解 LOW 截取low级别的请求报文，</description>
+    </item>
+    
+    <item>
+      <title>Build_vulhub</title>
+      <link>https://www.a1ee.cn/basic/build_vulhub/</link>
+      <pubDate>Wed, 09 Sep 2020 13:48:07 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/basic/build_vulhub/</guid>
+      <description>Ubuntu Server 安装 Vulhub 根据官方网站的说明，需要安装docker和docker-compose，需要用pip安装docker-compose，官方的演示视</description>
+    </item>
+    
+    <item>
+      <title>Build_lab</title>
+      <link>https://www.a1ee.cn/basic/build_lab/</link>
+      <pubDate>Wed, 09 Sep 2020 11:37:04 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/basic/build_lab/</guid>
+      <description>Ubuntu Server 安装 DVWA 和 SQLI-Lab 环境下载 本地虚拟机安装ubuntu server 20.04.1 LTS 然后使用xshell连接服务器，采用xftp上传一键下载环境的脚本，脚本内命令如下： #!/bin/sh</description>
+    </item>
+    
+    <item>
+      <title>About Me</title>
+      <link>https://www.a1ee.cn/about-me/</link>
+      <pubDate>Fri, 04 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.a1ee.cn/about-me/</guid>
+      <description>I am a bad scholar, learning because I am too boring.
+This is a blog that summarizes knowledge, I will record everything I learned here.
+Hereby declare:
+ Knowledge comes from the Internet, but I will try to avoid mistakes. I will try my best to make the method really work. Sometimes I will express some personal opinions, please stay rational. The most important thing is to hope this knowledge is useful to you.</description>
+    </item>
+    
+  </channel>
+</rss>

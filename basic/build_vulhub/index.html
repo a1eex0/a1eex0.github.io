@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#494f5c">
+	<meta name="msapplication-TileColor" content="#494f5c">
+<meta itemprop="name" content="Build_vulhub">
+<meta itemprop="description" content="Ubuntu Server 安装 Vulhub 根据官方网站的说明，需要安装docker和docker-compose，需要用pip安装docker-compose，官方的演示视">
+<meta itemprop="datePublished" content="2020-09-09T13:48:07+08:00" />
+<meta itemprop="dateModified" content="2020-09-09T13:48:07+08:00" />
+<meta itemprop="wordCount" content="922">
+<meta itemprop="image" content="https://www.a1ee.cn/bg.png">
+
+
+
+<meta itemprop="keywords" content="vulhub,docker," />
+<meta property="og:title" content="Build_vulhub" />
+<meta property="og:description" content="Ubuntu Server 安装 Vulhub 根据官方网站的说明，需要安装docker和docker-compose，需要用pip安装docker-compose，官方的演示视" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.a1ee.cn/basic/build_vulhub/" />
+<meta property="og:image" content="https://www.a1ee.cn/bg.png" />
+<meta property="article:published_time" content="2020-09-09T13:48:07+08:00" />
+<meta property="article:modified_time" content="2020-09-09T13:48:07+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://www.a1ee.cn/bg.png"/>
+
+<meta name="twitter:title" content="Build_vulhub"/>
+<meta name="twitter:description" content="Ubuntu Server 安装 Vulhub 根据官方网站的说明，需要安装docker和docker-compose，需要用pip安装docker-compose，官方的演示视"/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<title>Build_vulhub</title>
+	<link rel="stylesheet" href="https://www.a1ee.cn/css/style.min.eac77496566fd7d5768fd650ddb0b2b181ca6a2d7c5fdd6fe6b8ba4bf47e566f.css" integrity="sha256-6sd0llZv19V2j9ZQ3bCysYHKai18X91v5ri6S/R+Vm8=" crossorigin="anonymous">
+	<style>.bg-img {background-image: url('https://www.a1ee.cn/bg.png');}</style>
+</head>
+
+<body id="page">
+	
+	<header id="site-header" class="animated slideInUp">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="https://www.a1ee.cn">alee</a>
+				</div>
+				<nav class="site-nav hide-in-mobile">
+					
+				<a href="https://www.a1ee.cn/basic/">BASIC</a>
+				<a href="https://www.a1ee.cn/simaple/">SIMAPLE</a>
+				<a href="https://www.a1ee.cn/about-me/">ABOUT</a>
+
+				</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<button id="img-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-image"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></button><span class="hdr-social hide-in-mobile"><a href="https://github.com/a1eex0" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="https://www.a1ee.cn/basic/">BASIC</a></li>
+			<li><a href="https://www.a1ee.cn/simaple/">SIMAPLE</a></li>
+			<li><a href="https://www.a1ee.cn/about-me/">ABOUT</a></li>
+		</ul>
+	</div>
+
+
+	<div class="bg-img"></div>
+	<main class="site-main section-inner animated fadeIn faster">
+		<article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>Sep 9, 2020</span></div>
+				<h1>Build_vulhub</h1>
+			</header>
+			<div class="content">
+				<h1 id="ubuntu-server-安装-vulhub">Ubuntu Server 安装 Vulhub<a href="#ubuntu-server-安装-vulhub" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
+<p>根据<a href="https://vulhub.org/">官方网站</a>的说明，需要安装<code>docker</code>和<code>docker-compose</code>，需要用<code>pip</code>安装<code>docker-compose</code>，官方的演示视频中使用的命令如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># If you don&#39;t have a docker installed, you&#39;ll need to install docker</span>
+curl -s https://get.docker.com/ <span class="p">|</span> sh
+
+<span class="c1"># If you don&#39;t have a pip installed, you&#39;ll need to install pip</span>
+curl -s https://bootstrap.pypa.io/get-pip.py <span class="p">|</span> python3
+
+<span class="c1"># Use pip to install docker-compose</span>
+pip install docker-compose
+
+<span class="c1"># git clone vulhub source</span>
+git clone https://github.com/vulhub/vulhub
+
+<span class="c1"># Entry vulnerability directory</span>
+<span class="nb">cd</span> /path/to/vuln/
+
+<span class="c1"># Compile (optional)</span>
+docker-compose build
+
+<span class="c1"># Run</span>
+docker-compose up -d
+</code></pre></div><p><strong>注：由于网络环境的问题，部分命令采用了等级处理，详见下文。</strong></p>
+<p>本地搭建的<code>Ubuntu Server</code>实机演示截图如下：
+安装<code>docker</code>，命令：<code>curl -s https://get.docker.com/ | sh</code></p>
+<p><img src="/vulhub_images/20200826174153268_13222.png" alt=""></p>
+<p>安装<code>pip</code>，命令：<code>curl -s https://bootstrap.pypa.io/get-pip.py | python3</code>，在本地网络环境下的<code>Ubuntu 18.04.5</code>中，很遗憾的无法正常执行该命令，取消-s参数后，将看到并未进行下载安装（猜测是网络原因导致的问题）：</p>
+<p><img src="/vulhub_images/20200827090852112_9538.png" alt=""></p>
+<p>于是只能采用apt命令安装，具体命令如下：</p>
+<pre><code>apt-get install python3-pip
+</code></pre><p>安装完成以后的pip版本如下：</p>
+<p><img src="/vulhub_images/20200827100049007_28795.png" alt=""></p>
+<p>安装<code>docker-compose</code>，命令：<code>pip3 install docker-compose</code>，你可能会因为网络原因而失败很多次，我没有很好的建议，因为我的做法是不断的重复执行该条命令，由于pip安装的时候会将下载的包缓存到本地，所以我就利用这个特性，慢慢的把整个安装所需的包下载到了本地最后成功安装了，当前安装的版本如下：</p>
+<p><img src="/vulhub_images/20200827104943518_10737.png" alt=""></p>
+<p>安装好<code>docker</code>后就需要<code>git</code>下载<code>vulhub</code>源码了:<code>git clone https://github.com/vulhub/vulhub</code>
+现在实验环境搭建完成。</p>
+<h2 id="配置下载源">配置下载源<a href="#配置下载源" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>下载了vulhub的框架后，先不要进行实验，添加国内镜像地址，可以使下载镜像的时候，快上许多。
+创建daemon.json文件<code>vim /etc/docker/daemon.json</code>，再往里写入镜像地址，我这里用的中科大的地址：</p>
+<pre><code>{
+	&quot;registry-mirrors&quot;: [&quot;http://docker.mirrors.ustc.edu.cn&quot;]
+}
+</code></pre><p><img src="/vulhub_images/20201202101721106_19536.png" alt=""></p>
+<p>更新好了以后，需要重启一下docker：<code>systemctl restart docker</code></p>
+<h2 id="docker命令">docker命令<a href="#docker命令" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>整个vulhub实验中需要用到的docker命令很少，基础命令即可：</p>
+<pre><code>docker-compose up -d        构建并启动容器（需要进入到容器目录）（-d表示后台运行）
+docker ps                   列出当前多有的容器及相关信息
+docker start/stop 容器名/id 启动/停止 指定容器
+docker restart 容器名/id    重启 指定容器
+docker exec -it 容器名/id bash  进入到指定容器当中（命令行中输入exit退出容器）
+docker ps -a                查看所有容器
+docker-compose down         停止并删除当前运行的容器
+docker rm 容器名/id          删除指定容器
+docker images               查看所有镜像
+docker rmi 镜像名/id         删除指定镜像
+</code></pre>
+			</div>
+			<hr class="post-end">
+			<footer class="post-info">
+				<p>
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://www.a1ee.cn/tags/vulhub">vulhub</a></span><span class="tag"><a href="https://www.a1ee.cn/tags/docker">docker</a></span>
+				</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2020-09-09 13:48 &#43;0800</p>
+			</footer>
+		</article>
+		<div class="post-nav thin">
+			<a class="next-post" href="https://www.a1ee.cn/basic/dvwa_brute_force/">
+				<span class="post-nav-label"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>&nbsp;</span><br><span>Dvwa_brute_force</span>
+			</a>
+			<a class="prev-post" href="https://www.a1ee.cn/basic/build_lab/">
+				<span class="post-nav-label">&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>Build_lab</span>
+			</a>
+		</div>
+		<div id="comments" class="thin">
+</div>
+	</main>
+
+	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+		<p>&copy; 2020 <a href="https://www.a1ee.cn">alee</a></p>
+	</footer>
+
+
+
+	<script src="https://www.a1ee.cn/js/bundle.min.4a9a0ac3d2217822c7865b4161e6c2a71de1d70492264337755427898dd718f6.js" integrity="sha256-SpoKw9IheCLHhltBYebCpx3h1wSSJkM3dVQniY3XGPY=" crossorigin="anonymous"></script>
+	
+
+</body>
+
+</html>
