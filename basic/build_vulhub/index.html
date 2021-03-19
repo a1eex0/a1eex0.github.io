@@ -11,7 +11,7 @@
 <meta itemprop="description" content="Ubuntu Server 安装 Vulhub 根据官方网站的说明，需要安装docker和docker-compose，需要用pip安装docker-compose，官方的演示视">
 <meta itemprop="datePublished" content="2020-09-09T13:48:07+08:00" />
 <meta itemprop="dateModified" content="2020-09-09T13:48:07+08:00" />
-<meta itemprop="wordCount" content="922">
+<meta itemprop="wordCount" content="976">
 <meta itemprop="image" content="https://www.a1ee.cn/bg.png">
 
 
@@ -128,7 +128,8 @@ docker-compose up -d
 <p>更新好了以后，需要重启一下docker：<code>systemctl restart docker</code></p>
 <h2 id="docker命令">docker命令<a href="#docker命令" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>整个vulhub实验中需要用到的docker命令很少，基础命令即可：</p>
-<pre><code>docker-compose up -d        构建并启动容器（需要进入到容器目录）（-d表示后台运行）
+<pre><code>docker-compose build        当修改dockerfile或者docker-compose时，运行docker-compose build 重建镜像
+docker-compose up -d        构建并启动容器（需要进入到容器目录）（-d表示后台运行）
 docker ps                   列出当前多有的容器及相关信息
 docker start/stop 容器名/id 启动/停止 指定容器
 docker restart 容器名/id    重启 指定容器

