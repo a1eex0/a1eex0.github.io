@@ -99,7 +99,7 @@ if __name__ == '__main__':
 		print('[+] Find a new type! Please contact author increase!\n'+r.text)
 	print('[++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++]')
 </code></pre><h2 id="成功截图">成功截图</h2>
-<p><img src="Apache-Solr_images/4363814090360.png" alt=""></p>
+<p><img src="/Apache-Solr_images/4363814090360.png" alt=""></p>
 <p><code>solr_readfile.py</code>的<a href="https://github.com/a1eex0/Utilities/tree/main/Solr/solr%20Arbitrary%20file%20reading">github地址</a></p>
 ]]></content>
 		</item>
