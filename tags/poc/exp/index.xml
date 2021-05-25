@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>POC/EXP on alee</title>
+    <link>https://www.a1ee.cn/tags/poc/exp/</link>
+    <description>Recent content in POC/EXP on alee</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language><atom:link href="https://www.a1ee.cn/tags/poc/exp/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Apache Solr任意文件读取（20210318爆出)</title>
+      <link>https://www.a1ee.cn/simaple/apache-solr%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%9620210318%E7%88%86%E5%87%BA/</link>
+      <pubDate>Fri, 19 Mar 2021 09:29:16 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/simaple/apache-solr%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%9620210318%E7%88%86%E5%87%BA/</guid>
+      <description>漏洞触发点 漏洞是通过实例下的：/debug/dump?param=ContentStreams，参数：stream.url触发的。 想要触发该</description>
+    </item>
+    
+  </channel>
+</rss>
