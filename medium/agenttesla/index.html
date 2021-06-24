@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#494f5c">
+	<meta name="msapplication-TileColor" content="#494f5c">
+<meta itemprop="name" content="AgentTesla">
+<meta itemprop="description" content="AgentTesla窃密木马样本分析 1. 简介 Agent Tesla 是一种密码窃取间谍软件，自 2014 年以来一直存在。攻击者可以使用该恶意软件来监视受害者，使他们能够查"><meta itemprop="datePublished" content="2021-06-24T15:22:11&#43;08:00" />
+<meta itemprop="dateModified" content="2021-06-24T15:22:11&#43;08:00" />
+<meta itemprop="wordCount" content="2143"><meta itemprop="image" content="https://www.a1ee.cn/bg.png">
+<meta itemprop="keywords" content="AgentTesla,Sample," /><meta property="og:title" content="AgentTesla" />
+<meta property="og:description" content="AgentTesla窃密木马样本分析 1. 简介 Agent Tesla 是一种密码窃取间谍软件，自 2014 年以来一直存在。攻击者可以使用该恶意软件来监视受害者，使他们能够查" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.a1ee.cn/medium/agenttesla/" /><meta property="og:image" content="https://www.a1ee.cn/bg.png" /><meta property="article:section" content="medium" />
+<meta property="article:published_time" content="2021-06-24T15:22:11&#43;08:00" />
+<meta property="article:modified_time" content="2021-06-24T15:22:11&#43;08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://www.a1ee.cn/bg.png"/>
+
+<meta name="twitter:title" content="AgentTesla"/>
+<meta name="twitter:description" content="AgentTesla窃密木马样本分析 1. 简介 Agent Tesla 是一种密码窃取间谍软件，自 2014 年以来一直存在。攻击者可以使用该恶意软件来监视受害者，使他们能够查"/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<title>AgentTesla</title>
+	<link rel="stylesheet" href="https://www.a1ee.cn/css/style.min.eac77496566fd7d5768fd650ddb0b2b181ca6a2d7c5fdd6fe6b8ba4bf47e566f.css" integrity="sha256-6sd0llZv19V2j9ZQ3bCysYHKai18X91v5ri6S/R+Vm8=" crossorigin="anonymous">
+	<style>.bg-img {background-image: url('https://www.a1ee.cn/bg.png');}</style>
+</head>
+
+<body id="page">
+	
+	<header id="site-header" class="animated slideInUp">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="https://www.a1ee.cn">alee</a>
+				</div>
+				<nav class="site-nav hide-in-mobile">
+					
+				<a href="https://www.a1ee.cn/basic/">BASIC</a>
+				<a href="https://www.a1ee.cn/simaple/">SIMAPLE</a>
+				<a href="https://www.a1ee.cn/medium/">MEDIUM</a>
+				<a href="https://www.a1ee.cn/about-me/">ABOUT</a>
+
+				</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<button id="img-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-image"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></button><span class="hdr-social hide-in-mobile"><a href="https://github.com/a1eex0" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="https://www.a1ee.cn/basic/">BASIC</a></li>
+			<li><a href="https://www.a1ee.cn/simaple/">SIMAPLE</a></li>
+			<li><a href="https://www.a1ee.cn/medium/">MEDIUM</a></li>
+			<li><a href="https://www.a1ee.cn/about-me/">ABOUT</a></li>
+		</ul>
+	</div>
+
+
+	<div class="bg-img"></div>
+	<main class="site-main section-inner animated fadeIn faster">
+		<article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>Jun 24, 2021</span></div>
+				<h1>AgentTesla</h1>
+			</header>
+			<div class="content">
+				<h1 id="agenttesla窃密木马样本分析">AgentTesla窃密木马样本分析<a href="#agenttesla窃密木马样本分析" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
+<h2 id="1-简介">1. 简介<a href="#1-简介" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>Agent Tesla 是一种密码窃取间谍软件，自 2014 年以来一直存在。攻击者可以使用该恶意软件来监视受害者，使他们能够查看在支持的程序和网络浏览器中输入的所有内容。</p>
+<p>Agent Tesla 病毒在其自己的网站上进行营销和销售，该网站错误地声称该程序是为个人使用而创建的合法键盘记录器，因此在黑客社区中非常流行。不仅仅是因为它的易用性和技术支持，可以在攻击者出售此恶意软件的“官方”网站以及专用的 Discord 服务器上找到。尽管声称该软件是合法的，但售卖人员还是会就非法使用该病毒提出建议。</p>
+<h2 id="2-样本详情">2. 样本详情<a href="#2-样本详情" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>本次分析的样本哈希如下：</p>
+<pre><code>MD5：af98b88c0b5dc353fbe536bd6fb8c4ec
+SHA256：cc262fd3fa1f646aff2f5bcdea33beca5ed081260028b8604d5f714dd23c03ac
+</code></pre><p>可以从<a href="https://app.any.run/tasks/84fc78ab-2695-4a5a-9a89-45f2497c38de/">any.run沙箱</a>查看到样本的行为及下载样本。</p>
+<p>将样本用PEStudio打开，可以看到<code>Mircrosoft</code>将其标记为<code>AgentTesla</code>：</p>
+<p><img src="/tesla_images/1832029179083.png" alt=""></p>
+<p><code>libraries</code>标签可以看出这是一个.NET程序，且<code>strings</code>标签内字符串数量有点多，<code>version</code>标签中可以获取到样本的原始文件名及哈希情况：</p>
+<p><img src="/tesla_images/3350431166950.png" alt=""></p>
+<h2 id="3-样本分析">3. 样本分析<a href="#3-样本分析" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>使用<code>dnSpy</code>加载样本，向下观察代码，可以在<code>Helper</code>类中找到<code>Gzip</code>其中存放了约<code>10000</code>行数据，向下阅读代码，是<code>C#</code>中常用的解压缩函数<code>GZipStream</code>：</p>
+<ol>
+<li><img src="/tesla_images/5397454179785.png" alt=""></li>
+</ol>
+<h3 id="31-样本释放">3.1. 样本释放<a href="#31-样本释放" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>在<code>retrun result</code>处下断，得到了解压内存存放的内存地址<code>0x00027800</code>，在内存窗口中查看，可以明显看出是<code>PE</code>文件结构：</p>
+<p><img src="/tesla_images/1477230100659.png" alt=""></p>
+<p>使用<code>dnSpy</code>自带的保存功能，将该地址处存放的数据保存到本地，再使用<code>PEStudio</code>查看，这是一个名为：<code>Ihinax.dll</code>的<code>.NET</code>文件。</p>
+<p><img src="/tesla_images/2901937119085.png" alt=""></p>
+<p><code>Ihinax.dll</code>函数名经过了混淆，经过了长时间的阅读，在<code>LVU3WCMrRsWDmqar8f</code>空间下的<code>Su370LNVnsglWDN9lR</code>类的第311行，找到了<code>gzipStream</code>，下断点执行到此处，<code>array2</code>中所存放的内容是<code>PE</code>文件格式的内容。</p>
+<p><img src="/tesla_images/2984344106952.png" alt=""></p>
+<p>保存下来，使用<code>PEStudio</code>查看：</p>
+<p><img src="/tesla_images/2175446127118.png" alt=""></p>
+<p>这里推荐使用互联网工具对文件进行解压。<a href="https://www.unpac.me/results/01c9a92b-100b-4d9d-93cb-56a9029a0026#/">UnpacMe解压</a>结果如下：</p>
+<p><img src="/tesla_images/1678414182094.png" alt=""></p>
+<p>将手动解压与<code>UnpacMe</code>解压的内容进行<code>SHA256</code>比较，并无差别：</p>
+<p><img src="/tesla_images/4437048119787.png" alt=""></p>
+<h3 id="32-样本解码">3.2. 样本解码<a href="#32-样本解码" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>使用<code>dnSpy</code>加载最终的恶意程序，进入主函数可以看到一些奇怪的函数，<code>GetEnvironmentVariable</code>函数是用于获取系统变量的，参数却是函数<code>97085277-F30F-47FA-9C3D-82DA9E6730B4.L()</code>。</p>
+<p><img src="/tesla_images/4581331127121.png" alt=""></p>
+<p>进入其中可以看到类中有个类似于解密的东西，然后下方的方法进行方法传递：</p>
+<p><img src="/tesla_images/3794127100662.png" alt=""></p>
+<p>解密字符集：</p>
+<p><img src="/tesla_images/3522028119088.png" alt=""></p>
+<p><img src="/tesla_images/3441329106955.png" alt=""></p>
+<p>这里可以使用<code>de4dot</code>对其进行动态解密，作者在<code>readme</code>中进行了如下说明：</p>
+<p><img src="/tesla_images/1697150189976.png" alt=""></p>
+<p><code>de4dot</code>对<code>--strtyp</code>参数的说明如下：</p>
+<pre><code>String decrypter types
+  none             Don't decrypt strings
+  default          Use default string decrypter type (usually static)
+  static           Use static string decrypter if available
+  delegate         Use a delegate to call the real string decrypter
+  emulate          Call real string decrypter and emulate certain instructions
+</code></pre><p>这里选取了<code>emulate</code>进行尝试，但是作者显然并不想我们这么容易就解除了混淆，加密字符串居然有<code>6000535h - 600022Bh = 30Ah</code>处！</p>
+<p><img src="/tesla_images/440434116345.png" alt=""></p>
+<p>所以我简单生成了一个粗糙的bat：</p>
+<pre><code>de4dot.exe dump2.bin --strtyp emulate --strtok 600022B
+rename dump2-cleaned.bin dump3.bin
+de4dot.exe dump3.bin --strtyp emulate --strtok 600022C
+del dump3.bin
+rename dump3-cleaned.bin dump3.bin
+de4dot.exe dump3.bin --strtyp emulate --strtok 600022D
+del dump3.bin
+rename dump3-cleaned.bin dump3.bin
+de4dot.exe dump3.bin --strtyp emulate --strtok 600022E
+del dump3.bin
+rename dump3-cleaned.bin dump3.bin
+de4dot.exe dump3.bin --strtyp emulate --strtok 600022F
+del dump3.bin
+rename dump3-cleaned.bin dump3.bin
+……
+……
+……
+de4dot.exe dump3.bin --strtyp emulate --strtok 6000533
+del dump3.bin
+rename dump3-cleaned.bin dump3.bin
+de4dot.exe dump3.bin --strtyp emulate --strtok 6000534
+del dump3.bin
+rename dump3-cleaned.bin dump3.bin
+de4dot.exe dump3.bin --strtyp emulate --strtok 6000535
+del dump3.bin
+rename dump3-cleaned.bin dump3.bin
+</code></pre><p>在经过了大约二十分钟后，我获得了一个解密后的程序：</p>
+<p><img src="/tesla_images/115833119790.png" alt=""></p>
+<h3 id="33-代码阅读">3.3. 代码阅读<a href="#33-代码阅读" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>对于<code>C#</code>程序，既然字符串已经还原了，个人习惯是先阅读代码，然后就会有如下的这些发现。</p>
+<h4 id="331-设置开机自启">3.3.1. 设置开机自启<a href="#331-设置开机自启" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><img src="/tesla_images/3034945140663.png" alt=""></p>
+<h4 id="332-获取本机公网ip">3.3.2. 获取本机公网ip<a href="#332-获取本机公网ip" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><img src="/tesla_images/18847159089.png" alt=""></p>
+<h4 id="333-下载文件">3.3.3. 下载文件<a href="#333-下载文件" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><img src="/tesla_images/1613451167122.png" alt=""></p>
+<h4 id="334-获取系统信息">3.3.4. 获取系统信息<a href="#334-获取系统信息" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><img src="/tesla_images/2452553159791.png" alt=""></p>
+<h4 id="335-截取屏幕">3.3.5. 截取屏幕<a href="#335-截取屏幕" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><img src="/tesla_images/5994156156346.png" alt=""></p>
+<h4 id="336-ftp服务操作">3.3.6. FTP服务操作<a href="#336-ftp服务操作" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><img src="/tesla_images/764505162100.png" alt=""></p>
+<h4 id="337-浏览器用户数据窃取">3.3.7. 浏览器用户数据窃取<a href="#337-浏览器用户数据窃取" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><img src="/tesla_images/3854308179980.png" alt=""></p>
+<h4 id="338-smtp请求配置">3.3.8. SMTP请求配置<a href="#338-smtp请求配置" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><img src="/tesla_images/2423011177584.png" alt=""></p>
+<h4 id="339-键盘记录">3.3.9. 键盘记录<a href="#339-键盘记录" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><img src="/tesla_images/4989936183004.png" alt=""></p>
+<h4 id="3310-socket通信">3.3.10. SOCKET通信<a href="#3310-socket通信" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><img src="/tesla_images/630324175086.png" alt=""></p>
+<h4 id="3311-数据上传">3.3.11. 数据上传<a href="#3311-数据上传" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><img src="/tesla_images/5323027156327.png" alt=""></p>
+<h4 id="3312-des加密">3.3.12. DES加密<a href="#3312-des加密" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><img src="/tesla_images/4082929178767.png" alt=""></p>
+<h4 id="3313-判断操作系统版本">3.3.13. 判断操作系统版本<a href="#3313-判断操作系统版本" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><img src="/tesla_images/1222354160583.png" alt=""></p>
+<h4 id="3314-特殊软件的凭证窃取">3.3.14. 特殊软件的凭证窃取<a href="#3314-特殊软件的凭证窃取" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p>特殊软件的凭证窃取（下图是Edge浏览器的窃取函数段）</p>
+<p><img src="/tesla_images/3238651188043.png" alt=""></p>
+<p>从Edge凭证窃取函数可以看出，窃取函数存在以下特征：</p>
+<pre><code>UserName =
+Password =
+Browser = &quot;&quot;
+</code></pre><p>检索全部代码，反复确认后，发现窃取目标包含以下对象：</p>
+<pre><code>Browser = &quot;IE/Edge&quot;
+Browser = &quot;Edge Chromium&quot;
+Browser = &quot;QQ Browser&quot;
+Browser = &quot;incredimail&quot;
+x.Browser = &quot;Eudora&quot;
+Browser = &quot;Falkon Browser&quot;
+Browser = &quot;Falkon Browser&quot;
+Browser = &quot;ClawsMail&quot;
+Browser = &quot;Flock Browser&quot;
+Browser = &quot;DynDNS&quot;
+x.Browser = &quot;Psi/Psi+&quot;
+x.Browser = &quot;Open VPN&quot;
+x.Browser = &quot;FileZilla&quot;
+Browser = &quot;WinSCP&quot;
+Browser = &quot;FlashFXP&quot;
+x.Browser = &quot;FTP Navigator&quot;
+x.Browser = &quot;JDownloader&quot;
+Browser = &quot;Paltalk&quot;
+Browser = &quot;Pidgin&quot;
+Browser = &quot;SmartFTP&quot;
+x.Browser = &quot;WS_FTP&quot;
+Browser = &quot;FTPCommander&quot;
+x.Browser = &quot;FTPGetter&quot;
+Browser = &quot;NO-IP&quot;
+Browser = &quot;NO-IP&quot;
+Browser = &quot;TheBat&quot;
+x.Browser = &quot;Becky!&quot;
+Browser = &quot;Trillian&quot;
+x.Browser = &quot;Outlook&quot;
+x.Browser = &quot;Foxmail&quot;
+x.Browser = &quot;Opera Mail&quot;
+x.Browser = &quot;PocoMail&quot;
+Browser = &quot;eM Client&quot;
+x.Browser = &quot;Mailbird&quot;
+x.Browser = &quot;Mailbird&quot;
+Browser = &quot;NordVPN&quot;
+Browser = &quot;MySQL Workbench&quot;
+Browser = &quot;Private Internet Access&quot;
+x.Browser = &quot;Safari Browser&quot;
+x.Browser = &quot;Internet Download Manager&quot;
+</code></pre><h4 id="3315-vnc凭证窃取">3.3.15. VNC凭证窃取<a href="#3315-vnc凭证窃取" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><img src="/tesla_images/1320920203013.png" alt=""></p>
+<h4 id="3316-下载tor浏览器">3.3.16. 下载Tor浏览器<a href="#3316-下载tor浏览器" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><img src="/tesla_images/4431331170914.png" alt=""></p>
+<h3 id="34-动态调试">3.4. 动态调试<a href="#34-动态调试" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>进入程序入口，会生成一串字符串，用于标识受害者主机，然后会设置一个30s的定时循环任务，接着开始进行浏览器用户数据窃取；</p>
+<p><img src="/tesla_images/2016144140664.png" alt=""></p>
+<p>汇总如下：</p>
+<pre><code>@&quot;C:\Users\alee\AppData\Local\7Star\7Star\User Data&quot;
+@&quot;C:\Users\alee\AppData\Local\uCozMedia\Uran\User Data&quot;
+@&quot;C:\Users\alee\AppData\Local\MapleStudio\ChromePlus\User Data&quot;
+@&quot;C:\Users\alee\AppData\Local\Yandex\YandexBrowser\User Data&quot;
+@&quot;C:\Users\alee\AppData\Local\Torch\User Data&quot;
+@&quot;C:\Users\alee\AppData\Local\Coowon\Coowon\User Data&quot;
+@&quot;C:\Users\alee\AppData\Local\Comodo\Dragon\User Data&quot;
+@&quot;C:\Users\alee\AppData\Local\Sputnik\Sputnik\User Data&quot;
+@&quot;C:\Users\alee\AppData\Local\Iridium\User Data&quot;
+@&quot;C:\Users\alee\AppData\Local\Vivaldi\User Data&quot;
+@&quot;C:\Users\alee\AppData\Roaming\Opera Software\Opera Stable&quot;
+@&quot;C:\Users\alee\AppData\Local\Chedot\User Data&quot;
+@&quot;C:\Users\alee\AppData\Local\CocCoc\Browser\User Data&quot;
+@&quot;C:\Users\alee\AppData\Local\Fenrir Inc\Sleipnir5\setting\modules\ChromiumViewer&quot;
+@&quot;C:\Users\alee\AppData\Local\Epic Privacy Browser\User Data&quot;
+@&quot;C:\Users\alee\AppData\Local\Elements Browser\User Data&quot;
+@&quot;C:\Users\alee\AppData\Local\Amigo\User Data&quot;
+@&quot;C:\Users\alee\AppData\Local\CatalinaGroup\Citrio\User Data&quot;
+@&quot;C:\Users\alee\AppData\Local\BraveSoftware\Brave-Browser\User Data&quot;
+@&quot;C:\Users\alee\AppData\Local\360Chrome\Chrome\User Data&quot;
+@&quot;C:\Users\alee\AppData\Local\Kometa\User Data&quot;
+@&quot;C:\Users\alee\AppData\Local\liebao\User Data&quot;
+@&quot;C:\Users\alee\AppData\Local\CentBrowser\User Data&quot;
+@&quot;C:\Users\alee\AppData\Local\QIP Surf\User Data&quot;
+@&quot;C:\Users\alee\AppData\Local\Chromium\User Data&quot;
+@&quot;C:\Users\alee\AppData\Local\Orbitum\User Data&quot;
+</code></pre><p>然后会在每一个目录下寻找<code>logins</code>文件夹，窃取其中的信息</p>
+<p><img src="/tesla_images/4256159090.png" alt=""></p>
+<p>针对<code>logins</code>内的文件窃取函数内容如下：</p>
+<p><img src="/tesla_images/4252004160664.png" alt=""></p>
+<p>往下则是一列窃取函数的调用，核实并整理后如下：</p>
+<pre><code>list.AddRange(global::A.b.E.LoginsSteal(x.A, x.A));
+list.AddRange(global::A.b.E.RimArtsSteal());
+list.AddRange(global::A.b.E.ChromeSteal());
+list.AddRange(global::A.b.E.FlockSteal());
+list.AddRange(global::A.b.E.IceDragonSteal());
+list.AddRange(global::A.b.E.OpearMailSteal());
+list.AddRange(global::A.b.E.GetOSVersion());
+list.AddRange(global::A.b.E.ClawsMailSteal());
+list.AddRange(global::A.b.E.PostboxSteal());
+list.AddRange(global::A.b.E.AppleSteal());
+list.AddRange(global::A.b.E.IncrediMailSteal());
+list.AddRange(global::A.b.E.BlackHawkSteal());
+list.AddRange(global::A.b.E.IceCatSteal());
+list.AddRange(global::A.b.E.WaterFoxSteal());
+list.AddRange(global::A.b.E.PocomailSteal());
+list.AddRange(global::A.b.E.UCBrowserSteal());
+list.AddRange(global::A.b.E.FileZillaSteal());
+list.AddRange(global::A.b.E.FirefoxSteal());
+list.AddRange(global::A.b.E.WinSCP_2_Steal());
+list.AddRange(global::A.b.E.FalkonSteal());
+list.AddRange(global::A.b.E.QQBrowserSteal());
+list.AddRange(global::A.b.E.CyberFoxSteal());
+list.AddRange(global::A.b.E.SeaMonkeySteal());
+list.AddRange(global::A.b.E.K-MeleonSteal());
+list.AddRange(global::A.b.E.OutLookSteal());
+list.AddRange(global::A.b.E.FoxmailSteal());
+list.AddRange((IEnumerable&lt;global::A.b.X&gt;)global::A.b.E.EudoraSteal());
+list.AddRange(global::A.b.E.ThunderbirdSteal());
+list.AddRange(global::A.b.E.PaleMoonSteal());
+</code></pre><h2 id="4-总结">4. 总结<a href="#4-总结" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>AgentTesla是一款商业窃密木马，当中还存在某些交互并未深入分析，不过基础模块已经很清晰了，从这些模块可以看出大多是针对浏览器和邮件客户端的窃密。这里提醒大家尽量不要在浏览器中保存密码，在使用邮件客户端时，也应当格外小心。</p>
+
+			</div>
+			<hr class="post-end">
+			<footer class="post-info">
+				<p>
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://www.a1ee.cn/tags/agenttesla">AgentTesla</a></span><span class="tag"><a href="https://www.a1ee.cn/tags/sample">Sample</a></span>
+				</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2021-06-24 15:22 &#43;0800</p>
+			</footer>
+		</article>
+		<div class="post-nav thin">
+			<a class="prev-post" href="https://www.a1ee.cn/medium/darksideransomware/">
+				<span class="post-nav-label">&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>DarksideRansomware</span>
+			</a>
+		</div>
+		<div id="comments" class="thin">
+</div>
+	</main>
+
+	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+		<p>&copy; 2021 <a href="https://www.a1ee.cn">alee</a></p>
+	</footer>
+
+
+
+	<script src="https://www.a1ee.cn/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	
+
+</body>
+
+</html>
