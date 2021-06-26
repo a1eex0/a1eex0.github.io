@@ -5,8 +5,590 @@
 		<description>Recent content in Simaples on alee</description>
 		<generator>Hugo -- gohugo.io</generator>
 		<language>zh-cn</language>
-		<lastBuildDate>Fri, 19 Mar 2021 09:29:16 +0800</lastBuildDate>
+		<lastBuildDate>Sat, 26 Jun 2021 10:14:17 +0800</lastBuildDate>
 		<atom:link href="https://www.a1ee.cn/simaple/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>IDAPython</title>
+			<link>https://www.a1ee.cn/simaple/idapython/</link>
+			<pubDate>Sat, 26 Jun 2021 10:14:17 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/simaple/idapython/</guid>
+			<description>idaPython脚本编写实例 1. 背景 在使用IDA对darkside样本进行分析的时候，发现样本是动态加载dll，这使得IDA分析起来极不方便</description>
+			<content type="html"><![CDATA[<h1 id="idapython脚本编写实例">idaPython脚本编写实例</h1>
+<h2 id="1-背景">1. 背景</h2>
+<p>在使用<code>IDA</code>对<a href="https://bazaar.abuse.ch/sample/151fbd6c299e734f7853497bd083abfa29f8c186a9db31dbe330ace2d35660d5/">darkside样本</a>进行分析的时候，发现样本是动态加载<code>dll</code>，这使得<code>IDA</code>分析起来极不方便，所以就需要结合<code>idaPython</code>编写一个脚本用来加载<code>dll</code>。</p>
+<h2 id="2-入口">2. 入口</h2>
+<p>在<code>IDA</code>中找到加载函数，如下所示：</p>
+<p><img src="/idapy_images/4720824160665.png" alt=""></p>
+<p>其中<code>sub_40171C</code>的源代码如下：</p>
+<p><img src="/idapy_images/2987633199982.png" alt=""></p>
+<p>转成<code>C</code>代码如下，一段解密，并将内容输出到<code>byte_410ABE</code>：</p>
+<p><img src="/idapy_images/2747250179091.png" alt=""></p>
+<p><code>sub_40182A</code>的关键代码如下：</p>
+<p><img src="/idapy_images/3440531186348.png" alt=""></p>
+<p>转成<code>C</code>代码如下，可见其功能是调用解密函数解密后，再调用<code>LoadLibraryA</code>加载<code>dll</code>：</p>
+<p><img src="/idapy_images/1413552166958.png" alt=""></p>
+<p><code>sub_40182A</code>中存在解码函数<code>sub_4016D5</code>：</p>
+<p><img src="/idapy_images/1365935197586.png" alt=""></p>
+<p>转成<code>C</code>代码如下，主要是分类输出，主体解密不在此函数中：</p>
+<p><img src="/idapy_images/1852429197124.png" alt=""></p>
+<p><code>sub_4016D5</code>嵌套了一个函数<code>sub_4017AA</code>：</p>
+<p><img src="/idapy_images/2645336195088.png" alt=""></p>
+<p>转成<code>C</code>代码如下，解密流程函数：</p>
+<p><img src="/idapy_images/1950830189793.png" alt=""></p>
+<h2 id="3-构建">3. 构建</h2>
+<p>从函数的功能和<code>IDA</code>转<code>C</code>代码的功能阅读，加上动态调试，可以构建出如下代码：</p>
+<pre><code>import idaapi
+import idc
+import idautils
+
+
+# 密钥生成函数
+def Resolve_Buffer(arg1, arg2, length):
+    global KEY_BUFFER
+    v3 = 240
+    v4 = arg1[0]
+    v5 = arg1[1]
+    v6 = arg1[2]
+    v7 = arg1[3]
+
+    def _copy_bytes(integer, BUFFER, offset):
+        for i in range(0, 4):
+            BUFFER[offset + i] = integer &amp; 0xff
+            integer &gt;&gt;= 8
+        return BUFFER
+
+    while v3 &gt;= 0:
+        KEY_BUFFER = _copy_bytes(v4, KEY_BUFFER, v3 + 12)
+        KEY_BUFFER = _copy_bytes(v7, KEY_BUFFER, v3 + 8)
+        KEY_BUFFER = _copy_bytes(v5, KEY_BUFFER, v3 + 4)
+        KEY_BUFFER = _copy_bytes(v6, KEY_BUFFER, v3)
+        v4 -= 0x10101010
+        v7 -= 0x10101010
+        v5 -= 0x10101010
+        v6 -= 0x10101010
+        v3 -= 0x10
+
+    lo_v8 = 0
+    v9 = 0
+    v10 = 0
+
+    while True:
+        while True:
+            lo_result = KEY_BUFFER[v9] &amp; 0xff
+            lo_v8 = (lo_result + ((arg2[v10] + lo_v8) &amp; 0xff)) &amp; 0xff
+            hi_result = KEY_BUFFER[lo_v8]
+
+            v10 += 1
+            KEY_BUFFER[lo_v8] = lo_result
+            KEY_BUFFER[v9] = hi_result
+            if v10 &gt;= length:
+                break
+            v9 += 1
+            v9 &amp;= 0xff
+            if v9 == 0:
+                return
+
+        v10 = 0
+        v9 += 1
+        v9 &amp;= 0xff
+        if v9 == 0:
+            break
+
+# 密钥加载函数
+def Get_KEY_BUFFER():
+    global KEY_BUFFER
+    # 由RVA计算出函数的实际内存地址
+    for s in idautils.Segments():
+        if idc.get_segm_name(s) == &quot;.text&quot;:
+            resolve_func_ea = 0x71C + s
+
+    # 获取函数交叉引用地址，这里只有一处交叉引用，可以不用判断
+    for ref in idautils.CodeRefsTo(resolve_func_ea, 1):
+        ref_ea = ref
+
+    # 获取三个参数压入函数的参数
+    arg_list = [0, 0, 0]
+    for i in range(0, 3):
+        prev_instruction_ea = idc.prev_head(ref_ea)  # 获取交叉引用处的上一个指令地址
+        if idc.print_insn_mnem(prev_instruction_ea) == 'push':  # 获取该处的助记符，判断是否是push
+            arg_list[i] = idc.get_operand_value(prev_instruction_ea, 0)  # 获取第一个操作数
+            ref_ea = prev_instruction_ea
+
+    # 获取三个参数
+    arg1 = []
+    arg2 = []
+    arg1_ea = arg_list[0]
+    arg2_ea = arg_list[1]
+    length = arg_list[2]
+    while arg1_ea &lt; arg_list[0] + length:
+        arg1.append(int.from_bytes(idaapi.get_bytes(arg1_ea, 4), 'little'))  # 以dword形式拷贝，并以小端模式转为int型
+        arg1_ea += 4
+    while arg2_ea &lt; arg_list[1] + length:
+        arg2.append(int.from_bytes(idaapi.get_bytes(arg2_ea, 1), 'little'))  # 以byte形式拷贝，并以小端模式转为int型
+        arg2_ea += 1
+
+    Resolve_Buffer(arg1, arg2, length)
+
+# 获取待解密内容
+def Get_Encrypted_Lib_Table():
+    LoadLibraryA_ea = idc.get_name_ea_simple(&quot;LoadLibraryA&quot;)
+    LoadLibraryA_ref = None
+    if LoadLibraryA_ea != idaapi.BADADDR:
+        for ref in idautils.CodeRefsTo(LoadLibraryA_ea, 1):
+            LoadLibraryA_ref = ref  # 获取LoadLibraryA交叉引用地址
+            break
+
+    ENCRYPTED_LIB_TABLE_ea = idc.get_operand_value((LoadLibraryA_ref - 22), 1)
+    ENCRYPTED_LIB_TABLE_ea -= 4
+
+    global API_TABLE_start_ea
+    global ENCRYPTED_LIB_TABLE
+    API_TABLE_start_ea = idc.get_operand_value((LoadLibraryA_ref - 16), 1)
+    ENCRYPTED_LIB_TABLE = idaapi.get_bytes(ENCRYPTED_LIB_TABLE_ea, 0xE70) #0xE70是密文的总长度，可通过动态调试得出大小
+
+def Decrypt_String(encrypted_string, length):
+    BUFFER1 = []
+    for i in KEY_BUFFER:
+        BUFFER1.append(i)
+
+    v2 = 0
+    v4 = 0
+    curr_index = 0
+    v6 = 0
+
+    while length != 0:
+        v4 = (BUFFER1[1 + v2] + v4) &amp; 0xFF
+        v6 = BUFFER1[1 + v2] &amp; 0xFF
+        v7 = BUFFER1[v4] &amp; 0xFF
+        BUFFER1[v4] = v6
+        BUFFER1[1 + v2] = v7
+        v6 = (v7 + v6) &amp; 0xFF
+        v2 += 1
+        encrypted_string[curr_index] ^= BUFFER1[v6]
+        curr_index += 1
+        length -= 1
+    return encrypted_string
+
+def Resolve_String(encrypted_string, length):
+    v3 = int(length / 0xFF)
+    v4 = length % 0xFF
+    if v3 != 0:
+        v5 = int(length / 0xFF)
+
+        while v5 != 0:
+            encrypted_string = Decrypt_String(encrypted_string, 255)
+            v5 -= 1
+    if v4 != 0:
+        encrypted_string = Decrypt_String(encrypted_string, v4)
+
+    return ''.join([chr(x) for x in encrypted_string])[:-1]
+
+# 密钥存储数组
+KEY_BUFFER = []
+# 密文存储起点
+API_TABLE_start_ea = 0
+# 密文存储数据
+ENCRYPTED_LIB_TABLE = None
+Darkside_DLL_LIST = set(['ntdll', 'kernel32', 'advapi32', 'shell32', 'ole32', 'oleaut32', 'mpr',
+						 'iphlpapi', 'shlwapi', 'gdi32', 'user32', 'netapi32', 'wsock32', 'wininet', 'wtsapi32'])
+
+def Main():
+    global KEY_BUFFER, API_TABLE_start_ea, ENCRYPTED_LIB_TABLE
+    for i in range(0, 256):
+        KEY_BUFFER.append(0)
+
+    Get_KEY_BUFFER()
+    Get_Encrypted_Lib_Table()
+
+    ENCRYPTED_LIB_TABLE_counter = 0
+    length = int.from_bytes(ENCRYPTED_LIB_TABLE[ENCRYPTED_LIB_TABLE_counter:ENCRYPTED_LIB_TABLE_counter+4], 'little')
+    ENCRYPTED_LIB_TABLE_counter += 4
+
+    curr_API_ea = API_TABLE_start_ea
+
+    while length!= 0:
+        encrypted_string = [x for x in ENCRYPTED_LIB_TABLE[ENCRYPTED_LIB_TABLE_counter:ENCRYPTED_LIB_TABLE_counter+length]]
+        resolved_API = Resolve_String(encrypted_string, length)
+        print(resolved_API)
+        if resolved_API not in Darkside_DLL_LIST:
+            idc.set_name(curr_API_ea, 'mw_' + resolved_API)
+            curr_API_ea += 4
+        ENCRYPTED_LIB_TABLE_counter += length
+        length = int.from_bytes(ENCRYPTED_LIB_TABLE[ENCRYPTED_LIB_TABLE_counter:ENCRYPTED_LIB_TABLE_counter + 4], 'little')
+        ENCRYPTED_LIB_TABLE_counter += 4
+
+if __name__ == &quot;__main__&quot;:
+    Main()
+</code></pre><h2 id="4-对比">4. 对比</h2>
+<p>核心函数原始代码：</p>
+<p><img src="/idapy_images/1461708100667.png" alt=""></p>
+<p>动态加载<code>dll</code>后代码：</p>
+<p><img src="/idapy_images/5227509119093.png" alt=""></p>
+<h2 id="5-总结">5. 总结</h2>
+<p>这不是一次从<code>0</code>到<code>1</code>的创造，而是一次从<code>1</code>到<code>1</code>的练习，非常感谢<a href="https://github.com/cdong1012/IDAPython-Malware-Scripts/blob/master/Darkside/darkside_parser.py">前辈</a>的无私奉献，附录是我对<a href="https://leanpub.com/IDAPython-Book">IDAPython-Book</a>的整理，希望也能对正在学习<code>idaPython</code>的你有所帮助。</p>
+<h2 id="6-idapython附录">6. IDAPython附录</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">api名称</th>
+<th style="text-align:left">功能说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">idc.get_screen_ea()</td>
+<td style="text-align:left">返回当前光标所在处的地址，等效于&quot;here()&quot;</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.get_inf_attr(INF_MIN_EA)</td>
+<td style="text-align:left">返回IDB中的最小地址</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.get_inf_attr(INF_MAX_EA)</td>
+<td style="text-align:left">返回IDB中的最大地址</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.get_segm_name(ea)</td>
+<td style="text-align:left">返回ea地址所在的段名称</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.generate_disasm_line(ea,0)</td>
+<td style="text-align:left">返回ea地址处的反汇编代码</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.next_head(ea)</td>
+<td style="text-align:left">返回ea地址处下一个汇编指令的地址</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.prev_head(ea)</td>
+<td style="text-align:left">返回ea地址处上一个汇编指令的地址</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.print_insn_mnem(ea)</td>
+<td style="text-align:left">返回ea地址处的助记符</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.print_operand(ea,n)</td>
+<td style="text-align:left">返回ea地址处第n+1个操作数</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.get_operand_type(ea,n)</td>
+<td style="text-align:left">返回ea地址处第n+1个操作数类型</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.get_operand_value(ea,n)</td>
+<td style="text-align:left">获取ea地址处第n+1个操作数值</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.op_plain_offset(ea,n,base)</td>
+<td style="text-align:left">将ea地址出的第n+1个操作数转换为偏移量(base是基地址）</td>
+</tr>
+<tr>
+<td style="text-align:left">idaapi.BADADDR</td>
+<td style="text-align:left">返回有效地址</td>
+</tr>
+<tr>
+<td style="text-align:left">idautils.Segments()</td>
+<td style="text-align:left">返回每个段地址的起始地址</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.get_segm_end(ea)</td>
+<td style="text-align:left">返回ea地址所在段的结束地址</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.get_next_seg(ea)</td>
+<td style="text-align:left">返回ea地址所在段的下一个段的起始地址</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.selector_by_name(str_SectionName)</td>
+<td style="text-align:left">返回str_SectionName段的序号</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.get_segm_by_sel(int)</td>
+<td style="text-align:left">返回int序号段的起始地址</td>
+</tr>
+<tr>
+<td style="text-align:left">idautils.Functions()</td>
+<td style="text-align:left">返回已知函数的列表，包含每个函数的起始地址，可使用参数以限定返回范围</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.get_func_name(ea)</td>
+<td style="text-align:left">返回ea地址所在函数区域的函数名称</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.get_next_func(ea)</td>
+<td style="text-align:left">返回ea地址所在函数的下一个函数的起始地址</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.get_prev_func(ea)</td>
+<td style="text-align:left">返回ea地址所在函数的上一个函数的起始地址</td>
+</tr>
+<tr>
+<td style="text-align:left">idaapi.get_func(ea).start_ea</td>
+<td style="text-align:left">返回ea地址所在函数的起始地址</td>
+</tr>
+<tr>
+<td style="text-align:left">idaapi.get_func(ea).end_ea</td>
+<td style="text-align:left">返回ea地址所在函数的结束地址</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.get_func_attr(ea,FUNCATTR_START)</td>
+<td style="text-align:left">返回ea地址所在函数的起始地址</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.get_func_attr(ea,FUNCATTR_END)</td>
+<td style="text-align:left">返回ea地址所在函数的结束地址</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.create_insn(ea)</td>
+<td style="text-align:left">从ea地址开始尝试将数据转换为代码</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.add_func(start,end)</td>
+<td style="text-align:left">从start地址开始识别为函数，直至end地址结束（许多情况下不需要end，ida会自动判断结束位置）</td>
+</tr>
+<tr>
+<td style="text-align:left">idaapi.get_arg_addrs(ea)</td>
+<td style="text-align:left">获取被调用函数的参数地址（并不是特别有效，但对api较为准确）</td>
+</tr>
+<tr>
+<td style="text-align:left">idautils.FuncItems(ea)</td>
+<td style="text-align:left">返回ea地址所在函数的所有指令地址</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.next_addr(ea)</td>
+<td style="text-align:left">返回ea地址的下一个地址</td>
+</tr>
+<tr>
+<td style="text-align:left">idaapi.decode_insn(insn_t,ea)</td>
+<td style="text-align:left">解码。insn_t是ida_ua.insn_t()创建的，ea是需要解码的地址</td>
+</tr>
+<tr>
+<td style="text-align:left">idaapi.FlowChart(idaapi.get_func(ea),idaapi.FC_PREDS)</td>
+<td style="text-align:left">针对ea地址所在函数生成图，idaapi.FC_PREDS表示计算前驱节点</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.add_default_til(name)</td>
+<td style="text-align:left">加载name库（TIL），并返回加载状态，1（成功），0（失败）</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.import_type(idx,type_name)</td>
+<td style="text-align:left">导入单个定义，idx表示类型索引，type_name表示具体类型</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.get_struc_id(string_name)</td>
+<td style="text-align:left">获取结构体类型的id</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.op_stroff(ea,n,strid,delta)</td>
+<td style="text-align:left">将结构名称添加到偏移量</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.del_struc(sid)</td>
+<td style="text-align:left">删除id为sid的结构体</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.add_struc(idx,name,is_union)</td>
+<td style="text-align:left">构建新的结构体</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.add_enum(idx,name,flag)</td>
+<td style="text-align:left">idx是新枚举的序号，name是名称，flag是idaapi.hexflag()的标志</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.get_name_ea_simple(str)</td>
+<td style="text-align:left">返回api的地址，str为api名称</td>
+</tr>
+<tr>
+<td style="text-align:left">idautils.CodeRefsTo(ea,flow)</td>
+<td style="text-align:left">返回ea地址的被何处交叉引用，flow指定否循环正常的代码流程（0-是，1-否）</td>
+</tr>
+<tr>
+<td style="text-align:left">idautils.CodeRefsFrom(ea,flow)</td>
+<td style="text-align:left">返回ea地址引用的是何处的代码，flow指定否循环正常的代码流程（0-是，1-否）</td>
+</tr>
+<tr>
+<td style="text-align:left">idautils.Names()</td>
+<td style="text-align:left">返回一个迭代器对象，可循环遍历该对象，打印出所有重命名函数和api，格式（ea,str_name）</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.set_name(ea,name,SN_CHECK)</td>
+<td style="text-align:left">将ea地址重命名为name</td>
+</tr>
+<tr>
+<td style="text-align:left">idautils.DataRefsTo(e)</td>
+<td style="text-align:left">返回ea地址的数据被何处交叉引用</td>
+</tr>
+<tr>
+<td style="text-align:left">idautils.DataRefsFrom(ea)</td>
+<td style="text-align:left">返回ea地址引用的是何处的数据</td>
+</tr>
+<tr>
+<td style="text-align:left">idautils.XrefsTo(ea,flags=0)</td>
+<td style="text-align:left">返回ea地址的所有被交叉引用的地址</td>
+</tr>
+<tr>
+<td style="text-align:left">idautils.XrefsFrom(ea,flags=0)</td>
+<td style="text-align:left">返回ea地址交叉引用的所有地址</td>
+</tr>
+<tr>
+<td style="text-align:left">idautils.XrefTypeName(typeid)</td>
+<td style="text-align:left">返回typeid类型的名称，搭配XrefsTo/XrefsFrom使用</td>
+</tr>
+<tr>
+<td style="text-align:left">ida_search.find_binary(start,end,searchstr,radiux,sflag)</td>
+<td style="text-align:left">搜索特定字节，start、end指定范围；searchstr指定搜索内容；radiux编写搜索模块时使用；sflag搜索方向或条件</td>
+</tr>
+<tr>
+<td style="text-align:left">ida_search.find_text(ea,y,x,searchstr,sflag)</td>
+<td style="text-align:left">搜索特定字节，ea是起始地址，y是搜索行数，x是行中坐标，通常xy为0，剩余参数同上</td>
+</tr>
+<tr>
+<td style="text-align:left">ida_search.find_code(ea,sflag)</td>
+<td style="text-align:left">查找下一个标记为代码的地址，ea为当前地址，sflag同上</td>
+</tr>
+<tr>
+<td style="text-align:left">ida_search.find_data(ea,flag)</td>
+<td style="text-align:left">查找下一个标记为数据的地址，ea为当前地址，sflag同上</td>
+</tr>
+<tr>
+<td style="text-align:left">ida_search.find_unknown(ea,flag)</td>
+<td style="text-align:left">查找下一个标记为未知的地址，ea为当前地址，sflag同上</td>
+</tr>
+<tr>
+<td style="text-align:left">ida_search.find_defined(ea,flag)</td>
+<td style="text-align:left">查找下一个标记为代码或数据的地址，ea为当前地址，sflag同上</td>
+</tr>
+<tr>
+<td style="text-align:left">ida_search.find_imm(ea,sflag,value)</td>
+<td style="text-align:left">查找value的地址，ea为起始地址，sflag同上</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.get_full_flags(ea)</td>
+<td style="text-align:left">返回ea地址的内部标志，用于<code>idc.is*</code>函数集做判断</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.is_code(f)</td>
+<td style="text-align:left">如果 IDA 已将地址标记为代码，则返回 True</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.is_data(f)</td>
+<td style="text-align:left">如果 IDA 已将地址标记为数据，则返回 True</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.is_tail(f)</td>
+<td style="text-align:left">如果 IDA 已将地址标记为尾部，则返回 True</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.is_unknown(f)</td>
+<td style="text-align:left">如果 IDA 已将地址标记为未知，则返回 True。当 IDA 尚未识别地址是代码还是数据时使用此类型。</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.is_head(f)</td>
+<td style="text-align:left">如果 IDA 已将地址标记为头部，则返回 True</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.read_selection_start()</td>
+<td style="text-align:left">返回在ida中选取的代码起始地址</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.read_selection_end()</td>
+<td style="text-align:left">返回在ida中选取的代码结束地址的下一个地址</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.set_cmt(ea,comment,0)</td>
+<td style="text-align:left">给ea地址添加comment注释，0表示注释不可重复，1表示注释可重复</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.get_cmt(ea,repeatable)</td>
+<td style="text-align:left">获取ea地址处的注释，repeatable是bool型，True表示重复，False表示不可重复</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.set_func_cmt(ea,cmt,repeatable)</td>
+<td style="text-align:left">给ea地址所在的函数添加cmt注释，repeatable同上</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.get_func_cmt(ea,repeatable)</td>
+<td style="text-align:left">获取ea地址所在函数的注释，repeatable同上</td>
+</tr>
+<tr>
+<td style="text-align:left">ida_bytes.get_flags(ea)</td>
+<td style="text-align:left">获取ea地址的标志，将用于<code>hasUserName</code>做判断</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.hasUserName(flags)</td>
+<td style="text-align:left">根据<code>get_flags</code>获取的标志，判断地址是否被重命名</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.set_color(ea,what,color)</td>
+<td style="text-align:left">为ea地址着色，what指定着色范围：指令着色(CIC_ITEM)，功能块着色(CIC_FUNC)，段着色(CIC_SEGM)，color为十六进制颜色代码</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.get_wide_byte(ea)</td>
+<td style="text-align:left">获取ea地址处一个字节大小的数据</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.get_wide_word(ea)</td>
+<td style="text-align:left">获取ea地址处一个字大小的数据</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.get_wide_dword(ea)</td>
+<td style="text-align:left">获取ea地址处一个双字大小的数据</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.get_qword(ea)</td>
+<td style="text-align:left">获取ea地址处一个四字大小的数据</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.get_bytes(ea,size,use_dbg=False)</td>
+<td style="text-align:left">获取ea地址后size大小的原始数据块，use_dbg可选，在调试内存时需要</td>
+</tr>
+<tr>
+<td style="text-align:left">idaapi.get_bytes(ea,size)</td>
+<td style="text-align:left">获取ea地址后size大小的原始数据块</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.patch_byte(ea,value)</td>
+<td style="text-align:left">将ea地址处一个字节的值修改为value，大小与函数指定的原始大小一致</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.patch_word(ea,value)</td>
+<td style="text-align:left">将ea地址处一个字的值修改为value，大小与函数指定的原始大小一致</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.patch_dword(ea,value)</td>
+<td style="text-align:left">将ea地址处一个双字的值修改为value，大小与函数指定的原始大小一致</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.read_selection_start()</td>
+<td style="text-align:left">选择突出显示的数据地址的开始</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.read_selection_end()</td>
+<td style="text-align:left">选择突出显示的数据地址的结束</td>
+</tr>
+<tr>
+<td style="text-align:left">ida_kernwin.ask_file(forsave,mask,prompt)</td>
+<td style="text-align:left">文件导入导出；forsave为0表示导入，1表示导出；mask表示导出类型；prompt是提示内容</td>
+</tr>
+<tr>
+<td style="text-align:left">idaapi.jumpto(ea)</td>
+<td style="text-align:left">将反汇编视图重定向到ea地址处</td>
+</tr>
+<tr>
+<td style="text-align:left">idaapi.auto_wait()</td>
+<td style="text-align:left">等待ida完成分析后再将控制权返回给脚本</td>
+</tr>
+<tr>
+<td style="text-align:left">idc.qexit(0)</td>
+<td style="text-align:left">停止执行脚本，关闭数据库并返还给脚本调用者</td>
+</tr>
+</tbody>
+</table>
+]]></content>
+		</item>
 		
 		<item>
 			<title>Apache Solr任意文件读取（20210318爆出)</title>
