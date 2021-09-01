@@ -6,7 +6,16 @@
     <description>Recent content on alee</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 26 Jun 2021 10:14:17 +0800</lastBuildDate><atom:link href="https://www.a1ee.cn/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 01 Sep 2021 08:59:16 +0800</lastBuildDate><atom:link href="https://www.a1ee.cn/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>WorkMiner</title>
+      <link>https://www.a1ee.cn/medium/workminer/</link>
+      <pubDate>Wed, 01 Sep 2021 08:59:16 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/medium/workminer/</guid>
+      <description>WorkMiner样本分析 样本信息 使用DIE查看样本情况： 脱壳 使用upx3.93脱壳失败，提示： upx: work64: CantUnpackException: p_info corrupted 使用文本标记其查看二进制文件，发现</description>
+    </item>
+    
     <item>
       <title>IDAPython</title>
       <link>https://www.a1ee.cn/simaple/idapython/</link>
