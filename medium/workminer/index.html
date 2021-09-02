@@ -10,7 +10,7 @@
 <meta itemprop="name" content="WorkMiner">
 <meta itemprop="description" content="WorkMiner样本分析 样本信息 使用DIE查看样本情况： 脱壳 使用upx3.93脱壳失败，提示： upx: work64: CantUnpackException: p_info corrupted 使用文本标记其查看二进制文件，发现"><meta itemprop="datePublished" content="2021-09-01T08:59:16+08:00" />
 <meta itemprop="dateModified" content="2021-09-01T08:59:16+08:00" />
-<meta itemprop="wordCount" content="1785"><meta itemprop="image" content="https://www.a1ee.cn/bg.png">
+<meta itemprop="wordCount" content="2579"><meta itemprop="image" content="https://www.a1ee.cn/bg.png">
 <meta itemprop="keywords" content="WorkMiner,Sample," /><meta property="og:title" content="WorkMiner" />
 <meta property="og:description" content="WorkMiner样本分析 样本信息 使用DIE查看样本情况： 脱壳 使用upx3.93脱壳失败，提示： upx: work64: CantUnpackException: p_info corrupted 使用文本标记其查看二进制文件，发现" />
 <meta property="og:type" content="article" />
@@ -278,20 +278,59 @@ iptables -I POSTROUTING -t nat -p udp --sport %d -j ACCEPT
 </code></pre><h3 id="ssh蠕虫攻击">ssh蠕虫攻击<a href="#ssh蠕虫攻击" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>在修改完防火墙规则后，执行<code>__home_haha_work_go_sshworm_work_Crackssh</code>函数，对<code>ssh</code>服务进行<code>Crack</code>：</p>
 <p><img src="/workminer_images/2778508206278.png" alt=""></p>
-<p>根据函数名，检索函数列表得出如下函数列：</p>
-<p><img src="/workminer_images/4634517222557.png" alt=""></p>
+<p>进入函数中首先检查当前目录（<code>/tmp</code>）下是否存在<code>./user.list</code>：</p>
+<p><img src="/workminer_images/4941630160942.png" alt=""></p>
+<p>如果存在且不为空，则加载内容至内存中；如果为空，则将<code>root</code>加载到内存中，当作<code>userlist</code>使用：</p>
+<p><img src="/workminer_images/3213532179368.png" alt=""></p>
+<p>然后检查当前目录（<code>/tmp</code>）下是否存在<code>./pass.list</code>：</p>
+<p><img src="/workminer_images/2385533167235.png" alt=""></p>
+<p>如果存在且不为空，则加载内容至内存中；如果为空，则将<code>123456</code>加载到内存中，当作<code>passlist</code>使用：</p>
+<p><img src="/workminer_images/2635134187401.png" alt=""></p>
+<p>接着新建一个<code>goroutine</code>池，用于多线程爆破：
+<img src="/workminer_images/715138180070.png" alt=""></p>
+<p>然后收集用于爆破的IP地址（包括内网、公网、已知主机的IP）：</p>
+<p><img src="/workminer_images/137540176625.png" alt=""></p>
+<p>如果收集到IP地址，则检查本地（<code>/.ssh/id_rsa</code>）是否存在公钥，如果存在公钥则在<code>goroutine</code>池中进行公钥登录尝试：</p>
+<p><img src="/workminer_images/188745190259.png" alt=""></p>
+<p>如果不存在公钥，则在<code>goroutine</code>池中进行默认登录尝试：</p>
+<p><img src="/workminer_images/5561547187863.png" alt=""></p>
+<p>如果未收集用于爆破的IP地址，则会获取<code>lanip</code>，并删除重复值：</p>
+<p><img src="/workminer_images/2551955185365.png" alt=""></p>
+<p>如果获取失败，则随机生成IP并判断是否是lanip，最后都将统一在<code>goroutine</code>池中进行默认登录尝试：</p>
+<p><img src="/workminer_images/1287058166606.png" alt=""></p>
+<p>在使用公钥登录（<code>__home_haha_work_go_sshworm_work_Pkeylogin</code>）或默认登录（<code>__home_haha_work_go_sshworm_work_LoginSsh</code>）成功后，都将调用<code>__home_haha_work_go_sshworm_work_scp_proc</code>函数，该函数会首先创建<code>/usr/.work</code>：</p>
+<p><img src="/workminer_images/3321348090943.png" alt=""></p>
+<p>接着创建<code>/tmp/.work</code>：</p>
+<p><img src="/workminer_images/4934150109369.png" alt=""></p>
+<p>添加权限并执行<code>work32</code>：</p>
+<p><img src="/workminer_images/4232507107236.png" alt=""></p>
+<p>等待2s后继续，添加权限并执行<code>work64</code>：</p>
+<p><img src="/workminer_images/5347708127402.png" alt=""></p>
+<p>整个蠕虫攻击形成闭环。</p>
 <h3 id="main__cfunc_getconf">main__Cfunc_GetConf<a href="#main__cfunc_getconf" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>在执行完<code>ssh蠕虫攻击</code>后，最后调用<code>main__Cfunc_GetConf</code></p>
 <p><img src="/workminer_images/3660828202700.png" alt=""></p>
 <p>层层深入后发现恶意外链：</p>
 <p><img src="/workminer_images/1768926215602.png" alt=""></p>
-<p>P2P节点如下：</p>
-<pre><code>router.bittorrent.com:6881
+<p>查看<code>off_D8D080</code>地址处的字符串：</p>
+<p><img src="/workminer_images/2444401130071.png" alt=""></p>
+<p>上方存在循环，也就是说<code>[rbp+var_B0]</code>依次递增，通过循环可依次去除链接进行访问，查看循环出发点：</p>
+<p><img src="/workminer_images/868405126626.png" alt=""></p>
+<p>上一个函数应该就是外联函数（<code>sub_7341E0</code>）：</p>
+<p><img src="/workminer_images/1618016140260.png" alt=""></p>
+<p>进入其中，向下寻找，逐步定位函数<code>sub_73BAD0</code>为<code>socket</code>请求主函数：</p>
+<p><img src="/workminer_images/2578817137864.png" alt=""></p>
+<p>进入其中可以看到明显的<code>socket</code>、<code>bind</code>函数：</p>
+<p><img src="/workminer_images/3633214122380.png" alt=""></p>
+<p>外联过程分析结束，链接分析如下：</p>
+<pre><code>P2P节点如下：
+router.bittorrent.com:6881
 bttracker.debian.org:6881
 router.utorrent.com:6881
 dht.transmissionbt.com:6881
-</code></pre><p>恶意CC如下：</p>
-<pre><code>212.129.33.59:6881
+
+恶意CC如下：
+212.129.33.59:6881
 82.221.103.244:6881
 130.239.18.159:6881
 87.98.162.88:6881

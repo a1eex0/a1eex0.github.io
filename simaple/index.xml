@@ -106,6 +106,8 @@ init_routing()
 </ol>
 <p>至此流程分析结束。</p>
 <h2 id="总结">总结</h2>
+<p>完整图例如下：</p>
+<p><img src="/cuckoo_images/4756822090942.png" alt=""></p>
 <p>至于Cuckoo的执行流程，可以这样简述：</p>
 <ul>
 <li>server端启动Cuckoo服务；</li>
@@ -117,8 +119,6 @@ init_routing()
 <li>等待分析结束，上传结果至server端；</li>
 <li>处理client端上传的结果，形成报告；</li>
 </ul>
-<p>完整图例如下：</p>
-<p><img src="/cuckoo_images/4756822090942.png" alt=""></p>
 ]]></content>
 		</item>
 		
