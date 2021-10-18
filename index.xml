@@ -6,7 +6,16 @@
     <description>Recent content on alee</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 01 Sep 2021 09:12:41 +0800</lastBuildDate><atom:link href="https://www.a1ee.cn/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 18 Oct 2021 16:13:48 +0800</lastBuildDate><atom:link href="https://www.a1ee.cn/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>BlackMatter</title>
+      <link>https://www.a1ee.cn/medium/blackmatter/</link>
+      <pubDate>Mon, 18 Oct 2021 16:13:48 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/medium/blackmatter/</guid>
+      <description>BlackMatter 勒索软件分析 1. 前言 一个新的勒索软件团伙BlackMatter于 2021 年 7 月在地下论坛/Exploit/和/XSS/上招募附属机构。他们填补了在</description>
+    </item>
+    
     <item>
       <title>Cuckoo</title>
       <link>https://www.a1ee.cn/simaple/cuckoo/</link>
