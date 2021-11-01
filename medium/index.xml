@@ -14,13 +14,14 @@
 			<pubDate>Mon, 01 Nov 2021 15:45:24 +0800</pubDate>
 			
 			<guid>https://www.a1ee.cn/medium/redline/</guid>
-			<description>RedLine 样本分析 1. 前言 VirusTotal样本信息 MalwareBazaar样本信息 unpacme解包文件 AnyRun检测结果 2. 恶意程序分析 2.1. CC</description>
+			<description>RedLine 样本分析 1. 前言 VirusTotal样本信息 MalwareBazaar样本信息 unpacme解包文件 AnyRun检测结果 根据unpacme结</description>
 			<content type="html"><![CDATA[<h1 id="redline-样本分析">RedLine 样本分析</h1>
 <h2 id="1-前言">1. 前言</h2>
 <p><a href="https://www.virustotal.com/gui/file/43bf339f8d440b52a1a8385223ff7c15674952c020325c5839c99a8291e97512">VirusTotal样本信息</a></p>
 <p><a href="https://bazaar.abuse.ch/sample/43bf339f8d440b52a1a8385223ff7c15674952c020325c5839c99a8291e97512/">MalwareBazaar样本信息</a></p>
 <p><a href="https://www.unpac.me/results/d8b3bed4-85d1-4e75-95cf-3770fd5c55cf">unpacme解包文件</a></p>
 <p><a href="https://app.any.run/tasks/32858da1-fef5-4980-b3c8-65cbf7fb2504/">AnyRun检测结果</a></p>
+<p>根据<code>unpacme</code>结果，逐个查看可知恶意载荷的<code>SHA256</code>为：<code>b1d6c8d2b9498001f50dab84090b9caf31f864871cfc995ffea41c22d2da9d28</code></p>
 <h2 id="2-恶意程序分析">2. 恶意程序分析</h2>
 <h3 id="21-cc交互">2.1. CC交互</h3>
 <p>从函数入口开始分析，可以看到样本载入了配置文件：</p>

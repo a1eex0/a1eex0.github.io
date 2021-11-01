@@ -8,11 +8,11 @@
 	<meta name="theme-color" content="#494f5c">
 	<meta name="msapplication-TileColor" content="#494f5c">
 <meta itemprop="name" content="RedLine">
-<meta itemprop="description" content="RedLine 样本分析 1. 前言 VirusTotal样本信息 MalwareBazaar样本信息 unpacme解包文件 AnyRun检测结果 2. 恶意程序分析 2.1. CC"><meta itemprop="datePublished" content="2021-11-01T15:45:24+08:00" />
+<meta itemprop="description" content="RedLine 样本分析 1. 前言 VirusTotal样本信息 MalwareBazaar样本信息 unpacme解包文件 AnyRun检测结果 根据unpacme结"><meta itemprop="datePublished" content="2021-11-01T15:45:24+08:00" />
 <meta itemprop="dateModified" content="2021-11-01T15:45:24+08:00" />
-<meta itemprop="wordCount" content="2766"><meta itemprop="image" content="https://www.a1ee.cn/bg.png">
+<meta itemprop="wordCount" content="2861"><meta itemprop="image" content="https://www.a1ee.cn/bg.png">
 <meta itemprop="keywords" content="RedLine,Sample," /><meta property="og:title" content="RedLine" />
-<meta property="og:description" content="RedLine 样本分析 1. 前言 VirusTotal样本信息 MalwareBazaar样本信息 unpacme解包文件 AnyRun检测结果 2. 恶意程序分析 2.1. CC" />
+<meta property="og:description" content="RedLine 样本分析 1. 前言 VirusTotal样本信息 MalwareBazaar样本信息 unpacme解包文件 AnyRun检测结果 根据unpacme结" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.a1ee.cn/medium/redline/" /><meta property="og:image" content="https://www.a1ee.cn/bg.png" /><meta property="article:section" content="medium" />
 <meta property="article:published_time" content="2021-11-01T15:45:24+08:00" />
@@ -22,7 +22,7 @@
 <meta name="twitter:image" content="https://www.a1ee.cn/bg.png"/>
 
 <meta name="twitter:title" content="RedLine"/>
-<meta name="twitter:description" content="RedLine 样本分析 1. 前言 VirusTotal样本信息 MalwareBazaar样本信息 unpacme解包文件 AnyRun检测结果 2. 恶意程序分析 2.1. CC"/>
+<meta name="twitter:description" content="RedLine 样本分析 1. 前言 VirusTotal样本信息 MalwareBazaar样本信息 unpacme解包文件 AnyRun检测结果 根据unpacme结"/>
 
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -82,6 +82,7 @@
 <p><a href="https://bazaar.abuse.ch/sample/43bf339f8d440b52a1a8385223ff7c15674952c020325c5839c99a8291e97512/">MalwareBazaar样本信息</a></p>
 <p><a href="https://www.unpac.me/results/d8b3bed4-85d1-4e75-95cf-3770fd5c55cf">unpacme解包文件</a></p>
 <p><a href="https://app.any.run/tasks/32858da1-fef5-4980-b3c8-65cbf7fb2504/">AnyRun检测结果</a></p>
+<p>根据<code>unpacme</code>结果，逐个查看可知恶意载荷的<code>SHA256</code>为：<code>b1d6c8d2b9498001f50dab84090b9caf31f864871cfc995ffea41c22d2da9d28</code></p>
 <h2 id="2-恶意程序分析">2. 恶意程序分析<a href="#2-恶意程序分析" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <h3 id="21-cc交互">2.1. CC交互<a href="#21-cc交互" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>从函数入口开始分析，可以看到样本载入了配置文件：</p>
