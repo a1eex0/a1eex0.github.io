@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#494f5c">
+	<meta name="msapplication-TileColor" content="#494f5c">
+<meta itemprop="name" content="MountLocker">
+<meta itemprop="description" content="MountLocker 样本分析 样本信息 样本来源：MALWAREbazaar 相关报告：VirusTotal扫描报告 样本md5：3808F21E56DEDE99BC"><meta itemprop="datePublished" content="2021-11-01T15:45:13+08:00" />
+<meta itemprop="dateModified" content="2021-11-01T15:45:13+08:00" />
+<meta itemprop="wordCount" content="2718"><meta itemprop="image" content="https://www.a1ee.cn/bg.png">
+<meta itemprop="keywords" content="MountLocker,Sample," /><meta property="og:title" content="MountLocker" />
+<meta property="og:description" content="MountLocker 样本分析 样本信息 样本来源：MALWAREbazaar 相关报告：VirusTotal扫描报告 样本md5：3808F21E56DEDE99BC" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.a1ee.cn/medium/mountlocker/" /><meta property="og:image" content="https://www.a1ee.cn/bg.png" /><meta property="article:section" content="medium" />
+<meta property="article:published_time" content="2021-11-01T15:45:13+08:00" />
+<meta property="article:modified_time" content="2021-11-01T15:45:13+08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://www.a1ee.cn/bg.png"/>
+
+<meta name="twitter:title" content="MountLocker"/>
+<meta name="twitter:description" content="MountLocker 样本分析 样本信息 样本来源：MALWAREbazaar 相关报告：VirusTotal扫描报告 样本md5：3808F21E56DEDE99BC"/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<title>MountLocker</title>
+	<link rel="stylesheet" href="https://www.a1ee.cn/css/style.min.eac77496566fd7d5768fd650ddb0b2b181ca6a2d7c5fdd6fe6b8ba4bf47e566f.css" integrity="sha256-6sd0llZv19V2j9ZQ3bCysYHKai18X91v5ri6S/R+Vm8=" crossorigin="anonymous">
+	<style>.bg-img {background-image: url('https://www.a1ee.cn/bg.png');}</style>
+</head>
+
+<body id="page">
+	
+	<header id="site-header" class="animated slideInUp">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="https://www.a1ee.cn">alee</a>
+				</div>
+				<nav class="site-nav hide-in-mobile">
+					
+				<a href="https://www.a1ee.cn/basic/">BASIC</a>
+				<a href="https://www.a1ee.cn/simaple/">SIMAPLE</a>
+				<a href="https://www.a1ee.cn/medium/">MEDIUM</a>
+				<a href="https://www.a1ee.cn/about-me/">ABOUT</a>
+
+				</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<button id="img-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-image"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></button><span class="hdr-social hide-in-mobile"><a href="https://github.com/a1eex0" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="https://www.a1ee.cn/basic/">BASIC</a></li>
+			<li><a href="https://www.a1ee.cn/simaple/">SIMAPLE</a></li>
+			<li><a href="https://www.a1ee.cn/medium/">MEDIUM</a></li>
+			<li><a href="https://www.a1ee.cn/about-me/">ABOUT</a></li>
+		</ul>
+	</div>
+
+
+	<div class="bg-img"></div>
+	<main class="site-main section-inner animated fadeIn faster">
+		<article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>Nov 1, 2021</span></div>
+				<h1>MountLocker</h1>
+			</header>
+			<div class="content">
+				<h1 id="mountlocker-样本分析">MountLocker 样本分析<a href="#mountlocker-样本分析" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
+<h2 id="样本信息">样本信息<a href="#样本信息" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>样本来源：<a href="https://bazaar.abuse.ch/sample/4a5ac3c6f8383cc33c795804ba5f7f5553c029bbb4a6d28f1e4d8fb5107902c1/">MALWAREbazaar</a></p>
+<p>相关报告：<a href="https://www.virustotal.com/gui/file/4a5ac3c6f8383cc33c795804ba5f7f5553c029bbb4a6d28f1e4d8fb5107902c1/detection">VirusTotal扫描报告</a></p>
+<p>样本md5：3808F21E56DEDE99BC914D90AEABE47A</p>
+<p>样本sha256：4A5AC3C6F8383CC33C795804BA5F7F5553C029BBB4A6D28F1E4D8FB5107902C1</p>
+<h2 id="行为结果">行为结果<a href="#行为结果" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>运行样本后，样本首先将对硬盘内的文件进行遍历，对部分文件进行加密，并以<code>ReadManual.***</code>后缀结尾、创建日志文件和恢复说明<code>html</code>。</p>
+<p><img src="/mountlocker_images/4442910100867.png" alt=""></p>
+<p><code>MountLocker.exe.log</code>日志文件（精简了DEFAULT LOCK部分）如下：</p>
+<p><img src="/mountlocker_images/1911120119293.png" alt=""></p>
+<p><code>RecoveryManual.html</code>恢复说明文件内容如下：</p>
+<p><img src="/mountlocker_images/352923107160.png" alt=""></p>
+<h2 id="静态分析">静态分析<a href="#静态分析" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h3 id="参数获取">参数获取<a href="#参数获取" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>样本的第一个函数就是处理命令参数的函数，进来后可以看到一连串的参数匹配：</p>
+<p><img src="/mountlocker_images/3729710160867.png" alt=""></p>
+<h3 id="创建日志文件">创建日志文件<a href="#创建日志文件" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>参数获取完成后，进入下一个函数内，该函数首先判断用户权限，然后获取样本路径，直接在该路径后添加<code>.log</code>创建日志文件：</p>
+<p><img src="/mountlocker_images/3077115090872.png" alt=""></p>
+<h3 id="写入系统信息">写入系统信息<a href="#写入系统信息" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>读取<code>console</code>参数，决定是否终端显示日志，然后向日志文件写入当前版本及系统信息：</p>
+<p><img src="/mountlocker_images/632409189294.png" alt=""></p>
+<h3 id="初始化">初始化<a href="#初始化" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p><code>LockerInit()</code>将初始化恶意程序，提升权限、生成密钥</p>
+<p><img src="/mountlocker_images/643420097165.png" alt=""></p>
+<p>然后生成<code>RecoveryManual.html</code>：
+<img src="/mountlocker_images/2441221117331.png" alt=""></p>
+<h3 id="终止服务">终止服务<a href="#终止服务" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>如果未输入<code>network</code>且未输入<code>nokill</code>参数，则杀死指定服务</p>
+<p><img src="/mountlocker_images/5803501119297.png" alt=""></p>
+<p>服务列表为：包含字符串<code>SQL</code>、<code>database</code>、<code>msexchange</code>的服务</p>
+<p><img src="/mountlocker_images/5359453090871.png" alt=""></p>
+<h3 id="终止进程">终止进程<a href="#终止进程" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>使用<code>ZwQuerySystemInformation</code>获取当前进程列表。</p>
+<p><img src="/mountlocker_images/3669117107164.png" alt=""></p>
+<p>然后进行列表比对，杀死指定进程</p>
+<p><img src="/mountlocker_images/2802719119999.png" alt=""></p>
+<p>进程列表如下：</p>
+<pre><code>&quot;msftesql.exe&quot;、&quot;sqlagent.exe&quot;、&quot;sqlbrowser.exe&quot;、&quot;sqlwriter.exe&quot;、&quot;oracle.exe&quot;、&quot;ocssd.exe&quot;、&quot;dbsnmp.exe&quot;、&quot;synctime.exe&quot;、&quot;agntsvc.exe&quot;、&quot;isqlplussvc.exe&quot;、&quot;xfssvccon.exe&quot;、&quot;sqlservr.exe&quot;、&quot;mydesktopservice.exe&quot;、&quot;ocautoupds.exe&quot;、&quot;encsvc.exe&quot;、&quot;firefoxconfig.exe&quot;、&quot;tbirdconfig.exe&quot;、&quot;mydesktopqos.exe&quot;、&quot;ocomm.exe&quot;、&quot;mysqld.exe&quot;、&quot;mysqld-nt.exe&quot;、&quot;mysqld-opt.exe&quot;、&quot;dbeng50.exe&quot;、&quot;sqbcoreservice.exe&quot;、&quot;excel.exe&quot;、&quot;infopath.exe&quot;、&quot;msaccess.exe&quot;、&quot;mspub.exe&quot;、&quot;onenote.exe&quot;、&quot;outlook.exe&quot;、&quot;powerpnt.exe&quot;、&quot;sqlservr.exe&quot;、&quot;thebat.exe&quot;、&quot;steam.exe&quot;、&quot;thebat64.exe&quot;、&quot;thunderbird.exe&quot;、&quot;visio.exe&quot;、&quot;winword.exe&quot;、&quot;wordpad.exe&quot;、&quot;QBW32.exe&quot;、&quot;QBW64.exe&quot;、&quot;ipython.exe&quot;、&quot;wpython.exe&quot;、&quot;python.exe&quot;、&quot;dumpcap.exe&quot;、&quot;procmon.exe&quot;、&quot;procmon64.exe&quot;、&quot;procexp.exe&quot;、&quot;procexp64.exe&quot;
+</code></pre><p><img src="/mountlocker_images/4202625116554.png" alt=""></p>
+<h3 id="加密文件">加密文件<a href="#加密文件" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>根据<code>/NOLOCK</code>参数，选择加密函数，默认是执行第一条：</p>
+<p><img src="/mountlocker_images/4206518165366.png" alt=""></p>
+<p>进入加密功能函数，首先是做驱动器判断：</p>
+<p><img src="/mountlocker_images/761020146607.png" alt=""></p>
+<h4 id="加密文件列表获取">加密文件列表获取<a href="#加密文件列表获取" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p>扫描文件列表时，将进行文件夹名称和文件名判断，如果文件夹中未包含<code>RecoveryManual.html</code>则创建：</p>
+<p><img src="/mountlocker_images/5237357100944.png" alt=""></p>
+<p><code>ResultCheckDir</code>文件夹检查，如果满足以下要求，则跳过该文件夹（保留基础服务）：</p>
+<p><img src="/mountlocker_images/2884701155729.png" alt=""></p>
+<p>查看<code>off_14000A100</code>内容得出<code>black_list</code>文件列表如下：</p>
+<pre><code>&quot;:\\Windows\\&quot;,&quot;:\\System Volume Information\\&quot;,&quot;:\\$RECYCLE.BIN\\&quot;,&quot;:\\SYSTEM.SAV&quot;,&quot;:\\WINNT&quot;,&quot;:\\$WINDOWS.~BT\\&quot;,&quot;:\\Windows.old\\&quot;,&quot;:\\PerfLog\\&quot;,&quot;:\\Boot&quot;,&quot;:\\ProgramData\\Microsoft\\&quot;,&quot;:\\ProgramData\\Packages\\&quot;,&quot;$\\Windows\\&quot;,&quot;$\\System Volume Information\\&quot;,&quot;$\\$RECYCLE.BIN\\&quot;,&quot;$\\SYSTEM.SAV&quot;,&quot;$\\WINNT&quot;,&quot;$\\$WINDOWS.~BT\\&quot;,&quot;$\\Windows.old\\&quot;,&quot;$\\PerfLog\\&quot;,&quot;$\\Boot&quot;,&quot;$\\ProgramData\\Microsoft\\&quot;,&quot;$\\ProgramData\\Packages\\&quot;,&quot;\\WindowsApps\\&quot;,&quot;\\Microsoft\\Windows\\&quot;,&quot;\\Local\\Packages\\&quot;,&quot;\\Windows Defender&quot;,&quot;\\microsoft shared\\&quot;,&quot;\\Google\\Chrome\\&quot;,&quot;\\Mozilla Firefox\\&quot;,&quot;\\Mozilla\\Firefox\\&quot;,&quot;\\Internet Explorer\\&quot;,&quot;\\MicrosoftEdge\\&quot;,&quot;\\Tor Browser\\&quot;,&quot;\\AppData\\Local\\Temp\\&quot;
+</code></pre><p>数据文件夹<code>&quot;Program Files&quot;</code>，<code>&quot;Program Files (x86)&quot;</code>，<code>&quot;ProgramData&quot;</code>，<code>&quot;SQL&quot;</code>：</p>
+<p><img src="/mountlocker_images/2166505156338.png" alt=""></p>
+<p><code>ResultCheckFile</code>文件名检查如下，如果文件小于最小，大于最大，或者是指定后缀名则跳过该文件：</p>
+<p><img src="/mountlocker_images/4876024154804.png" alt=""></p>
+<p>后缀名检查如下：</p>
+<p><img src="/mountlocker_images/5143325151055.png" alt=""></p>
+<p>查看数组可知<code>suffix_list</code>如下：</p>
+<pre><code>&quot;exe&quot;,&quot;dll&quot;,&quot;sys&quot;,&quot;msi&quot;,&quot;mui&quot;,&quot;inf&quot;,&quot;cat&quot;,&quot;bat&quot;,&quot;cmd&quot;,&quot;ps1&quot;,&quot;vbs&quot;,&quot;ttf&quot;,&quot;fon&quot;,&quot;lnk&quot;
+</code></pre><p>然后扫描文件，以<code>FindFirstFileW</code>和<code>FindNextFileW</code>来查找文件， 循环调用以确保所有文件夹都被扫描到：</p>
+<p><img src="/mountlocker_images/1884021169047.png" alt=""></p>
+<h4 id="文件加密流程">文件加密流程<a href="#文件加密流程" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p>采用多线程启动加密主函数：</p>
+<p><img src="/mountlocker_images/2889733164183.png" alt=""></p>
+<p>再多线程对目标进行加密：</p>
+<p><img src="/mountlocker_images/1930634157729.png" alt=""></p>
+<p>将加密文件重命名成固定格式：</p>
+<p><img src="/mountlocker_images/708036150863.png" alt=""></p>
+<p>加密好密钥，然后将内容写入到文件中：</p>
+<p><img src="/mountlocker_images/4889737141393.png" alt=""></p>
+<p>接着重新读取文件并加密：</p>
+<p><img src="/mountlocker_images/653843143897.png" alt=""></p>
+<h3 id="蠕虫攻击">蠕虫攻击<a href="#蠕虫攻击" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>如果<code>/NETWORK</code>参数不为空，则启动蠕虫攻击：</p>
+<p><img src="/mountlocker_images/1950341169370.png" alt=""></p>
+<p>蠕虫函数运行前会创建线程，等待事件：</p>
+<p><img src="/mountlocker_images/4849842157237.png" alt=""></p>
+<p>然后会在域内寻找<code>LDAP</code>服务器：</p>
+<p><img src="/mountlocker_images/2093647177403.png" alt=""></p>
+<p>当检查存在主机时，添加事件到线程中去：</p>
+<p><img src="/mountlocker_images/5563848166627.png" alt=""></p>
+<p>事件将链接目标主机，然后进行蠕虫行为：
+<img src="/mountlocker_images/5761449162381.png" alt=""></p>
+<p>首先会复制自身到<code>C:\\ProgramData</code>目录下：</p>
+<p><img src="/mountlocker_images/1250253177865.png" alt=""></p>
+<p>根据<code>NetworkFlag</code>的不同，选择不同的方式：</p>
+<p><img src="/mountlocker_images/5054254175367.png" alt=""></p>
+<p>第一种方式是<code>CreateServiceW</code>：</p>
+<p><img src="/mountlocker_images/5240655156608.png" alt=""></p>
+<p>第二种方式是<code>WMI</code>（由于技术实力不达标，未看明白函数主体，但从上下文结构和错误提示信息得出方式）：</p>
+<p><img src="/mountlocker_images/2959659179048.png" alt=""></p>
+<h3 id="自我删除">自我删除<a href="#自我删除" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>在蠕虫攻击结束后，退出前的最后一个函数是自我删除函数：</p>
+<p><img src="/mountlocker_images/4854100184184.png" alt=""></p>
+<p>创建一个<code>bat</code>文件，取消文件系统、只读、隐藏属性，安静模式强制删除文件</p>
+<pre><code>attrib -s -r -h %1
+:l
+del /F /Q %1
+if exist %1 goto l
+del %0
+</code></pre><p>在最后将利用<code>CreateProcessW</code>删除自身</p>
+
+			</div>
+			<hr class="post-end">
+			<footer class="post-info">
+				<p>
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://www.a1ee.cn/tags/mountlocker">MountLocker</a></span><span class="tag"><a href="https://www.a1ee.cn/tags/sample">Sample</a></span>
+				</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2021-11-01 15:45 &#43;0800</p>
+			</footer>
+		</article>
+		<div class="post-nav thin">
+			<a class="next-post" href="https://www.a1ee.cn/medium/redline/">
+				<span class="post-nav-label"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>&nbsp;</span><br><span>RedLine</span>
+			</a>
+			<a class="prev-post" href="https://www.a1ee.cn/medium/blackmatter/">
+				<span class="post-nav-label">&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>BlackMatter</span>
+			</a>
+		</div>
+		<div id="comments" class="thin">
+</div>
+	</main>
+
+	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+		<p>&copy; 2021 <a href="https://www.a1ee.cn">alee</a></p>
+	</footer>
+
+
+
+	<script src="https://www.a1ee.cn/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	
+
+</body>
+
+</html>

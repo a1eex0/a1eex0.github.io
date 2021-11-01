@@ -5,8 +5,275 @@
 		<description>Recent content in Mediums on alee</description>
 		<generator>Hugo -- gohugo.io</generator>
 		<language>zh-cn</language>
-		<lastBuildDate>Mon, 18 Oct 2021 16:13:48 +0800</lastBuildDate>
+		<lastBuildDate>Mon, 01 Nov 2021 15:45:24 +0800</lastBuildDate>
 		<atom:link href="https://www.a1ee.cn/medium/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>RedLine</title>
+			<link>https://www.a1ee.cn/medium/redline/</link>
+			<pubDate>Mon, 01 Nov 2021 15:45:24 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/medium/redline/</guid>
+			<description>RedLine 样本分析 1. 前言 VirusTotal样本信息 MalwareBazaar样本信息 unpacme解包文件 AnyRun检测结果 2. 恶意程序分析 2.1. CC</description>
+			<content type="html"><![CDATA[<h1 id="redline-样本分析">RedLine 样本分析</h1>
+<h2 id="1-前言">1. 前言</h2>
+<p><a href="https://www.virustotal.com/gui/file/43bf339f8d440b52a1a8385223ff7c15674952c020325c5839c99a8291e97512">VirusTotal样本信息</a></p>
+<p><a href="https://bazaar.abuse.ch/sample/43bf339f8d440b52a1a8385223ff7c15674952c020325c5839c99a8291e97512/">MalwareBazaar样本信息</a></p>
+<p><a href="https://www.unpac.me/results/d8b3bed4-85d1-4e75-95cf-3770fd5c55cf">unpacme解包文件</a></p>
+<p><a href="https://app.any.run/tasks/32858da1-fef5-4980-b3c8-65cbf7fb2504/">AnyRun检测结果</a></p>
+<h2 id="2-恶意程序分析">2. 恶意程序分析</h2>
+<h3 id="21-cc交互">2.1. CC交互</h3>
+<p>从函数入口开始分析，可以看到样本载入了配置文件：</p>
+<p><img src="/redline_images/4039744161067.png" alt=""></p>
+<p>后面会有动态解密过程，获取C&amp;C服务器地址端口：<code>45.9.20.182:52236</code></p>
+<p><img src="/redline_images/2791422189493.png" alt=""></p>
+<p>请求报文<code>header</code>格式如下：</p>
+<pre><code>{&lt;Authorization xmlns=&quot;ns1&quot;&gt;a272f3a2850ec3dccdaed97234b7c40e&lt;/Authorization&gt;}
+</code></pre><p><img src="/redline_images/4782429177360.png" alt=""></p>
+<p>发送链接请求后等待服务器响应：</p>
+<p><img src="/redline_images/2256927187529.png" alt=""></p>
+<p>实例化参数列表如下：</p>
+<p><img src="/redline_images/2155748091070.png" alt=""></p>
+<p>实例化本地规则列表如下：</p>
+<p><img src="/redline_images/4342651109496.png" alt=""></p>
+<h3 id="22-主要功能">2.2. 主要功能</h3>
+<p>当服务器响应后，从报文中获取参数，并根据参数内容执行对应的功能函数，但作者在实例化函数列表时，对函数名混淆了：</p>
+<p><img src="/redline_images/4485152097363.png" alt=""></p>
+<p>不过好在每个函数的功能很明确，逐个函数进行功能确认后，可以得出真实的功能函数列表如下：</p>
+<p><img src="/redline_images/5417928180198.png" alt=""></p>
+<h4 id="221-获取硬件信息">2.2.1. 获取硬件信息</h4>
+<p><img src="/redline_images/3952608186753.png" alt=""></p>
+<h4 id="222-获取浏览器信息">2.2.2. 获取浏览器信息</h4>
+<p>会读取注册表已获取默认浏览器的信息</p>
+<pre><code>SOFTWARE\\WOW6432Node\\Clients\\StartMenuInternet
+SOFTWARE\\Clients\\StartMenuInternet
+</code></pre><p><img src="/redline_images/255814182507.png" alt=""></p>
+<h4 id="223-获取软件列表">2.2.3. 获取软件列表</h4>
+<p>通过查看注册表：<code>SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall</code>获取软件列表，再通过<code>DisplayName</code>获取软件名；<code>DisplayVersion</code>获取软件列表：</p>
+<p><img src="/redline_images/3981249200387.png" alt=""></p>
+<h4 id="224-获取杀毒防护软件列表">2.2.4. 获取杀毒防护软件列表</h4>
+<p>通过<code>SystemInfoHelper.GetVs()</code>函数已<code> WMI</code>查询<code>SELECT * FROM AntivirusProduct|AntiSpyWareProduct|FirewallProduct</code>，并将获取到的杀软防护软件存放在<code>ROOT\\SecurityCenter</code>和<code>ROOT\\SecurityCenter2</code>的 <code>WMI</code>命名空间中
+<img src="/redline_images/1980228091142.png" alt=""></p>
+<h4 id="225-获取进程列表">2.2.5. 获取进程列表</h4>
+<p>通过执行<code>SELSystem.Text.RegularExpressionsECT * FRSystem.Text.RegularExpressionsOM Win32_PSystem.Text.RegularExpressionsrocess WSystem.Text.RegularExpressionshere SessSystem.Text.RegularExpressionsionId=''</code>语句获取系统进程列表信息并按照<code>ID</code>、<code>ProcessID</code>、<code>Name</code>、<code>CommandLine</code>形式存储</p>
+<p><img src="/redline_images/5049521119568.png" alt=""></p>
+<h4 id="226-获取本地安装的语言">2.2.6. 获取本地安装的语言</h4>
+<p><img src="/redline_images/3858226107435.png" alt=""></p>
+<h4 id="227-查询telegram文件">2.2.7. 查询Telegram文件</h4>
+<p>如果配置文件中要求扫描<code>Telegram</code>，那么将对<code>Telegram</code>文件夹进行扫描</p>
+<p><img src="/redline_images/2636727127601.png" alt=""></p>
+<h4 id="228-扫描浏览器数据">2.2.8. 扫描浏览器数据</h4>
+<p>如果配置文件中要求扫描浏览器，那么将执行<code>Chrome</code>、<code>Gecko</code>浏览器的数据扫描</p>
+<p><img src="/redline_images/2602231120270.png" alt=""></p>
+<p>其中<code>Chrome</code>浏览器将会查找<code>Login Data</code>、<code>Web Data</code>、<code>Cookies</code>路径，窃取<code>Opera GX Stable</code>、<code>Opera GX</code>、<code>AppData\\Roaming\\</code>中的浏览器数据</p>
+<p><img src="/redline_images/2249334112579.png" alt=""></p>
+<p><code>Gecko</code>浏览器则是窃取<code>cookies.sqlite</code>、<code>%USERPROFILE%\\AppData\\Roaming</code>目录下的浏览器数据</p>
+<p><img src="/redline_images/170140130459.png" alt=""></p>
+<h4 id="229-窃取文件数据">2.2.9. 窃取文件数据</h4>
+<p>如果配置文件中设置了扫描文件选项，那么当接收到文件路径时，将对文件进行扫描</p>
+<p><img src="/redline_images/2186948106806.png" alt=""></p>
+<p>其中<code>GetFiles</code>函数覆盖了系统文件内容：<code>\\Windows\\</code>、<code>\\Program Files\\</code>、<code>\\Program Files (x86)\\</code>、<code>\\Program Data\\</code></p>
+<p><img src="/redline_images/4168544125565.png" alt=""></p>
+<h4 id="2210-窃取ftp数据">2.2.10. 窃取FTP数据</h4>
+<p>如果配置文件中要求扫描<code>FTP</code>,则进行<code>FileZilla</code>文件扫描</p>
+<p><img src="/redline_images/1806051129246.png" alt=""></p>
+<p>扫描的路径是：<code>{0}\\FileZilla\\recentservers.xml</code>、<code>{0}\\FileZilla\\sitemanager.xml</code></p>
+<p>窃密函数如下：</p>
+<p><img src="/redline_images/5254854124382.png" alt=""></p>
+<h4 id="2211-窃取加密钱包">2.2.11. 窃取加密钱包</h4>
+<p>如果配置文件中要求窃取加密钱包，则会对<code>BrEx.Init</code>中已加密的钱包进行扫描</p>
+<p><img src="/redline_images/858056117928.png" alt=""></p>
+<p><code>BrEx.Init</code>中存储的是采用了<code>base64</code>编码的钱包字符串：</p>
+<pre><code>ZmZuYmVsZmRvZWlvaGVua2ppYm5tYWRqaWVoamhhamJ8WW9yb2lXYWxsZXQKaWJuZWpkZmptbWtwY25scGVia2xtbmtvZW9paG9mZWN8VHJvbmxpbmsKamJkYW9jbmVpaWlubWpiamxnYWxoY2VsZ2Jlam1uaWR8TmlmdHlXYWxsZXQKbmtiaWhmYmVvZ2FlYW9laGxlZm5rb2RiZWZncGdrbm58TWV0YW1hc2sKYWZiY2JqcGJwZmFkbGttaG1jbGhrZWVvZG1hbWNmbGN8TWF0aFdhbGxldApobmZhbmtub2NmZW9mYmRkZ2Npam5taG5mbmtkbmFhZHxDb2luYmFzZQpmaGJvaGltYWVsYm9ocGpiYmxkY25nY25hcG5kb2RqcHxCaW5hbmNlQ2hhaW4Kb2RiZnBlZWloZGtiaWhtb3BrYmptb29uZmFubGJmY2x8QnJhdmVXYWxsZXQKaHBnbGZoZ2ZuaGJncGpkZW5qZ21kZ29laWFwcGFmbG58R3VhcmRhV2FsbGV0CmJsbmllaWlmZmJvaWxsa25qbmVwb2dqaGtnbm9hcGFjfEVxdWFsV2FsbGV0CmNqZWxmcGxwbGViZGpqZW5sbHBqY2JsbWprZmNmZm5lfEpheHh4TGliZXJ0eQpmaWhrYWtmb2JrbWtqb2pwY2hwZmdjbWhmam5tbmZwaXxCaXRBcHBXYWxsZXQKa25jY2hkaWdvYmdoZW5iYmFkZG9qam5uYW9nZnBwZmp8aVdhbGxldAphbWttamptbWZsZGRvZ21ocGpsb2ltaXBib2ZuZmppaHxXb21iYXQKZmhpbGFoZWltZ2xpZ25kZGtqZ29ma2NiZ2VraGVuYmh8QXRvbWljV2FsbGV0Cm5sYm1ubmlqY25sZWdrampwY2ZqY2xtY2ZnZ2ZlZmRtfE1ld0N4Cm5hbmptZGtuaGtpbmlmbmtnZGNnZ2NmbmhkYWFtbW1qfEd1aWxkV2FsbGV0Cm5rZGRnbmNkamdqZmNkZGFtZmdjbWZubGhjY25pbWlnfFNhdHVybldhbGxldApmbmpobWtoaG1rYmpra2FibmRjbm5vZ2Fnb2dibmVlY3xSb25pbldhbGxldAphaWlmYm5iZm9icG1lZWtpcGhlZWlqaW1kcG5scGdwcHxUZXJyYVN0YXRpb24KZm5uZWdwaGxvYmpkcGtoZWNhcGtpampka2djamhraWJ8SGFybW9ueVdhbGxldAphZWFjaGtubWVmcGhlcGNjaW9uYm9vaGNrb25vZWVtZ3xDb2luOThXYWxsZXQKY2dlZW9kcGZhZ2pjZWVmaWVmbG1kZnBocGxrZW5sZmt8VG9uQ3J5c3RhbApwZGFkamtma2djYWZnYmNlaW1jcGJrYWxuZm5lcGJua3xLYXJkaWFDaGFpbg==
+</code></pre><p>解码后的数据如下：</p>
+<pre><code>ffnbelfdoeiohenkjibnmadjiehjhajb|YoroiWallet
+ibnejdfjmmkpcnlpebklmnkoeoihofec|Tronlink
+jbdaocneiiinmjbjlgalhcelgbejmnid|NiftyWallet
+nkbihfbeogaeaoehlefnkodbefgpgknn|Metamask
+afbcbjpbpfadlkmhmclhkeeodmamcflc|MathWallet
+hnfanknocfeofbddgcijnmhnfnkdnaad|Coinbase
+fhbohimaelbohpjbbldcngcnapndodjp|BinanceChain
+odbfpeeihdkbihmopkbjmoonfanlbfcl|BraveWallet
+hpglfhgfnhbgpjdenjgmdgoeiappafln|GuardaWallet
+blnieiiffboillknjnepogjhkgnoapac|EqualWallet
+cjelfplplebdjjenllpjcblmjkfcffne|JaxxxLiberty
+fihkakfobkmkjojpchpfgcmhfjnmnfpi|BitAppWallet
+kncchdigobghenbbaddojjnnaogfppfj|iWallet
+amkmjjmmflddogmhpjloimipbofnfjih|Wombat
+fhilaheimglignddkjgofkcbgekhenbh|AtomicWallet
+nlbmnnijcnlegkjjpcfjclmcfggfefdm|MewCx
+nanjmdknhkinifnkgdcggcfnhdaammmj|GuildWallet
+nkddgncdjgjfcddamfgcmfnlhccnimig|SaturnWallet
+fnjhmkhhmkbjkkabndcnnogagogbneec|RoninWallet
+aiifbnbfobpmeekipheeijimdpnlpgpp|TerraStation
+fnnegphlobjdpkhecapkijjdkgcjhkib|HarmonyWallet
+aeachknmefphepccionboohckonoeemg|Coin98Wallet
+cgeeodpfagjceefieflmdfphplkenlfk|TonCrystal
+pdadjkfkgcafgbceimcpbkalnfnepbnk|KardiaChain
+</code></pre><h4 id="2212-窃取discord数据">2.2.12. 窃取Discord数据</h4>
+<p>如果配置文件中要求扫描<code>Discord</code>，则会扫描<code>Discord</code>文件，<code>GetTokens()</code>函数则是获取<code>Tokens.txt</code>。</p>
+<p><img src="/redline_images/2268106121062.png" alt=""></p>
+<h4 id="2213-窃取steam数据">2.2.13. 窃取Steam数据</h4>
+<p>如果配置文件中要求扫描<code>Steam</code>，则会调用<code>GameLauncher()</code>窃取<code>Steam</code>登录凭证</p>
+<p><img src="/redline_images/2279416111592.png" alt=""></p>
+<p><code>GameLauncher()</code>函数会扫描注册表<code>Software\\Valve\\Steam</code>中的<code>SteamPath</code>值获取安装路径，然后窃取<code>*ssfn*</code>、<code>config</code>、<code>*.vdf</code>文件。</p>
+<h4 id="2214-窃取vpn数据">2.2.14. 窃取VPN数据</h4>
+<p>如果配置文件中要求扫描<code>VPN</code>，则会对<code>NordVPN</code>、<code>OpenVPN</code>和<code>ProtonVPN</code>进行文件窃取</p>
+<p><img src="/redline_images/2289828114096.png" alt=""></p>
+<p>针对<code>NordVPN</code>，首先从<code>%USERPROFILE%\\AppData\\Local</code>路径扫描<code>NordVPN</code>文件夹，获取<code>user.config</code>，然后再<code>xml</code>文件中匹配<code>//setting[@name=\\Username\\]/value</code>和<code>//setting[@name=\\Password\\]/value</code>窃取用户密码，然后采用内置的解密函数<code>CryptoHelper.DecryptBlob</code>进行解密：</p>
+<p><img src="/redline_images/3529732123043.png" alt=""></p>
+<p>针对<code>OpenVPN</code>，首先从<code>%USERPROFILE%\\AppData\\Roaming</code>路径扫描<code>OpenVPN Connect</code>文件夹，进入<code>profiles</code>文件夹，然后扫描<code>npvo*</code>文件；</p>
+<p>针对<code>ProtonVPN</code>，首先从<code>%USERPROFILE%\\AppData\\Local</code>路径扫描<code>ProtonVPN</code>文件夹，然后扫描<code>npvo*</code>文件。</p>
+<h4 id="2215-截取屏幕">2.2.15. 截取屏幕</h4>
+<p>如果配置中要求截取屏幕，则调用<code>GdiHelper.GetImageBase()</code>函数截取屏幕</p>
+<p><img src="/redline_images/4231349145928.png" alt=""></p>
+<h4 id="2216-获取用户名">2.2.16. 获取用户名</h4>
+<p>直接调用系统<code>API</code>获取用户名</p>
+<p><img src="/redline_images/1307955146537.png" alt=""></p>
+<h4 id="2217-获取显示器大小">2.2.17. 获取显示器大小</h4>
+<p>调用<code>GdiHelper.MonitorSize()</code>函数以获取显示器长宽大小</p>
+<p><img src="/redline_images/4828655173492.png" alt=""></p>
+<h4 id="2218-获取系统版本">2.2.18. 获取系统版本</h4>
+<p>调用<code>SystemInfoHelper.GetWindowsVersion()</code>函数查询注册表：<code>SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion</code>和<code>SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion</code>，以获取用户系统版本信息</p>
+<p><img src="/redline_images/285659145003.png" alt=""></p>
+<h4 id="2219-获取自身路径">2.2.19. 获取自身路径</h4>
+<p>调用系统<code>API</code>获取当前运行路径</p>
+<p><img src="/redline_images/45700151254.png" alt=""></p>
+<h4 id="2220-获取硬件id">2.2.20. 获取硬件ID</h4>
+<p>根据当前用户关联的网络域名、当前线程相关联的用户名和<code>Win32_DiskDrive</code>对象信息计算<code>MD5</code>生成<code>HardwareID</code></p>
+<p><img src="/redline_images/2406200151393.png" alt=""></p>
+<h4 id="2221-获取时区">2.2.21. 获取时区</h4>
+<p>调用系统<code>API</code>获取主机所在的时区信息</p>
+<p><img src="/redline_images/1418309163483.png" alt=""></p>
+<h3 id="23-发送详情">2.3. 发送详情</h3>
+<p>当获取到上述数据后，会调用<code>Send()</code>函数，将扫描的详情进行填充，</p>
+<p><img src="/redline_images/5122110168522.png" alt=""></p>
+<p>其中<code>PartsSender.GetLocalInfo()</code>函数，会在主机上访问<code>http://733s.komawai.ru/</code>，该链接将返回主机的相关信息：</p>
+<pre><code>{&quot;city&quot;:&quot;***&quot;,&quot;country_code&quot;:&quot;***&quot;,&quot;postal&quot;:null,&quot;ip&quot;:&quot;*.*.*.*&quot;}
+</code></pre><p>解析上述<code>json</code>文件，填充到发送请求中：</p>
+<p><img src="/redline_images/1305416169817.png" alt=""></p>
+<h3 id="24-远程下载">2.4. 远程下载</h3>
+<p>当上述的发送请求结束，将会调用<code>TaskResolver()</code>函数</p>
+<p><img src="/redline_images/4939619170819.png" alt=""></p>
+<p>该函数有四个方法：<code>CommandLineUpdate()</code>、<code>DownloadUpdate()</code>、<code>DownloadAndExecuteUpdate()</code>、<code>OpenUpdate()</code></p>
+<p><img src="/redline_images/3430930172827.png" alt=""></p>
+<p><code>DownloadAndExecuteUpdate()</code>函数采用<code>WebClient().DownloadFile()</code>下载文件，并使用<code>System.Diagnostics.Process.Start()</code>运行</p>
+<p><img src="/redline_images/2031022156548.png" alt=""></p>
+]]></content>
+		</item>
+		
+		<item>
+			<title>MountLocker</title>
+			<link>https://www.a1ee.cn/medium/mountlocker/</link>
+			<pubDate>Mon, 01 Nov 2021 15:45:13 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/medium/mountlocker/</guid>
+			<description>MountLocker 样本分析 样本信息 样本来源：MALWAREbazaar 相关报告：VirusTotal扫描报告 样本md5：3808F21E56DEDE99BC</description>
+			<content type="html"><![CDATA[<h1 id="mountlocker-样本分析">MountLocker 样本分析</h1>
+<h2 id="样本信息">样本信息</h2>
+<p>样本来源：<a href="https://bazaar.abuse.ch/sample/4a5ac3c6f8383cc33c795804ba5f7f5553c029bbb4a6d28f1e4d8fb5107902c1/">MALWAREbazaar</a></p>
+<p>相关报告：<a href="https://www.virustotal.com/gui/file/4a5ac3c6f8383cc33c795804ba5f7f5553c029bbb4a6d28f1e4d8fb5107902c1/detection">VirusTotal扫描报告</a></p>
+<p>样本md5：3808F21E56DEDE99BC914D90AEABE47A</p>
+<p>样本sha256：4A5AC3C6F8383CC33C795804BA5F7F5553C029BBB4A6D28F1E4D8FB5107902C1</p>
+<h2 id="行为结果">行为结果</h2>
+<p>运行样本后，样本首先将对硬盘内的文件进行遍历，对部分文件进行加密，并以<code>ReadManual.***</code>后缀结尾、创建日志文件和恢复说明<code>html</code>。</p>
+<p><img src="/mountlocker_images/4442910100867.png" alt=""></p>
+<p><code>MountLocker.exe.log</code>日志文件（精简了DEFAULT LOCK部分）如下：</p>
+<p><img src="/mountlocker_images/1911120119293.png" alt=""></p>
+<p><code>RecoveryManual.html</code>恢复说明文件内容如下：</p>
+<p><img src="/mountlocker_images/352923107160.png" alt=""></p>
+<h2 id="静态分析">静态分析</h2>
+<h3 id="参数获取">参数获取</h3>
+<p>样本的第一个函数就是处理命令参数的函数，进来后可以看到一连串的参数匹配：</p>
+<p><img src="/mountlocker_images/3729710160867.png" alt=""></p>
+<h3 id="创建日志文件">创建日志文件</h3>
+<p>参数获取完成后，进入下一个函数内，该函数首先判断用户权限，然后获取样本路径，直接在该路径后添加<code>.log</code>创建日志文件：</p>
+<p><img src="/mountlocker_images/3077115090872.png" alt=""></p>
+<h3 id="写入系统信息">写入系统信息</h3>
+<p>读取<code>console</code>参数，决定是否终端显示日志，然后向日志文件写入当前版本及系统信息：</p>
+<p><img src="/mountlocker_images/632409189294.png" alt=""></p>
+<h3 id="初始化">初始化</h3>
+<p><code>LockerInit()</code>将初始化恶意程序，提升权限、生成密钥</p>
+<p><img src="/mountlocker_images/643420097165.png" alt=""></p>
+<p>然后生成<code>RecoveryManual.html</code>：
+<img src="/mountlocker_images/2441221117331.png" alt=""></p>
+<h3 id="终止服务">终止服务</h3>
+<p>如果未输入<code>network</code>且未输入<code>nokill</code>参数，则杀死指定服务</p>
+<p><img src="/mountlocker_images/5803501119297.png" alt=""></p>
+<p>服务列表为：包含字符串<code>SQL</code>、<code>database</code>、<code>msexchange</code>的服务</p>
+<p><img src="/mountlocker_images/5359453090871.png" alt=""></p>
+<h3 id="终止进程">终止进程</h3>
+<p>使用<code>ZwQuerySystemInformation</code>获取当前进程列表。</p>
+<p><img src="/mountlocker_images/3669117107164.png" alt=""></p>
+<p>然后进行列表比对，杀死指定进程</p>
+<p><img src="/mountlocker_images/2802719119999.png" alt=""></p>
+<p>进程列表如下：</p>
+<pre><code>&quot;msftesql.exe&quot;、&quot;sqlagent.exe&quot;、&quot;sqlbrowser.exe&quot;、&quot;sqlwriter.exe&quot;、&quot;oracle.exe&quot;、&quot;ocssd.exe&quot;、&quot;dbsnmp.exe&quot;、&quot;synctime.exe&quot;、&quot;agntsvc.exe&quot;、&quot;isqlplussvc.exe&quot;、&quot;xfssvccon.exe&quot;、&quot;sqlservr.exe&quot;、&quot;mydesktopservice.exe&quot;、&quot;ocautoupds.exe&quot;、&quot;encsvc.exe&quot;、&quot;firefoxconfig.exe&quot;、&quot;tbirdconfig.exe&quot;、&quot;mydesktopqos.exe&quot;、&quot;ocomm.exe&quot;、&quot;mysqld.exe&quot;、&quot;mysqld-nt.exe&quot;、&quot;mysqld-opt.exe&quot;、&quot;dbeng50.exe&quot;、&quot;sqbcoreservice.exe&quot;、&quot;excel.exe&quot;、&quot;infopath.exe&quot;、&quot;msaccess.exe&quot;、&quot;mspub.exe&quot;、&quot;onenote.exe&quot;、&quot;outlook.exe&quot;、&quot;powerpnt.exe&quot;、&quot;sqlservr.exe&quot;、&quot;thebat.exe&quot;、&quot;steam.exe&quot;、&quot;thebat64.exe&quot;、&quot;thunderbird.exe&quot;、&quot;visio.exe&quot;、&quot;winword.exe&quot;、&quot;wordpad.exe&quot;、&quot;QBW32.exe&quot;、&quot;QBW64.exe&quot;、&quot;ipython.exe&quot;、&quot;wpython.exe&quot;、&quot;python.exe&quot;、&quot;dumpcap.exe&quot;、&quot;procmon.exe&quot;、&quot;procmon64.exe&quot;、&quot;procexp.exe&quot;、&quot;procexp64.exe&quot;
+</code></pre><p><img src="/mountlocker_images/4202625116554.png" alt=""></p>
+<h3 id="加密文件">加密文件</h3>
+<p>根据<code>/NOLOCK</code>参数，选择加密函数，默认是执行第一条：</p>
+<p><img src="/mountlocker_images/4206518165366.png" alt=""></p>
+<p>进入加密功能函数，首先是做驱动器判断：</p>
+<p><img src="/mountlocker_images/761020146607.png" alt=""></p>
+<h4 id="加密文件列表获取">加密文件列表获取</h4>
+<p>扫描文件列表时，将进行文件夹名称和文件名判断，如果文件夹中未包含<code>RecoveryManual.html</code>则创建：</p>
+<p><img src="/mountlocker_images/5237357100944.png" alt=""></p>
+<p><code>ResultCheckDir</code>文件夹检查，如果满足以下要求，则跳过该文件夹（保留基础服务）：</p>
+<p><img src="/mountlocker_images/2884701155729.png" alt=""></p>
+<p>查看<code>off_14000A100</code>内容得出<code>black_list</code>文件列表如下：</p>
+<pre><code>&quot;:\\Windows\\&quot;,&quot;:\\System Volume Information\\&quot;,&quot;:\\$RECYCLE.BIN\\&quot;,&quot;:\\SYSTEM.SAV&quot;,&quot;:\\WINNT&quot;,&quot;:\\$WINDOWS.~BT\\&quot;,&quot;:\\Windows.old\\&quot;,&quot;:\\PerfLog\\&quot;,&quot;:\\Boot&quot;,&quot;:\\ProgramData\\Microsoft\\&quot;,&quot;:\\ProgramData\\Packages\\&quot;,&quot;$\\Windows\\&quot;,&quot;$\\System Volume Information\\&quot;,&quot;$\\$RECYCLE.BIN\\&quot;,&quot;$\\SYSTEM.SAV&quot;,&quot;$\\WINNT&quot;,&quot;$\\$WINDOWS.~BT\\&quot;,&quot;$\\Windows.old\\&quot;,&quot;$\\PerfLog\\&quot;,&quot;$\\Boot&quot;,&quot;$\\ProgramData\\Microsoft\\&quot;,&quot;$\\ProgramData\\Packages\\&quot;,&quot;\\WindowsApps\\&quot;,&quot;\\Microsoft\\Windows\\&quot;,&quot;\\Local\\Packages\\&quot;,&quot;\\Windows Defender&quot;,&quot;\\microsoft shared\\&quot;,&quot;\\Google\\Chrome\\&quot;,&quot;\\Mozilla Firefox\\&quot;,&quot;\\Mozilla\\Firefox\\&quot;,&quot;\\Internet Explorer\\&quot;,&quot;\\MicrosoftEdge\\&quot;,&quot;\\Tor Browser\\&quot;,&quot;\\AppData\\Local\\Temp\\&quot;
+</code></pre><p>数据文件夹<code>&quot;Program Files&quot;</code>，<code>&quot;Program Files (x86)&quot;</code>，<code>&quot;ProgramData&quot;</code>，<code>&quot;SQL&quot;</code>：</p>
+<p><img src="/mountlocker_images/2166505156338.png" alt=""></p>
+<p><code>ResultCheckFile</code>文件名检查如下，如果文件小于最小，大于最大，或者是指定后缀名则跳过该文件：</p>
+<p><img src="/mountlocker_images/4876024154804.png" alt=""></p>
+<p>后缀名检查如下：</p>
+<p><img src="/mountlocker_images/5143325151055.png" alt=""></p>
+<p>查看数组可知<code>suffix_list</code>如下：</p>
+<pre><code>&quot;exe&quot;,&quot;dll&quot;,&quot;sys&quot;,&quot;msi&quot;,&quot;mui&quot;,&quot;inf&quot;,&quot;cat&quot;,&quot;bat&quot;,&quot;cmd&quot;,&quot;ps1&quot;,&quot;vbs&quot;,&quot;ttf&quot;,&quot;fon&quot;,&quot;lnk&quot;
+</code></pre><p>然后扫描文件，以<code>FindFirstFileW</code>和<code>FindNextFileW</code>来查找文件， 循环调用以确保所有文件夹都被扫描到：</p>
+<p><img src="/mountlocker_images/1884021169047.png" alt=""></p>
+<h4 id="文件加密流程">文件加密流程</h4>
+<p>采用多线程启动加密主函数：</p>
+<p><img src="/mountlocker_images/2889733164183.png" alt=""></p>
+<p>再多线程对目标进行加密：</p>
+<p><img src="/mountlocker_images/1930634157729.png" alt=""></p>
+<p>将加密文件重命名成固定格式：</p>
+<p><img src="/mountlocker_images/708036150863.png" alt=""></p>
+<p>加密好密钥，然后将内容写入到文件中：</p>
+<p><img src="/mountlocker_images/4889737141393.png" alt=""></p>
+<p>接着重新读取文件并加密：</p>
+<p><img src="/mountlocker_images/653843143897.png" alt=""></p>
+<h3 id="蠕虫攻击">蠕虫攻击</h3>
+<p>如果<code>/NETWORK</code>参数不为空，则启动蠕虫攻击：</p>
+<p><img src="/mountlocker_images/1950341169370.png" alt=""></p>
+<p>蠕虫函数运行前会创建线程，等待事件：</p>
+<p><img src="/mountlocker_images/4849842157237.png" alt=""></p>
+<p>然后会在域内寻找<code>LDAP</code>服务器：</p>
+<p><img src="/mountlocker_images/2093647177403.png" alt=""></p>
+<p>当检查存在主机时，添加事件到线程中去：</p>
+<p><img src="/mountlocker_images/5563848166627.png" alt=""></p>
+<p>事件将链接目标主机，然后进行蠕虫行为：
+<img src="/mountlocker_images/5761449162381.png" alt=""></p>
+<p>首先会复制自身到<code>C:\\ProgramData</code>目录下：</p>
+<p><img src="/mountlocker_images/1250253177865.png" alt=""></p>
+<p>根据<code>NetworkFlag</code>的不同，选择不同的方式：</p>
+<p><img src="/mountlocker_images/5054254175367.png" alt=""></p>
+<p>第一种方式是<code>CreateServiceW</code>：</p>
+<p><img src="/mountlocker_images/5240655156608.png" alt=""></p>
+<p>第二种方式是<code>WMI</code>（由于技术实力不达标，未看明白函数主体，但从上下文结构和错误提示信息得出方式）：</p>
+<p><img src="/mountlocker_images/2959659179048.png" alt=""></p>
+<h3 id="自我删除">自我删除</h3>
+<p>在蠕虫攻击结束后，退出前的最后一个函数是自我删除函数：</p>
+<p><img src="/mountlocker_images/4854100184184.png" alt=""></p>
+<p>创建一个<code>bat</code>文件，取消文件系统、只读、隐藏属性，安静模式强制删除文件</p>
+<pre><code>attrib -s -r -h %1
+:l
+del /F /Q %1
+if exist %1 goto l
+del %0
+</code></pre><p>在最后将利用<code>CreateProcessW</code>删除自身</p>
+]]></content>
+		</item>
 		
 		<item>
 			<title>BlackMatter</title>
