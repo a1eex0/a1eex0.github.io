@@ -135,7 +135,7 @@ pdadjkfkgcafgbceimcpbkalnfnepbnk|KardiaChain
 <p>调用<code>GdiHelper.MonitorSize()</code>函数以获取显示器长宽大小</p>
 <p><img src="/redline_images/4828655173492.png" alt=""></p>
 <h4 id="2218-获取系统版本">2.2.18. 获取系统版本</h4>
-<p>调用<code>SystemInfoHelper.GetWindowsVersion()</code>函数查询注册表：<code>SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion</code>和<code>SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion</code>，以获取用户系统版本信息</p>
+<p>调用<code>SystemInfoHelper.GetWindowsVersion()</code>函数查询注册表：<code>SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion</code>，以获取用户系统版本信息</p>
 <p><img src="/redline_images/285659145003.png" alt=""></p>
 <h4 id="2219-获取自身路径">2.2.19. 获取自身路径</h4>
 <p>调用系统<code>API</code>获取当前运行路径</p>
