@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#494f5c">
+	<meta name="msapplication-TileColor" content="#494f5c">
+<meta itemprop="name" content="Cuckoo">
+<meta itemprop="description" content="Cuckoo 2.0.7 流程分析 Cuckoo官方说明中提到： Cuckoo Sandbox 由处理样本执行和分析的中央管理软件组成。 每个分析都在一个全新的、隔离的虚拟机或物理机中启动。Cu"><meta itemprop="datePublished" content="2021-09-01T09:12:41+08:00" />
+<meta itemprop="dateModified" content="2021-09-01T09:12:41+08:00" />
+<meta itemprop="wordCount" content="1865"><meta itemprop="image" content="https://www.a1ee.cn/bg.png">
+<meta itemprop="keywords" content="Cuckoo,Sandboxie," /><meta property="og:title" content="Cuckoo" />
+<meta property="og:description" content="Cuckoo 2.0.7 流程分析 Cuckoo官方说明中提到： Cuckoo Sandbox 由处理样本执行和分析的中央管理软件组成。 每个分析都在一个全新的、隔离的虚拟机或物理机中启动。Cu" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.a1ee.cn/simple/cuckoo/" /><meta property="og:image" content="https://www.a1ee.cn/bg.png" /><meta property="article:section" content="simple" />
+<meta property="article:published_time" content="2021-09-01T09:12:41+08:00" />
+<meta property="article:modified_time" content="2021-09-01T09:12:41+08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://www.a1ee.cn/bg.png"/>
+
+<meta name="twitter:title" content="Cuckoo"/>
+<meta name="twitter:description" content="Cuckoo 2.0.7 流程分析 Cuckoo官方说明中提到： Cuckoo Sandbox 由处理样本执行和分析的中央管理软件组成。 每个分析都在一个全新的、隔离的虚拟机或物理机中启动。Cu"/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<title>Cuckoo</title>
+	<link rel="stylesheet" href="https://www.a1ee.cn/css/style.min.eac77496566fd7d5768fd650ddb0b2b181ca6a2d7c5fdd6fe6b8ba4bf47e566f.css" integrity="sha256-6sd0llZv19V2j9ZQ3bCysYHKai18X91v5ri6S/R+Vm8=" crossorigin="anonymous">
+	<style>.bg-img {background-image: url('https://www.a1ee.cn/bg.png');}</style>
+</head>
+
+<body id="page">
+	
+	<header id="site-header" class="animated slideInUp">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="https://www.a1ee.cn">alee</a>
+				</div>
+				<nav class="site-nav hide-in-mobile">
+					
+				<a href="https://www.a1ee.cn/basic/">BASIC</a>
+				<a href="https://www.a1ee.cn/simple/">SIMPLE</a>
+				<a href="https://www.a1ee.cn/medium/">MEDIUM</a>
+				<a href="https://www.a1ee.cn/about-me/">ABOUT</a>
+
+				</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<button id="img-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-image"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></button><span class="hdr-social hide-in-mobile"><a href="https://github.com/a1eex0" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="https://www.a1ee.cn/basic/">BASIC</a></li>
+			<li><a href="https://www.a1ee.cn/simple/">SIMPLE</a></li>
+			<li><a href="https://www.a1ee.cn/medium/">MEDIUM</a></li>
+			<li><a href="https://www.a1ee.cn/about-me/">ABOUT</a></li>
+		</ul>
+	</div>
+
+
+	<div class="bg-img"></div>
+	<main class="site-main section-inner thin animated fadeIn faster">
+		<h1>Cuckoo</h1>
+		<div class="content">
+			<h1 id="cuckoo-207-流程分析">Cuckoo 2.0.7 流程分析<a href="#cuckoo-207-流程分析" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
+<p><a href="https://cuckoo.sh/docs/introduction/what.html">Cuckoo官方说明</a>中提到：</p>
+<p>Cuckoo Sandbox 由处理样本执行和分析的中央管理软件组成。</p>
+<p>每个分析都在一个全新的、隔离的虚拟机或物理机中启动。Cuckoo 基础设施的主要组件是一台主机（管理软件）和一些访客机（用于分析的虚拟或物理机）。</p>
+<p>Host 运行沙箱的核心组件，管理整个分析过程，而 Guest 是隔离的环境，恶意软件样本在其中真正安全地执行和分析。</p>
+<p>下图解释了 Cuckoo 的主要架构：</p>
+<p><img src="/cuckoo_images/5988834160845.png" alt=""></p>
+<p>那么我们从操作手册中可以知道，<code>main.py</code>是Cuckoo的服务脚本，<code>agent.py</code>是客户机上运行的脚本，下面就两个脚本进行分别探究。</p>
+<h2 id="mainpy">main.py<a href="#mainpy" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>通过以下命令可以确定cuckoo的启动脚本位置：</p>
+<pre tabindex="0"><code>(venv) cuckoo@ubuntu:~$ cat $(which cuckoo)
+#!/home/cuckoo/venv/bin/python2
+# -*- coding: utf-8 -*-
+import re
+import sys
+from cuckoo.main import main
+if __name__ == '__main__':
+    sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
+    sys.exit(main())
+</code></pre><p>也就是<a href="https://github.com/cuckoosandbox/cuckoo/tree/master/cuckoo">Github仓库</a>中的<code>main.py</code></p>
+<p><img src="/cuckoo_images/1457240167145.png" alt=""></p>
+<p>运行<code>main()</code>，首先是<code>cuckoo_init()</code>初始化，初始化内容如下：</p>
+<pre tabindex="0"><code>cuckoo_resources()
+check_configs()
+check_version()
+Database().connect()
+load_signatures()
+init_modules()
+init_tasks()
+init_yara()
+init_binaries()
+init_rooter()
+init_routing()
+</code></pre><p>然后进入<code>cuckoo_main()</code>，主要启动两个服务。</p>
+<ul>
+<li>启动<code>ResultServer()</code>，使用<code>gevent.server</code>与<code>agent</code>构建通信；</li>
+</ul>
+<p><img src="/cuckoo_images/3221250187311.png" alt=""></p>
+<ul>
+<li>开启<code>Scheduler.start()</code>，用于执行数据库中的待分析任务，最直接的方式是通过<code>submit</code>参数提交，当然还有<code>rest api</code>和<code>web</code>上传，不过最终都是将任务添加到数据库中，由<code>Scheduler</code>循环检测数据库，执行相关分析任务。</li>
+</ul>
+<p><img src="/cuckoo_images/1709951176535.png" alt=""></p>
+<p>然后新建一个线程执行<code>AnalysisManager.run()</code>，这是分析类的汇总，包含了开始分析（<code>launch_analysis()</code>）以及产出报告（<code>process_results()</code>）。</p>
+<p><strong>launch_analysis()</strong></p>
+<p>包括了初始化分析函数、获取分析客户机、告知ResultServer服务分析机器标识、初始化分析机器、调用辅助模块、生成配置文件、启动分析虚拟机、启用网络路由、开始分析。</p>
+<p><img src="/cuckoo_images/3551512207773.png" alt=""></p>
+<p>当然最主要的是<code>guest_manage()</code>函数，它直接调用了<code>GuestManager.start_analysis()</code>开始分析，该分析函数的主要逻辑如下：</p>
+<ul>
+<li>等待虚拟机可用</li>
+<li>检查客户机状态是否为开启</li>
+<li>新旧代理检查</li>
+<li>设置静态ip</li>
+<li>获取虚拟机中agent的环境变量</li>
+<li>上传分析文件</li>
+<li>上传配置文件</li>
+<li>允许辅助模块接入客户机</li>
+<li>转储样本文件</li>
+<li>执行 <code>analyzer.py</code></li>
+</ul>
+<p>至此，分析的流程转交给了在客户机执行的<code>analyzer.py</code>，服务只需要等着返回结果生成报告即可。</p>
+<p><strong>process_results()</strong></p>
+<p><img src="/cuckoo_images/3373603109279.png" alt=""></p>
+<p>该结果分析是由三个大类依次处理的：</p>
+<ul>
+<li>RunProcessing()：对分析结果进行处理。在Cuckoo的源码目录中提供了<code>processing</code>文件夹，其中包含了许多的处理模块，在Cuckoo的说明手册中指出，我们可以根据框架模块自定义分析功能。</li>
+<li>RunSignatures()：对签名特征进行匹配。Cuckoo提供一个<a href="https://github.com/cuckoosandbox/community">社区版的signature库</a>，里面包含了官方和其他用户创建好的可用签名，当然，这个部分也是可以自定义的</li>
+<li>RunReporting()：对处理结果进行上报。在Cuckoo的源码目录中提供了<code>reporting</code>文件夹，其中包含了许多报告模板，我们可根据语法，自定义报告模板内容。</li>
+</ul>
+<h2 id="agentpy">agent.py<a href="#agentpy" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>这个部分是采用了<code>SimpleHTTPServer</code>开启了一个web服务与<code>ResultServer()</code>产生交互，当<code>Cuckoo server端</code>访问客户机<code>/execpy</code>路径时，将触发<code>do_execpy()</code>函数执行上传的<code>analyzer.py</code>，开始进行分析任务。</p>
+<p><img src="/cuckoo_images/5209333097146.png" alt=""></p>
+<p><strong>analyzer.py</strong></p>
+<p><img src="/cuckoo_images/2776242117312.png" alt=""></p>
+<p>关键的分析流程来了：</p>
+<ol>
+<li>首先是运行<code>prepare()</code>执行一些准备工作：提升权限、解析analysis.conf、传递配置给进程、设置虚拟机事件、创建监视管道和日志管道、获取样本路径；</li>
+<li>根据样本后缀名，获取样本的文件类型，移动样本到指定的缓存路径；</li>
+<li>导入辅助模块并执行；</li>
+<li>向内核驱动模块传入必要参数；</li>
+<li>根据样本类型，执行相应的样本分析脚本；</li>
+<li>分析结束后上传结果；</li>
+<li>终止辅助模块；</li>
+<li>转储所有挂载文件；</li>
+</ol>
+<p>其中需要重点关注的就是<code>执行相应的样本分析脚本</code>，这里以<code>exe.py</code>为例：</p>
+<ol>
+<li>脚本启动后将调用<code>Package.execute()</code>。其中包含了初始化注册表和调用<code>Process.execute()</code></li>
+<li><code>Process.execute()</code>的功能是执行样本和实现注入</li>
+</ol>
+<p>至此流程分析结束。</p>
+<h2 id="总结">总结<a href="#总结" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>完整图例如下：</p>
+<p><img src="/cuckoo_images/4756822090942.png" alt=""></p>
+<p>至于Cuckoo的执行流程，可以这样简述：</p>
+<ul>
+<li>server端启动Cuckoo服务；</li>
+<li>构建与client的socket通信；</li>
+<li>连接本地数据库，读取等待执行的任务；</li>
+<li>获取任务，提交给client等待处理；</li>
+<li>client接收任务，创建本地缓存并执行分析脚本；</li>
+<li>分析脚本执行注入程序，启动样本并进行注入；</li>
+<li>等待分析结束，上传结果至server端；</li>
+<li>处理client端上传的结果，形成报告；</li>
+</ul>
+
+		</div>
+	</main>
+
+	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+		<p>&copy; 2022 <a href="https://www.a1ee.cn">alee</a></p>
+	</footer>
+
+
+
+	<script src="https://www.a1ee.cn/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	
+
+</body>
+
+</html>

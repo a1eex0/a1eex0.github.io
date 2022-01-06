@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Simples on alee</title>
+    <link>https://www.a1ee.cn/simple/</link>
+    <description>Recent content in Simples on alee</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 06 Jan 2022 09:19:04 +0800</lastBuildDate><atom:link href="https://www.a1ee.cn/simple/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>PEview</title>
+      <link>https://www.a1ee.cn/simple/peview/</link>
+      <pubDate>Thu, 06 Jan 2022 09:19:04 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/simple/peview/</guid>
+      <description>PEview 修正错误提醒 前言 在《逆向工程核心原理》作者的站点上下载的PEview，在点击特定树树项时运行会报错，这里将记录如何修正该错误： 开始 采用x3</description>
+    </item>
+    
+    <item>
+      <title>Cuckoo</title>
+      <link>https://www.a1ee.cn/simple/cuckoo/</link>
+      <pubDate>Wed, 01 Sep 2021 09:12:41 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/simple/cuckoo/</guid>
+      <description>Cuckoo 2.0.7 流程分析 Cuckoo官方说明中提到： Cuckoo Sandbox 由处理样本执行和分析的中央管理软件组成。 每个分析都在一个全新的、隔离的虚拟机或物理机中启动。Cu</description>
+    </item>
+    
+    <item>
+      <title>IDAPython</title>
+      <link>https://www.a1ee.cn/simple/idapython/</link>
+      <pubDate>Sat, 26 Jun 2021 10:14:17 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/simple/idapython/</guid>
+      <description>idaPython脚本编写实例 1. 背景 在使用IDA对darkside样本进行分析的时候，发现样本是动态加载dll，这使得IDA分析起来极不方便</description>
+    </item>
+    
+    <item>
+      <title>Apache Solr任意文件读取（20210318爆出)</title>
+      <link>https://www.a1ee.cn/simple/apache-solr%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%9620210318%E7%88%86%E5%87%BA/</link>
+      <pubDate>Fri, 19 Mar 2021 09:29:16 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/simple/apache-solr%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%9620210318%E7%88%86%E5%87%BA/</guid>
+      <description>漏洞触发点 漏洞是通过实例下的：/debug/dump?param=ContentStreams，参数：stream.url触发的。 想要触发该</description>
+    </item>
+    
+    <item>
+      <title>Python_tkinter_info</title>
+      <link>https://www.a1ee.cn/simple/python_tkinter_info/</link>
+      <pubDate>Mon, 28 Dec 2020 14:20:32 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/simple/python_tkinter_info/</guid>
+      <description>tkinter库说明 这是一个相对轻量化的GUI库，因为它是python的原生库，不需要额外的安装库文件，因此存在很强的可移植性。 但不建议用它</description>
+    </item>
+    
+    <item>
+      <title>Python_nmap_info</title>
+      <link>https://www.a1ee.cn/simple/python_nmap_info/</link>
+      <pubDate>Mon, 28 Dec 2020 14:20:25 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/simple/python_nmap_info/</guid>
+      <description>python-nmap库说明 python-nmap库的官方说明文档，作者给出了一个实例代码。 实践代码 参考这两个资料，写出了如下的功能代码： #</description>
+    </item>
+    
+    <item>
+      <title>Python_webdriver_selenium_info</title>
+      <link>https://www.a1ee.cn/simple/python_webdriver_selenium_info/</link>
+      <pubDate>Mon, 28 Dec 2020 14:20:15 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/simple/python_webdriver_selenium_info/</guid>
+      <description>webdriver_selenium库说明 原型 当遇到一些受动态防御系统保护的站点时，需要一个模拟登陆的脚本来进行爆破尝试。 模拟登陆的pyth</description>
+    </item>
+    
+    <item>
+      <title>Xshell_6_plus</title>
+      <link>https://www.a1ee.cn/simple/xshell_6_plus/</link>
+      <pubDate>Mon, 28 Dec 2020 14:08:52 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/simple/xshell_6_plus/</guid>
+      <description>Xshell 6 plus 下载 官网下载 左边是需要输入注册码的，右边是30天的评估版，随意填写，使用临时邮箱就可以接收下载链接了，产品的下载链接路径是一样的，不同</description>
+    </item>
+    
+    <item>
+      <title>Awvs</title>
+      <link>https://www.a1ee.cn/simple/awvs/</link>
+      <pubDate>Mon, 28 Dec 2020 14:04:14 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/simple/awvs/</guid>
+      <description>AWVS 12 下载 下载试用版（2020-05-12：下载链接已失效，需要邮箱重新注册） 准备工作 安装好后，登录并扫描网站，在事件窗口会看到相关信息： 所有</description>
+    </item>
+    
+    <item>
+      <title>Winrar</title>
+      <link>https://www.a1ee.cn/simple/winrar/</link>
+      <pubDate>Mon, 28 Dec 2020 14:02:45 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/simple/winrar/</guid>
+      <description>WinRAR 官网下载WinRAR 寻找切入点 预览程序，寻找切入点： 两个点：一个是窗口上有 评估版本 字样，另一个是有广告弹窗。 我感觉从 setwindowtext 入手好像要简单一些。</description>
+    </item>
+    
+    <item>
+      <title>Sbulime_text3</title>
+      <link>https://www.a1ee.cn/simple/sbulime_text3/</link>
+      <pubDate>Mon, 28 Dec 2020 13:58:30 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/simple/sbulime_text3/</guid>
+      <description>Sublime Text3 入门级爆破 下载Sublime Text3 x64(3211)，需要的工具是看雪论坛的x64dbg。 讨厌的地方有两个：首页 、弹窗。 针对首页上的字样，在</description>
+    </item>
+    
+  </channel>
+</rss>

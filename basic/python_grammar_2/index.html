@@ -47,7 +47,7 @@
 				<nav class="site-nav hide-in-mobile">
 					
 				<a href="https://www.a1ee.cn/basic/">BASIC</a>
-				<a href="https://www.a1ee.cn/simaple/">SIMAPLE</a>
+				<a href="https://www.a1ee.cn/simple/">SIMPLE</a>
 				<a href="https://www.a1ee.cn/medium/">MEDIUM</a>
 				<a href="https://www.a1ee.cn/about-me/">ABOUT</a>
 
@@ -61,7 +61,7 @@
 	<div id="mobile-menu" class="animated fast">
 		<ul>
 			<li><a href="https://www.a1ee.cn/basic/">BASIC</a></li>
-			<li><a href="https://www.a1ee.cn/simaple/">SIMAPLE</a></li>
+			<li><a href="https://www.a1ee.cn/simple/">SIMPLE</a></li>
 			<li><a href="https://www.a1ee.cn/medium/">MEDIUM</a></li>
 			<li><a href="https://www.a1ee.cn/about-me/">ABOUT</a></li>
 		</ul>
@@ -79,12 +79,12 @@
 				<h1 id="3python语法二">3.Python语法（二）<a href="#3python语法二" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
 <h2 id="31条件判断">3.1.条件判断<a href="#31条件判断" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>Python程序语言指定任何非0和非空（null）值为true，0 或者 null为false。Python 编程中 if 语句用于控制程序的执行，基本形式为：</p>
-<pre><code>if 判断条件：
+<pre tabindex="0"><code>if 判断条件：
     执行语句……
 else：
     执行语句……
 </code></pre><p>if 语句的判断条件可以用&gt;（大于）、&lt;(小于)、==（等于）、&gt;=（大于等于）、&lt;=（小于等于）来表示其关系。当判断条件为多个值时，可以使用以下形式：</p>
-<pre><code>if 判断条件1:
+<pre tabindex="0"><code>if 判断条件1:
     执行语句1……
 elif 判断条件2:
     执行语句2……
@@ -94,7 +94,7 @@ else:
     执行语句4……
 </code></pre><p>由于 python 并不支持 switch 语句，所以多个条件判断，只能用 elif 来实现，如果判断需要多个条件需同时判断时，可以使用 or （或），表示两个条件有一个成立时判断条件成功；使用 and （与）时，表示只有两个条件同时成立的情况下，判断条件才成功。
 示例：</p>
-<pre><code>num = 9
+<pre tabindex="0"><code>num = 9
 if num &gt;= 0 and num &lt;= 5:
 	print('num belong [0,5]')
 elif num &gt;=5 and num &lt; 8:
@@ -116,37 +116,37 @@ if (num &gt;=0 and num &lt;=10) or (num &gt;=15 and num &lt;=20):
 else:
 	print('num is not here')
 </code></pre><p>输出结果如下：</p>
-<pre><code>num belong [8,10]
+<pre tabindex="0"><code>num belong [8,10]
 var belong [5,10]
 num belong [0,10] or [15,20]
 </code></pre><h2 id="32循环">3.2.循环<a href="#32循环" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>循环分为遍历循环（for）和条件循环（while）</p>
 <h3 id="321for-循环">3.2.1.for 循环<a href="#321for-循环" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>for循环的语法格式如下：</p>
-<pre><code>for iterating_var in sequence:
+<pre tabindex="0"><code>for iterating_var in sequence:
    statements(s)
 </code></pre><p>通过索引遍历的示例：</p>
-<pre><code>fruits = ['banana', 'apple',  'mango']
+<pre tabindex="0"><code>fruits = ['banana', 'apple',  'mango']
 for index in range(len(fruits)):
    print ('当前水果 :', fruits[index])
 </code></pre><p>输出如下：</p>
-<pre><code>当前水果 : banana
+<pre tabindex="0"><code>当前水果 : banana
 当前水果 : apple
 当前水果 : mango
 </code></pre><p>以上示例使用了内置函数 len() 和 range(),函数 len() 返回列表的长度，即元素的个数。 range返回一个序列的数。</p>
 <h3 id="322while-循环">3.2.2.while 循环<a href="#322while-循环" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>while 语句用于循环执行程序，即在某条件下，循环执行某段程序，以处理需要重复处理的相同任务。其基本形式为：</p>
-<pre><code>while 判断条件(condition)：
+<pre tabindex="0"><code>while 判断条件(condition)：
     执行语句(statements)……
 </code></pre><p>执行语句可以是单个语句或语句块。判断条件可以是任何表达式，任何非零、或非空（null）的值均为true。当判断条件假 false 时，循环结束。</p>
 <p>生成随机数示例：</p>
-<pre><code>import random
+<pre tabindex="0"><code>import random
 random_numbers = []
 while len(random_numbers) &lt; 20:
 	random_numbers.append(random.randint(1,10))
 print(random_numbers, len(random_numbers))
 </code></pre><p>输出为：</p>
-<pre><code>2, 8, 5, 2, 8, 7, 5, 3, 4, 6, 4, 8, 8, 7, 8, 10, 10, 10, 5, 7] 20
+<pre tabindex="0"><code>2, 8, 5, 2, 8, 7, 5, 3, 4, 6, 4, 8, 8, 7, 8, 10, 10, 10, 5, 7] 20
 </code></pre><h3 id="323函数">3.2.3.函数<a href="#323函数" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>你可以定义一个由自己想要功能的函数，以下是简单的规则：</p>
 <ul>
@@ -157,7 +157,7 @@ print(random_numbers, len(random_numbers))
 <li>return [表达式] 结束函数，选择性地返回一个值给调用方。不带表达式的return相当于返回 None。</li>
 </ul>
 <p>语法</p>
-<pre><code>def functionname( parameters ):
+<pre tabindex="0"><code>def functionname( parameters ):
    &quot;函数_文档字符串&quot;
    function_suite
    return [expression]
@@ -193,7 +193,7 @@ print(random_numbers, len(random_numbers))
 	</main>
 
 	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
-		<p>&copy; 2021 <a href="https://www.a1ee.cn">alee</a></p>
+		<p>&copy; 2022 <a href="https://www.a1ee.cn">alee</a></p>
 	</footer>
 
 

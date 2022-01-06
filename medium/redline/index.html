@@ -47,7 +47,7 @@
 				<nav class="site-nav hide-in-mobile">
 					
 				<a href="https://www.a1ee.cn/basic/">BASIC</a>
-				<a href="https://www.a1ee.cn/simaple/">SIMAPLE</a>
+				<a href="https://www.a1ee.cn/simple/">SIMPLE</a>
 				<a href="https://www.a1ee.cn/medium/">MEDIUM</a>
 				<a href="https://www.a1ee.cn/about-me/">ABOUT</a>
 
@@ -61,7 +61,7 @@
 	<div id="mobile-menu" class="animated fast">
 		<ul>
 			<li><a href="https://www.a1ee.cn/basic/">BASIC</a></li>
-			<li><a href="https://www.a1ee.cn/simaple/">SIMAPLE</a></li>
+			<li><a href="https://www.a1ee.cn/simple/">SIMPLE</a></li>
 			<li><a href="https://www.a1ee.cn/medium/">MEDIUM</a></li>
 			<li><a href="https://www.a1ee.cn/about-me/">ABOUT</a></li>
 		</ul>
@@ -90,7 +90,7 @@
 <p>后面会有动态解密过程，获取C&amp;C服务器地址端口：<code>45.9.20.182:52236</code></p>
 <p><img src="/redline_images/2791422189493.png" alt=""></p>
 <p>请求报文<code>header</code>格式如下：</p>
-<pre><code>{&lt;Authorization xmlns=&quot;ns1&quot;&gt;a272f3a2850ec3dccdaed97234b7c40e&lt;/Authorization&gt;}
+<pre tabindex="0"><code>{&lt;Authorization xmlns=&quot;ns1&quot;&gt;a272f3a2850ec3dccdaed97234b7c40e&lt;/Authorization&gt;}
 </code></pre><p><img src="/redline_images/4782429177360.png" alt=""></p>
 <p>发送链接请求后等待服务器响应：</p>
 <p><img src="/redline_images/2256927187529.png" alt=""></p>
@@ -107,7 +107,7 @@
 <p><img src="/redline_images/3952608186753.png" alt=""></p>
 <h4 id="222-获取浏览器信息">2.2.2. 获取浏览器信息<a href="#222-获取浏览器信息" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
 <p>会读取注册表已获取默认浏览器的信息</p>
-<pre><code>SOFTWARE\\WOW6432Node\\Clients\\StartMenuInternet
+<pre tabindex="0"><code>SOFTWARE\\WOW6432Node\\Clients\\StartMenuInternet
 SOFTWARE\\Clients\\StartMenuInternet
 </code></pre><p><img src="/redline_images/255814182507.png" alt=""></p>
 <h4 id="223-获取软件列表">2.2.3. 获取软件列表<a href="#223-获取软件列表" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
@@ -146,9 +146,9 @@ SOFTWARE\\Clients\\StartMenuInternet
 <p>如果配置文件中要求窃取加密钱包，则会对<code>BrEx.Init</code>中已加密的钱包进行扫描</p>
 <p><img src="/redline_images/858056117928.png" alt=""></p>
 <p><code>BrEx.Init</code>中存储的是采用了<code>base64</code>编码的钱包字符串：</p>
-<pre><code>ZmZuYmVsZmRvZWlvaGVua2ppYm5tYWRqaWVoamhhamJ8WW9yb2lXYWxsZXQKaWJuZWpkZmptbWtwY25scGVia2xtbmtvZW9paG9mZWN8VHJvbmxpbmsKamJkYW9jbmVpaWlubWpiamxnYWxoY2VsZ2Jlam1uaWR8TmlmdHlXYWxsZXQKbmtiaWhmYmVvZ2FlYW9laGxlZm5rb2RiZWZncGdrbm58TWV0YW1hc2sKYWZiY2JqcGJwZmFkbGttaG1jbGhrZWVvZG1hbWNmbGN8TWF0aFdhbGxldApobmZhbmtub2NmZW9mYmRkZ2Npam5taG5mbmtkbmFhZHxDb2luYmFzZQpmaGJvaGltYWVsYm9ocGpiYmxkY25nY25hcG5kb2RqcHxCaW5hbmNlQ2hhaW4Kb2RiZnBlZWloZGtiaWhtb3BrYmptb29uZmFubGJmY2x8QnJhdmVXYWxsZXQKaHBnbGZoZ2ZuaGJncGpkZW5qZ21kZ29laWFwcGFmbG58R3VhcmRhV2FsbGV0CmJsbmllaWlmZmJvaWxsa25qbmVwb2dqaGtnbm9hcGFjfEVxdWFsV2FsbGV0CmNqZWxmcGxwbGViZGpqZW5sbHBqY2JsbWprZmNmZm5lfEpheHh4TGliZXJ0eQpmaWhrYWtmb2JrbWtqb2pwY2hwZmdjbWhmam5tbmZwaXxCaXRBcHBXYWxsZXQKa25jY2hkaWdvYmdoZW5iYmFkZG9qam5uYW9nZnBwZmp8aVdhbGxldAphbWttamptbWZsZGRvZ21ocGpsb2ltaXBib2ZuZmppaHxXb21iYXQKZmhpbGFoZWltZ2xpZ25kZGtqZ29ma2NiZ2VraGVuYmh8QXRvbWljV2FsbGV0Cm5sYm1ubmlqY25sZWdrampwY2ZqY2xtY2ZnZ2ZlZmRtfE1ld0N4Cm5hbmptZGtuaGtpbmlmbmtnZGNnZ2NmbmhkYWFtbW1qfEd1aWxkV2FsbGV0Cm5rZGRnbmNkamdqZmNkZGFtZmdjbWZubGhjY25pbWlnfFNhdHVybldhbGxldApmbmpobWtoaG1rYmpra2FibmRjbm5vZ2Fnb2dibmVlY3xSb25pbldhbGxldAphaWlmYm5iZm9icG1lZWtpcGhlZWlqaW1kcG5scGdwcHxUZXJyYVN0YXRpb24KZm5uZWdwaGxvYmpkcGtoZWNhcGtpampka2djamhraWJ8SGFybW9ueVdhbGxldAphZWFjaGtubWVmcGhlcGNjaW9uYm9vaGNrb25vZWVtZ3xDb2luOThXYWxsZXQKY2dlZW9kcGZhZ2pjZWVmaWVmbG1kZnBocGxrZW5sZmt8VG9uQ3J5c3RhbApwZGFkamtma2djYWZnYmNlaW1jcGJrYWxuZm5lcGJua3xLYXJkaWFDaGFpbg==
+<pre tabindex="0"><code>ZmZuYmVsZmRvZWlvaGVua2ppYm5tYWRqaWVoamhhamJ8WW9yb2lXYWxsZXQKaWJuZWpkZmptbWtwY25scGVia2xtbmtvZW9paG9mZWN8VHJvbmxpbmsKamJkYW9jbmVpaWlubWpiamxnYWxoY2VsZ2Jlam1uaWR8TmlmdHlXYWxsZXQKbmtiaWhmYmVvZ2FlYW9laGxlZm5rb2RiZWZncGdrbm58TWV0YW1hc2sKYWZiY2JqcGJwZmFkbGttaG1jbGhrZWVvZG1hbWNmbGN8TWF0aFdhbGxldApobmZhbmtub2NmZW9mYmRkZ2Npam5taG5mbmtkbmFhZHxDb2luYmFzZQpmaGJvaGltYWVsYm9ocGpiYmxkY25nY25hcG5kb2RqcHxCaW5hbmNlQ2hhaW4Kb2RiZnBlZWloZGtiaWhtb3BrYmptb29uZmFubGJmY2x8QnJhdmVXYWxsZXQKaHBnbGZoZ2ZuaGJncGpkZW5qZ21kZ29laWFwcGFmbG58R3VhcmRhV2FsbGV0CmJsbmllaWlmZmJvaWxsa25qbmVwb2dqaGtnbm9hcGFjfEVxdWFsV2FsbGV0CmNqZWxmcGxwbGViZGpqZW5sbHBqY2JsbWprZmNmZm5lfEpheHh4TGliZXJ0eQpmaWhrYWtmb2JrbWtqb2pwY2hwZmdjbWhmam5tbmZwaXxCaXRBcHBXYWxsZXQKa25jY2hkaWdvYmdoZW5iYmFkZG9qam5uYW9nZnBwZmp8aVdhbGxldAphbWttamptbWZsZGRvZ21ocGpsb2ltaXBib2ZuZmppaHxXb21iYXQKZmhpbGFoZWltZ2xpZ25kZGtqZ29ma2NiZ2VraGVuYmh8QXRvbWljV2FsbGV0Cm5sYm1ubmlqY25sZWdrampwY2ZqY2xtY2ZnZ2ZlZmRtfE1ld0N4Cm5hbmptZGtuaGtpbmlmbmtnZGNnZ2NmbmhkYWFtbW1qfEd1aWxkV2FsbGV0Cm5rZGRnbmNkamdqZmNkZGFtZmdjbWZubGhjY25pbWlnfFNhdHVybldhbGxldApmbmpobWtoaG1rYmpra2FibmRjbm5vZ2Fnb2dibmVlY3xSb25pbldhbGxldAphaWlmYm5iZm9icG1lZWtpcGhlZWlqaW1kcG5scGdwcHxUZXJyYVN0YXRpb24KZm5uZWdwaGxvYmpkcGtoZWNhcGtpampka2djamhraWJ8SGFybW9ueVdhbGxldAphZWFjaGtubWVmcGhlcGNjaW9uYm9vaGNrb25vZWVtZ3xDb2luOThXYWxsZXQKY2dlZW9kcGZhZ2pjZWVmaWVmbG1kZnBocGxrZW5sZmt8VG9uQ3J5c3RhbApwZGFkamtma2djYWZnYmNlaW1jcGJrYWxuZm5lcGJua3xLYXJkaWFDaGFpbg==
 </code></pre><p>解码后的数据如下：</p>
-<pre><code>ffnbelfdoeiohenkjibnmadjiehjhajb|YoroiWallet
+<pre tabindex="0"><code>ffnbelfdoeiohenkjibnmadjiehjhajb|YoroiWallet
 ibnejdfjmmkpcnlpebklmnkoeoihofec|Tronlink
 jbdaocneiiinmjbjlgalhcelgbejmnid|NiftyWallet
 nkbihfbeogaeaoehlefnkodbefgpgknn|Metamask
@@ -211,7 +211,7 @@ pdadjkfkgcafgbceimcpbkalnfnepbnk|KardiaChain
 <p>当获取到上述数据后，会调用<code>Send()</code>函数，将扫描的详情进行填充，</p>
 <p><img src="/redline_images/5122110168522.png" alt=""></p>
 <p>其中<code>PartsSender.GetLocalInfo()</code>函数，会在主机上访问<code>http://733s.komawai.ru/</code>，该链接将返回主机的相关信息：</p>
-<pre><code>{&quot;city&quot;:&quot;***&quot;,&quot;country_code&quot;:&quot;***&quot;,&quot;postal&quot;:null,&quot;ip&quot;:&quot;*.*.*.*&quot;}
+<pre tabindex="0"><code>{&quot;city&quot;:&quot;***&quot;,&quot;country_code&quot;:&quot;***&quot;,&quot;postal&quot;:null,&quot;ip&quot;:&quot;*.*.*.*&quot;}
 </code></pre><p>解析上述<code>json</code>文件，填充到发送请求中：</p>
 <p><img src="/redline_images/1305416169817.png" alt=""></p>
 <h3 id="24-远程下载">2.4. 远程下载<a href="#24-远程下载" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
@@ -245,7 +245,7 @@ pdadjkfkgcafgbceimcpbkalnfnepbnk|KardiaChain
 	</main>
 
 	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
-		<p>&copy; 2021 <a href="https://www.a1ee.cn">alee</a></p>
+		<p>&copy; 2022 <a href="https://www.a1ee.cn">alee</a></p>
 	</footer>
 
 

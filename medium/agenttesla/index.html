@@ -47,7 +47,7 @@
 				<nav class="site-nav hide-in-mobile">
 					
 				<a href="https://www.a1ee.cn/basic/">BASIC</a>
-				<a href="https://www.a1ee.cn/simaple/">SIMAPLE</a>
+				<a href="https://www.a1ee.cn/simple/">SIMPLE</a>
 				<a href="https://www.a1ee.cn/medium/">MEDIUM</a>
 				<a href="https://www.a1ee.cn/about-me/">ABOUT</a>
 
@@ -61,7 +61,7 @@
 	<div id="mobile-menu" class="animated fast">
 		<ul>
 			<li><a href="https://www.a1ee.cn/basic/">BASIC</a></li>
-			<li><a href="https://www.a1ee.cn/simaple/">SIMAPLE</a></li>
+			<li><a href="https://www.a1ee.cn/simple/">SIMPLE</a></li>
 			<li><a href="https://www.a1ee.cn/medium/">MEDIUM</a></li>
 			<li><a href="https://www.a1ee.cn/about-me/">ABOUT</a></li>
 		</ul>
@@ -82,7 +82,7 @@
 <p>Agent Tesla 病毒在其自己的网站上进行营销和销售，该网站错误地声称该程序是为个人使用而创建的合法键盘记录器，因此在黑客社区中非常流行。不仅仅是因为它的易用性和技术支持，可以在攻击者出售此恶意软件的“官方”网站以及专用的 Discord 服务器上找到。尽管声称该软件是合法的，但售卖人员还是会就非法使用该病毒提出建议。</p>
 <h2 id="2-样本详情">2. 样本详情<a href="#2-样本详情" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>本次分析的样本哈希如下：</p>
-<pre><code>MD5：af98b88c0b5dc353fbe536bd6fb8c4ec
+<pre tabindex="0"><code>MD5：af98b88c0b5dc353fbe536bd6fb8c4ec
 SHA256：cc262fd3fa1f646aff2f5bcdea33beca5ed081260028b8604d5f714dd23c03ac
 </code></pre><p>可以从<a href="https://app.any.run/tasks/84fc78ab-2695-4a5a-9a89-45f2497c38de/">any.run沙箱</a>查看到样本的行为及下载样本。</p>
 <p>将样本用PEStudio打开，可以看到<code>Mircrosoft</code>将其标记为<code>AgentTesla</code>：</p>
@@ -118,7 +118,7 @@ SHA256：cc262fd3fa1f646aff2f5bcdea33beca5ed081260028b8604d5f714dd23c03ac
 <p>这里可以使用<code>de4dot</code>对其进行动态解密，作者在<code>readme</code>中进行了如下说明：</p>
 <p><img src="/tesla_images/1697150189976.png" alt=""></p>
 <p><code>de4dot</code>对<code>--strtyp</code>参数的说明如下：</p>
-<pre><code>String decrypter types
+<pre tabindex="0"><code>String decrypter types
   none             Don't decrypt strings
   default          Use default string decrypter type (usually static)
   static           Use static string decrypter if available
@@ -127,7 +127,7 @@ SHA256：cc262fd3fa1f646aff2f5bcdea33beca5ed081260028b8604d5f714dd23c03ac
 </code></pre><p>这里选取了<code>emulate</code>进行尝试，但是作者显然并不想我们这么容易就解除了混淆，加密字符串居然有<code>6000535h - 600022Bh = 30Ah</code>处！</p>
 <p><img src="/tesla_images/440434116345.png" alt=""></p>
 <p>所以我简单生成了一个粗糙的bat：</p>
-<pre><code>de4dot.exe dump2.bin --strtyp emulate --strtok 600022B
+<pre tabindex="0"><code>de4dot.exe dump2.bin --strtyp emulate --strtok 600022B
 rename dump2-cleaned.bin dump3.bin
 de4dot.exe dump3.bin --strtyp emulate --strtok 600022C
 del dump3.bin
@@ -187,11 +187,11 @@ rename dump3-cleaned.bin dump3.bin
 <p>特殊软件的凭证窃取（下图是Edge浏览器的窃取函数段）</p>
 <p><img src="/tesla_images/3238651188043.png" alt=""></p>
 <p>从Edge凭证窃取函数可以看出，窃取函数存在以下特征：</p>
-<pre><code>UserName =
+<pre tabindex="0"><code>UserName =
 Password =
 Browser = &quot;&quot;
 </code></pre><p>检索全部代码，反复确认后，发现窃取目标包含以下对象：</p>
-<pre><code>Browser = &quot;IE/Edge&quot;
+<pre tabindex="0"><code>Browser = &quot;IE/Edge&quot;
 Browser = &quot;Edge Chromium&quot;
 Browser = &quot;QQ Browser&quot;
 Browser = &quot;incredimail&quot;
@@ -239,7 +239,7 @@ x.Browser = &quot;Internet Download Manager&quot;
 <p>进入程序入口，会生成一串字符串，用于标识受害者主机，然后会设置一个30s的定时循环任务，接着开始进行浏览器用户数据窃取；</p>
 <p><img src="/tesla_images/2016144140664.png" alt=""></p>
 <p>汇总如下：</p>
-<pre><code>@&quot;C:\Users\alee\AppData\Local\7Star\7Star\User Data&quot;
+<pre tabindex="0"><code>@&quot;C:\Users\alee\AppData\Local\7Star\7Star\User Data&quot;
 @&quot;C:\Users\alee\AppData\Local\uCozMedia\Uran\User Data&quot;
 @&quot;C:\Users\alee\AppData\Local\MapleStudio\ChromePlus\User Data&quot;
 @&quot;C:\Users\alee\AppData\Local\Yandex\YandexBrowser\User Data&quot;
@@ -270,7 +270,7 @@ x.Browser = &quot;Internet Download Manager&quot;
 <p>针对<code>logins</code>内的文件窃取函数内容如下：</p>
 <p><img src="/tesla_images/4252004160664.png" alt=""></p>
 <p>往下则是一列窃取函数的调用，核实并整理后如下：</p>
-<pre><code>list.AddRange(global::A.b.E.LoginsSteal(x.A, x.A));
+<pre tabindex="0"><code>list.AddRange(global::A.b.E.LoginsSteal(x.A, x.A));
 list.AddRange(global::A.b.E.RimArtsSteal());
 list.AddRange(global::A.b.E.ChromeSteal());
 list.AddRange(global::A.b.E.FlockSteal());
@@ -325,7 +325,7 @@ list.AddRange(global::A.b.E.PaleMoonSteal());
 	</main>
 
 	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
-		<p>&copy; 2021 <a href="https://www.a1ee.cn">alee</a></p>
+		<p>&copy; 2022 <a href="https://www.a1ee.cn">alee</a></p>
 	</footer>
 
 

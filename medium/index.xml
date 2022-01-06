@@ -5,8 +5,303 @@
 		<description>Recent content in Mediums on alee</description>
 		<generator>Hugo -- gohugo.io</generator>
 		<language>zh-cn</language>
-		<lastBuildDate>Fri, 03 Dec 2021 10:36:39 +0800</lastBuildDate>
+		<lastBuildDate>Thu, 06 Jan 2022 09:10:58 +0800</lastBuildDate>
 		<atom:link href="https://www.a1ee.cn/medium/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>NjRat</title>
+			<link>https://www.a1ee.cn/medium/njrat/</link>
+			<pubDate>Thu, 06 Jan 2022 09:10:58 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/medium/njrat/</guid>
+			<description>NjRat 样本分析 1. 样本信息 NjRat (Bladabindi) 是一种 .NET RAT（远程访问木马），允许攻击者控制受感染的机器。 IOC 类别 特征值 MD5 556FE886EDD2DB888EE3A33A103C2364 SHA1 9D58E7B157FE41D86398FF587E10AE2FF3FB3EE9 SHA256 833F86074592648C0A758098E34AB605A2B922D94DBAB7141E2CE87ACEC03C35 C2 44gang44.duckdns.org:2222 2. 样本分析 采用dnSpy加载</description>
+			<content type="html"><![CDATA[<h1 id="njrat-样本分析">NjRat 样本分析</h1>
+<h2 id="1-样本信息">1. 样本信息</h2>
+<p><code>NjRat</code> (<code>Bladabindi</code>) 是一种 <code>.NET</code> <code>RAT</code>（远程访问木马），允许攻击者控制受感染的机器。</p>
+<p><img src="/njrat_images/18402611211250.png" alt=""></p>
+<p><strong>IOC</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">类别</th>
+<th style="text-align:left">特征值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">MD5</td>
+<td style="text-align:left">556FE886EDD2DB888EE3A33A103C2364</td>
+</tr>
+<tr>
+<td style="text-align:left">SHA1</td>
+<td style="text-align:left">9D58E7B157FE41D86398FF587E10AE2FF3FB3EE9</td>
+</tr>
+<tr>
+<td style="text-align:left">SHA256</td>
+<td style="text-align:left">833F86074592648C0A758098E34AB605A2B922D94DBAB7141E2CE87ACEC03C35</td>
+</tr>
+<tr>
+<td style="text-align:left">C2</td>
+<td style="text-align:left">44gang44.duckdns.org:2222</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-样本分析">2. 样本分析</h2>
+<p>采用<code>dnSpy</code>加载样本，得知样本原始文件名为：<code>ClassLibrary1.exe</code></p>
+<p><img src="/njrat_images/532053111229676.png" alt=""></p>
+<h3 id="21-初始命令参数判断">2.1. 初始命令参数判断</h3>
+<p>样本执行后，会检查是否存在参数命令，如果参数命令为<code>UP:[ProcessID]</code>，则设置<code>HKEY_CURRENT_USER\di</code>的值为<code>!</code>，关联指定进程并等待<code>5000</code>毫秒后退出；如果参数命令为<code>..</code>，则休眠<code>5000</code>毫秒：</p>
+<p><img src="/njrat_images/346784910211251.png" alt=""></p>
+<h3 id="22-互斥锁检查">2.2. 互斥锁检查</h3>
+<p>打开指定的已命名的互斥体<code>OK.RG</code>(<code>&quot;49e91d08e684b1770e0cefa60401157a&quot;</code>)，如果存在，关闭当前进程，如果不存在，则新建此互斥锁：</p>
+<p><img src="/njrat_images/128955610229677.png" alt=""></p>
+<p><img src="/njrat_images/299430211217544.png" alt=""></p>
+<h3 id="23-准备工作">2.3. 准备工作</h3>
+<h4 id="231-检查文件路径">2.3.1. 检查文件路径</h4>
+<p>作者定义了一个<code>OK.CompDir</code>函数，将当前执行路径与<code>%AppData%\services64.exe</code>进行比较：</p>
+<p><img src="/njrat_images/27884509217554.png" alt=""></p>
+<p>如果当前执行的文件不是<code>%AppData%\services64.exe</code>，且存在<code>%AppData%\services64.exe</code>，则将<code>%AppData%\services64.exe</code>删除，然后将自身复制到<code>%AppData%\services64.exe</code>，采用<code>Process.Start</code>启动目标进程，并采用<code>ProjectData.EndApp()</code>关闭当前进程：</p>
+<p><img src="/njrat_images/271083210216925.png" alt=""></p>
+<p><code>OK.DR</code>与<code>OK.EXE</code>的内容如下：</p>
+<p><img src="/njrat_images/423073109229687.png" alt=""></p>
+<h4 id="232-关闭附件管理器检查">2.3.2. 关闭附件管理器检查</h4>
+<p>在检查完执行路径后，会修改环境变量<code>SEE_MASK_NOZONECHECKS</code>的值为<code>1</code>，已关闭关闭附件管理器检查的弹框提醒：</p>
+<p><img src="/njrat_images/11745909237720.png" alt=""></p>
+<h4 id="233-修改防火墙规则">2.3.3. 修改防火墙规则</h4>
+<p>接着会执行<code>netsh firewall add allowedprogram</code>命令，添加出栈规则：</p>
+<p><img src="/njrat_images/141490310230389.png" alt=""></p>
+<p>其中<code>OK.LO</code>便是当前执行的文件信息类（<code>FileInfo</code>类）：</p>
+<p><img src="/njrat_images/400370910226944.png" alt=""></p>
+<h4 id="234-开机自启项">2.3.4. 开机自启项</h4>
+<p>在注册表<code>HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run</code>和<code>HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run</code>中，添加<code>49e91d08e684b1770e0cefa60401157a</code>项，指向样本的执行路径（<code>%AppData%\services64.exe</code>）：</p>
+<p><img src="/njrat_images/5001310222698.png" alt=""></p>
+<p><code>OK.sf</code>与<code>OK.RG</code>的值如下:</p>
+<p><img src="/njrat_images/278201810240578.png" alt=""></p>
+<p><img src="/njrat_images/500451810238182.png" alt=""></p>
+<h4 id="235-文件复制功能">2.3.5. 文件复制功能</h4>
+<p>将文件复制到用户的“开始”程序组目录下，并已<code>49e91d08e684b1770e0cefa60401157a.exe</code>命名：</p>
+<p><img src="/njrat_images/31652810235684.png" alt=""></p>
+<p>注：由于<code>OK.IsF</code>的定义为：<code>public static bool IsF = Conversions.ToBoolean(&quot;False&quot;);</code>，故该功能未执行！</p>
+<h3 id="24-网络通信">2.4. 网络通信</h3>
+<p>准备工作结束后，将多线程执行<code>OK.RC</code>函数：</p>
+<p><img src="/njrat_images/85163410239365.png" alt=""></p>
+<h4 id="241-连接c2">2.4.1. 连接C2</h4>
+<p>该函数用于<code>TCP</code>网络通信连接，其中存在一个<code>OK.connect</code>函数，用于同<code>C2</code>（<code>44gang44.duckdns.org:2222</code>）连接，并发送关于主机的相关信息（<code>OK.inf()</code>返回内容）：</p>
+<p><img src="/njrat_images/163664410234501.png" alt=""></p>
+<p><code>OK.H</code>与<code>OK.P</code>的值如下：</p>
+<p><img src="/njrat_images/408534410228047.png" alt=""></p>
+<h4 id="242-发送本地主机信息">2.4.2. 发送本地主机信息</h4>
+<p>发送的内容是已<code>lv</code>开头，已<code>|'|'|</code>分割的字符串（<code>OK.Y</code>的定义为<code>public static string Y = &quot;|'|'|&quot;;</code>）。</p>
+<p><strong>获取系统磁盘序号</strong></p>
+<p>首先检索注册表<code>HKEY_CURRENT_USER\Software\49e91d08e684b1770e0cefa60401157a\vn</code>的值是否为空，再通过<code>OK.HWD()</code>获取信息，然后将<code>OK.VN</code>与信息拼接起来再通过<code>OK.ENB()</code>编码：</p>
+<p><img src="/njrat_images/352070711221181.png" alt=""></p>
+<p>其中<code>OK.VN</code>的定义是：<code>c3BsaXRnYXRldWtyYXluYQ==</code>，通过<code>Base64</code>解码得到的字符串是：<code>splitgateukrayna</code>（分裂门乌克兰）不知道这是不是组织的标签。</p>
+<p><code>OK.HWD()</code>将首先获取当前系统磁盘符，然后通过<code>GetVolumeInformation</code>获取磁盘序号：</p>
+<p><img src="/njrat_images/153143511211711.png" alt=""></p>
+<p><strong>获取主机名和用户名</strong></p>
+<p>通过调用系统<code>API</code>：<code>Environment.MachineName</code>、<code>Environment.UserName</code>，获取此本地计算机的 NetBIOS 名称和当前线程相关联的用户的用户名：</p>
+<p><img src="/njrat_images/118024411214215.png" alt=""></p>
+<p><strong>获取文件最后一次修改时间</strong></p>
+<p>然后将调用<code>OK.FR()</code>获取上次修改当前文件的时间：</p>
+<p><img src="/njrat_images/202434811223162.png" alt=""></p>
+<p><strong>获取操作系统名称</strong></p>
+<p>从<code>My.Computer.Info.OSFullName</code>属性中获取完整的操作系统名称：</p>
+<p><img src="/njrat_images/504005514211261.png" alt=""></p>
+<p><strong>获取操作系统 ServicePack 版本</strong></p>
+<p>从<code>Environment.OSVersion</code>属性中获取<code>ServicePack</code>版本：</p>
+<p><img src="/njrat_images/9980015229687.png" alt=""></p>
+<p><strong>判断操作系统版本</strong></p>
+<p>通过检索<code>x86 Program Files</code>文件夹（<code>Program Files (x86)</code>）是否存在，判断操作系统版本并记录：</p>
+<p><img src="/njrat_images/497980615217554.png" alt=""></p>
+<p><strong>判断摄像头是否存在</strong></p>
+<p>调用<code>Ok.Cam()</code>，判断是否存在摄像头：</p>
+<p><img src="/njrat_images/537180715237720.png" alt=""></p>
+<p><code>Ok.Cam()</code>中调用了<code>Win32API</code>：<code>capGetDriverDescriptionA</code>，检索捕获驱动程序的版本说明，成功则返回<code>TRUE</code>，否则返回<code>FALSE</code>：</p>
+<p><img src="/njrat_images/255500915230389.png" alt=""></p>
+<p><strong>获取当前窗口信息</strong></p>
+<p>调用<code>OK.ACT()</code>函数，获取当前窗口的相关信息，并采用<code>OK.ENB</code>进行<code>Base64</code>编码，<code>API</code>调用如下：</p>
+<ul>
+<li>调用<code>GetForegroundWindow()</code>，检索前景窗口（用户当前正在使用的窗口）的句柄；</li>
+<li>调用<code>GetWindowTextLength()</code>，检索指定窗口标题栏文本的长度；</li>
+<li>调用<code>GetWindowText()</code>，将指定窗口标题栏的文本复制到缓冲区中；</li>
+<li>调用<code>GetWindowThreadProcessId()</code>，检索创建指定窗口的线程的标识符，以及创建该窗口的进程的标识符；</li>
+<li>调用<code>Process.GetProcessById().MainWindowTitle</code>，获取进程主窗口的标题；</li>
+</ul>
+<p><img src="/njrat_images/254663715226944.png" alt=""></p>
+<p><strong>创建注册表项</strong></p>
+<p>样本会创建<code>HKEY_CURRENT_USER\Software\49e91d08e684b1770e0cefa60401157a</code></p>
+<p><img src="/njrat_images/551502016222698.png" alt=""></p>
+<h4 id="243-响应内容处理">2.4.3. 响应内容处理</h4>
+<p>样本采用<code>Receive</code>将响应的内容存储到本地缓冲区，其长度为<code>5121</code>字节（<code>private static byte[] b = new byte[5121];</code>）</p>
+<p><img src="/njrat_images/100580417216925.png" alt=""></p>
+<p>创建新的线程执行<code>OK.Ind</code>以处理提取的响应命令（该部分将放在后面的命令解析中进行说明）：</p>
+<p><img src="/njrat_images/246810917234501.png" alt=""></p>
+<h3 id="25-键盘监控">2.5. 键盘监控</h3>
+<p>新建一个<code>kl</code>类，用于存储键盘记录相关的信息：</p>
+<p><img src="/njrat_images/292755616238182.png" alt=""></p>
+<p>然后创建线程执行<code>WRK()</code>函数：</p>
+<p><img src="/njrat_images/58585516240578.png" alt=""></p>
+<p>使用<code>File.ReadAllText()</code>读取日志文件，然后进行按键捕获，最终通过<code>File.WriteAllText()</code>写入日志到当前路径下的<code>services64.exe.tmp</code>中：</p>
+<p><img src="/njrat_images/365555716235684.png" alt=""></p>
+<p>调用<code>GetAsyncKeyState()</code>检测键盘是否被按下，然后调用<code>this.Fix()</code>捕获按键内容，特殊及组合按键的捕获方式如下：</p>
+<p><img src="/njrat_images/366310810211262.png" alt=""></p>
+<p>普通按键的的捕获则是通过来<code>kl.VKCodeToUnicode()</code>实现的：</p>
+<p><img src="/njrat_images/273741310229688.png" alt=""></p>
+<p><code>kl.VKCodeToUnicode()</code>中使用<code>GetKeyboardState()</code>将256个虚拟键的状态复制到指定的缓冲区，然后通过<code>MapVirtualKey()</code>将虚拟键代码转换（映射）为扫描代码或字符值，再使用<code>GetKeyboardLayout()</code>检索活动输入区域的键盘布局，最后调用<code>ToUnicodeEx()</code>将指定的虚拟键代码和键盘状态转换为相应的 Unicode 字符：</p>
+<p><img src="/njrat_images/584851410217555.png" alt=""></p>
+<p>调用<code>this.AV()</code>，将获取的信息整合起来，准备写入到日志中去：</p>
+<p><img src="/njrat_images/491632910237721.png" alt=""></p>
+<h3 id="26-命令解析">2.6. 命令解析</h3>
+<p>在<code>OK.Ind</code>函数中，会对响应内容进行分割，其中分割符<code>OK.Y</code>的值为<code>|'|'|</code>，这为命令的下发组合的反推提供了依据：</p>
+<p><img src="/njrat_images/22665510230390.png" alt=""></p>
+<h4 id="261-proc-命令">2.6.1. proc 命令</h4>
+<p><strong>当命令组合为：<code>proc|'|'|~</code>时</strong></p>
+<p>将发送当前活动进程的<code>Id</code>及数量到<code>C2</code>服务器：</p>
+<p><img src="/njrat_images/434665810226945.png" alt=""></p>
+<p>采用<code>process.MainModule.FileVersionInfo.FileDescription</code>获取进程描述代码后进行<code>Base64</code>编码，然后构造成包含进程ID、完整进程路径、编码描述代码的字符串：</p>
+<p><img src="/njrat_images/538301311222699.png" alt=""></p>
+<p>对于<code>Windows</code>系统进程处理略有不同：</p>
+<p><img src="/njrat_images/40071911240579.png" alt=""></p>
+<p>最后将收集到的信息发送到<code>C2</code>服务器：</p>
+<p><img src="/njrat_images/337912011238183.png" alt=""></p>
+<p><strong>当命令组合为：<code>proc|'|'|k|'|'|&lt;ProcessID&gt;..</code>时</strong></p>
+<p>当采用了<code>k</code>子命令时，将循环检索<code>&lt;ProcessID&gt;</code>，杀死进程，每次执行后都将反馈结果至<code>C2</code>服务器：</p>
+<p><img src="/njrat_images/354302211235685.png" alt=""></p>
+<p><strong>当命令组合为：<code>proc|'|'|kd|'|'|&lt;ProcessID&gt;..</code>时</strong></p>
+<p>当采用了<code>kd</code>子命令时，将循环检索<code>&lt;ProcessID&gt;</code>，杀死进程并删除进程文件，每次执行后都将反馈结果至<code>C2</code>服务器（彩蛋：这里<code>Delete</code>后作者的标识依然是<code>ER</code> -_-!）：</p>
+<p><img src="/njrat_images/253812911216926.png" alt=""></p>
+<p><strong>当命令组合为：<code>proc|'|'|re|'|'|&lt;ProcessID&gt;..</code>时</strong></p>
+<p>当采用了<code>re</code>子命令时，将循环检索<code>&lt;ProcessID&gt;</code>，重启进程，每次执行后都将反馈结果至<code>C2</code>服务器：</p>
+<p><img src="/njrat_images/472993411239366.png" alt=""></p>
+<h4 id="262-rss-命令">2.6.2. rss 命令</h4>
+<p><strong>当命令组合为：<code>rss|'|'|</code>时</strong></p>
+<p>新建一个<code>ProcessStartInfo</code>类并启动，该类的作用是附加一个子进程到当前进程，其中进行了如下配置：</p>
+<ol>
+<li>设置<code>RedirectStandardInput</code>属性为<code>true</code>，应用程序的输入是从<code>StandardInput</code>流中读取的值；</li>
+<li>设置<code>RedirectStandardOutput</code>属性为<code>true</code>，将应用程序的文本输出写入<code>StandardOutput</code>流中的值；</li>
+<li>设置<code>RedirectStandardError</code>属性为<code>true</code>，将应用程序的错误输出写入<code>StandardError</code>流中的值；</li>
+<li>设置子进程名为<code>cmd.exe</code>；</li>
+<li>指定<code>OK.RS()</code>处理<code>OutputDataReceived</code>（输出）和<code>ErrorDataReceived</code>（报错）事件；</li>
+<li>指定<code>OK.ex()</code>处理<code>Exited</code>（退出）事件；</li>
+<li>设置<code>UseShellExecute</code> 设置为<code>false</code> ，表示子进程将继承调用进程的标准输入、标准输出和标准错误流；</li>
+<li>设置<code>CreateNoWindow</code>属性为<code>true</code>，表示启动子进程而不创建包含它的新窗口；</li>
+<li>设置启动进程时使用的窗口状态为<code>Hidden</code>（隐藏）；</li>
+<li>设置<code>EnableRaisingEvents</code>属性为<code>true</code>，表示如果关联的进程终止时应引发<code>Exited</code>事件。</li>
+</ol>
+<p><img src="/njrat_images/182490214234502.png" alt=""></p>
+<p><code>OK.RS()</code>函数从后期绑定值中检索<code>Data</code>字段，该字段包含子进程的<code>StandardOutput/StandardError</code>流，然后采用<code>Base64</code>编码后发送到<code>C2</code>服务器：</p>
+<p><img src="/njrat_images/590630915228048.png" alt=""></p>
+<h4 id="263-rs-命令">2.6.3. rs 命令</h4>
+<p><strong>当命令组合为：<code>rs|'|'|&lt;EnBase64[command]&gt;</code>时</strong></p>
+<p>将通过<code>Base64</code>解码第二个参数，然后通过<code>StandardInput.WriteLine</code>向之前创建的<code>StandardInput</code>流写入数据：</p>
+<p><img src="/njrat_images/263611415221182.png" alt=""></p>
+<h4 id="264-rsc-命令">2.6.4. rsc 命令</h4>
+<p><strong>当命令组合为：<code>rsc|'|'|</code>时</strong></p>
+<p>将调用<code>Kill()</code>，杀死之前创建的子进程：</p>
+<p><img src="/njrat_images/108482115211712.png" alt=""></p>
+<h4 id="265-kl-命令">2.6.5. kl 命令</h4>
+<p><strong>当命令组合为：<code>rsc|'|'|</code>时</strong></p>
+<p>将对键盘记录的日志进行<code>Base64</code>编码后发送到<code>C2</code>服务器：</p>
+<p><img src="/njrat_images/227352315214216.png" alt=""></p>
+<h4 id="266-inf-命令">2.6.6. inf 命令</h4>
+<p><strong>当命令组合为：<code>inf|'|'|</code>时</strong></p>
+<p>检索注册表<code>HKEY_CURRENT_USER\Software\49e91d08e684b1770e0cefa60401157a\vn</code>的值是否为空，再通过<code>OK.HWD()</code>获取系统磁盘卷序列号，与<code>OK.VN</code>拼接后通过<code>Base64</code>编码，然后将<code>C2</code>域名、端口、<code>AppData</code>、可执行文件名、当前进程名拼接后发送到<code>C2</code>服务器：</p>
+<p><img src="/njrat_images/266782715223163.png" alt=""></p>
+<h4 id="267-prof-命令">2.6.7. prof 命令</h4>
+<p><strong>当命令组合为：<code>prof|'|'|~|'|'|&lt;name&gt;|'|'|&lt;value&gt;</code>时</strong></p>
+<p>将调用<code>OK.STV()</code>添加注册表项：</p>
+<p><img src="/njrat_images/63635115225825.png" alt=""></p>
+<p><code>OK.STV()</code>函数则是编辑注册表<code>HKEY_CURRENT_USER\Software\49e91d08e684b1770e0cefa60401157a</code>，为其添加新的项，并设置对应键值：</p>
+<p><img src="/njrat_images/395084515216657.png" alt=""></p>
+<p><strong>当命令组合为：<code>prof|'|'|!|'|'|&lt;name&gt;|'|'|&lt;value&gt;</code>时</strong></p>
+<p>将调用<code>OK.STV()</code>添加注册表项，然后调用<code>OK.GTV()</code>获取<code>!</code>的键值，并将键值发送到<code>C2</code>服务器。</p>
+<p><img src="/njrat_images/406185115215123.png" alt=""></p>
+<p><code>OK.GTV()</code>函数内容如下：</p>
+<p><img src="/njrat_images/91094815243612.png" alt=""></p>
+<p><strong>当命令组合为：<code>prof|'|'|@|'|'|&lt;name&gt;</code>时</strong></p>
+<p>将调用<code>OK.DLV()</code>删除对应名称的键值：</p>
+<p><img src="/njrat_images/10115415211374.png" alt=""></p>
+<p><code>OK.DLV()</code>函数内容如下：</p>
+<p><img src="/njrat_images/420645515211513.png" alt=""></p>
+<h4 id="268-rn-命令">2.6.8. rn 命令</h4>
+<p><strong>当命令组合为：<code>rn|'|'|&lt;Extension_Name&gt;|'|'|&lt;URL&gt;/&lt;Base64[Gzip_Bit]&gt;</code>时</strong></p>
+<p>首先将判断第三个参数是否是<code>http</code>开头的连接，如果不是，则调用<code>FromBase64String</code>解码第三个参数，再调用<code>OK.ZIP()</code>对解码内容进行处理：</p>
+<p><img src="/njrat_images/198180416223603.png" alt=""></p>
+<p><code>OK.ZIP()</code>函数会调用<code>GZipStream</code>压缩和解压缩数据内容，不过当前的执行流程是解压缩：</p>
+<p><img src="/njrat_images/31141216228642.png" alt=""></p>
+<p>如果第三个参数是<code>http</code>开头的链接，则会使用<code>WebClient.DownloadData()</code>下载文件：</p>
+<p><img src="/njrat_images/474271917229937.png" alt=""></p>
+<p>上述两个步骤二选一执行后，将对在<code>%Temp%</code>目录下，将所有字节写入随机命名的<code>.&lt;Extension_Name&gt;</code>文件，新建进程执行该文件并向<code>C2</code>服务器发送文件名：
+<img src="/njrat_images/263612717230939.png" alt=""></p>
+<h4 id="269-inv-命令">2.6.9. inv 命令</h4>
+<p><strong>当命令组合为：<code>inv|'|'|&lt;Registry_Name&gt;|'|'|&lt;String1&gt;|'|'|&lt;String2&gt;</code>时</strong></p>
+<p>首先检索<code>HKEY_CURRENT_USER\Software\49e91d08e684b1770e0cefa60401157a</code>中<code>&lt;Registry_Name&gt;</code>的键值，如果其不为空，则将该键值返回到<code>C2</code>服务器，并继续执行；</p>
+<p>如果<code>&lt;Registry_Name&gt;</code>的键值为空，且<code>&lt;String2&gt;</code>长度为<code>1</code>，则返回<code>C2</code>服务器错误信息并结束此轮命令解析；如果<code>&lt;String2&gt;</code>长度不为<code>1</code>，则调用<code>OK.ZIP()</code>对<code>&lt;String2&gt;</code>进行解压缩，并设置<code>&lt;Registry_Name&gt;</code>键值为<code>&lt;String2&gt;</code>解压缩后的内容，成功则发送信息至<code>C2</code>服务器；</p>
+<p>但从整个流程来看，<code>&lt;Registry_Name&gt;</code>中存放的是一个插件。样本首先检索<code>&lt;Registry_Name&gt;</code>是否已包含插件，如果没有，则判断<code>&lt;String2&gt;</code>是否是插件内容，如果是则写入<code>&lt;Registry_Name&gt;</code>，然后通过<code>OK.Plugin()</code>进行插件调用：</p>
+<p><img src="/njrat_images/330533609211263.png" alt=""></p>
+<p><code>OK.Plugin()</code>函数首先调用<code>Assembly.Load()</code>加载插件程序集，然后通过<code>Assembly.GetModules()</code>枚举程序集的所有模块，再寻找<code>.A</code>结尾的类，找到后使用<code>Assembly.CreateInstance()</code>创建它的实例：</p>
+<p><img src="/njrat_images/292373909229689.png" alt=""></p>
+<p>然后使用<code>NewLateBinding.LateSet()</code>方法向后期绑定字段写入：<code>h</code>（<code>C2</code>域名）、<code>p</code>（<code>C2</code>端口）、<code>osk</code>（<code>&lt;String1&gt;</code>），然后调用<code>NewLateBinding.LateCall()</code>执行<code>start</code>函数，最后写入<code>off</code>为<code>true</code>：</p>
+<p><img src="/njrat_images/149061110226946.png" alt=""></p>
+<h4 id="2610-ret-命令">2.6.10. ret 命令</h4>
+<p><strong>当命令组合为：<code>ret|'|'|&lt;Registry_Name&gt;|'|'|&lt;String&gt;</code>时</strong></p>
+<p>从函数结构可以看出功能同<code>inv</code>命令类似，首先查找本地注册表<code>&lt;Registry_Name&gt;</code>的键值，不存在则将<code>&lt;String&gt;</code>写入并进行插件加载：</p>
+<p><img src="/njrat_images/454520710237722.png" alt=""></p>
+<p>然后调用<code>NewLateBinding.LateGet()</code>获取<code>GT</code>的值，编码后发送给<code>C2</code>服务器：</p>
+<p><img src="/njrat_images/449611010230391.png" alt=""></p>
+<h4 id="2611-cap-命令">2.6.11. CAP 命令</h4>
+<p><strong>当命令组合为：<code>CAP|'|'|&lt;Width&gt;|'|'|&lt;Height&gt;</code>时</strong></p>
+<p>将通过<code>Bitmap.GetThumbnailImage()</code>方法，截取<code>&lt;Width&gt;</code>宽，<code>&lt;Height&gt;</code>高的屏幕，然后使用<code>OK.getMD5Hash()</code>将截图加密，最后通过<code>OK.Sendb()</code>发送到<code>C2</code>服务器：</p>
+<p><img src="/njrat_images/98111810222700.png" alt=""></p>
+<p><code>OK.getMD5Hash()</code>函数内容如下：</p>
+<p><img src="/njrat_images/83462210240580.png" alt=""></p>
+<p><code>OK.Sendb()</code>函数内容如下：</p>
+<p><img src="/njrat_images/415142210238184.png" alt=""></p>
+<h4 id="2612-p-命令">2.6.12. P 命令</h4>
+<p><strong>当命令组合为：<code>P</code>时</strong></p>
+<p>将向<code>C2</code>服务器发送<code>P</code>字符：</p>
+<p><img src="/njrat_images/452492410235686.png" alt=""></p>
+<h4 id="2613-un-命令">2.6.13. un 命令</h4>
+<p><code>un</code>命令存在三个子项：<code>~</code>、<code>!</code>、<code>@</code>：</p>
+<p><img src="/njrat_images/81072610216927.png" alt=""></p>
+<p><strong>当命令组合为：<code>un|'|'|~</code>时</strong></p>
+<p>调用<code>OK.UNS()</code>会首先执行<code>OK.pr(0)</code>将当前进程设置为非关键进程，然后删除被修改的注册表项及防火墙规则，删除启动文件夹下的样本文件，调用<code>cmd</code>隐藏窗口删除自身文件，最后结束当前进程：</p>
+<p><img src="/njrat_images/216722910239367.png" alt=""></p>
+<p><code>OK.pr(0)</code>调用了未公开的<code>API</code>函数<code>NtSetInformationProcess()</code>将当前进程设置为非关键进程，防止进程结束时触发<code>BSOD</code>：</p>
+<p><img src="/njrat_images/323273010234503.png" alt=""></p>
+<p><strong>当命令组合为：<code>un|'|'|!</code>时</strong></p>
+<p>调用<code>OK.pr(0)</code>将当前进程设置为非关键进程，然后退出当前进程。</p>
+<p><strong>当命令组合为：<code>un|'|'|@</code>时</strong></p>
+<p>调用<code>OK.pr(0)</code>将当前进程设置为非关键进程，然后新进程启动自身并退出当前进程，可以理解为安全的重启。</p>
+<h4 id="2614-up-命令">2.6.14. up 命令</h4>
+<p><strong>当命令组合为：<code>up|'|'|&lt;URL&gt;/&lt;Base64[Gzip_Bit]&gt;</code>时</strong></p>
+<p>前半段与<code>rn</code>命令下载功能类似，不过<code>up</code>命令指向的文件只能是<code>exe</code>，首先会根据第二个参数的内容获取目标文件的二进制，设置注册表<code>di</code>为空，将二进制文件保存到本地<code>%temp%</code>目录下，然后将随机生成的文件名发送到<code>C2</code>服务器，然后调用<code>Process.Start()</code>启动该文件，参数命令为<code>UP：&lt;当前进程ID&gt;</code>，然后进入一个循环，当<code>di</code>被设置为<code>!</code>时，卸载自身：</p>
+<p><img src="/njrat_images/360291411228049.png" alt=""></p>
+<h4 id="2615-rg-命令">2.6.15. RG 命令</h4>
+<p><strong>当命令组合为：<code>RG|'|'|~|'|'|&lt;Registry_Item&gt;</code>时</strong></p>
+<p>首先会调用<code>OK.GetKey()</code>获取<code>&lt;Registry_Item&gt;</code>项，然后通过<code>GetSubKeyNames()</code>和<code>GetValueNames()</code>枚举该项中的所有子项和对应键值，最后发送到<code>C2</code>服务器：</p>
+<p><img src="/njrat_images/348183411211713.png" alt=""></p>
+<p><code>OK.GetKey()</code>函数构造如下：</p>
+<p><img src="/njrat_images/293383711214217.png" alt=""></p>
+<p><strong>当命令组合为：<code>RG|'|'|!|'|'|&lt;Registry_Item&gt;|'|'|&lt;Registry_Name&gt;|'|'|&lt;Registry_Value&gt;|'|'|&lt;Registry_Kind&gt;</code>时</strong></p>
+<p>设置<code>&lt;Registry_Name&gt;</code>项的键值为<code>&lt;Registry_Value&gt;</code>，类型为<code>&lt;Registry_Kind&gt;</code>：</p>
+<p><img src="/njrat_images/556894111223164.png" alt=""></p>
+<p><strong>当命令组合为：<code>RG|'|'|@|'|'|&lt;Registry_Item&gt;|'|'|&lt;Registry_Name&gt;</code>时</strong></p>
+<p>将删除<code>&lt;Registry_Name&gt;</code>的项：</p>
+<p><img src="/njrat_images/260094611216049.png" alt=""></p>
+<p><strong>当命令组合为：<code>RG|'|'|#|'|'|&lt;Registry_Item&gt;|'|'|&lt;Registry_Name&gt;</code>时</strong></p>
+<p>将创建<code>&lt;Registry_Name&gt;</code>的项：</p>
+<p><img src="/njrat_images/505854711216658.png" alt=""></p>
+<p><strong>当命令组合为：<code>RG|'|'|$|'|'|&lt;Registry_Item&gt;|'|'|&lt;Registry_Name&gt;</code>时</strong></p>
+<p>将递归删除<code>&lt;Registry_Name&gt;</code>项和它的其它子项：</p>
+<p><img src="/njrat_images/510814811243613.png" alt=""></p>
+<h2 id="3-参考资料">3. 参考资料</h2>
+<p><a href="https://cybergeeks.tech/just-another-analysis-of-the-njrat-malware-a-step-by-step-approach/">https://cybergeeks.tech/just-another-analysis-of-the-njrat-malware-a-step-by-step-approach/</a>
+<a href="https://www.secpulse.com/archives/73878.html">https://www.secpulse.com/archives/73878.html</a>
+<a href="https://app.any.run/tasks/78913e0b-1419-4571-8611-ac3372ffd578/#">https://app.any.run/tasks/78913e0b-1419-4571-8611-ac3372ffd578/#</a>
+<a href="https://www.virustotal.com/gui/file/833f86074592648c0a758098e34ab605a2b922d94dbab7141e2ce87acec03c35">https://www.virustotal.com/gui/file/833f86074592648c0a758098e34ab605a2b922d94dbab7141e2ce87acec03c35</a></p>
+]]></content>
+		</item>
 		
 		<item>
 			<title>SnakeKeylogger</title>
@@ -107,7 +402,7 @@
 <p><img src="/snake_images/3567936190299.png" alt=""></p>
 <h4 id="352-杀死防护进程">3.5.2. 杀死防护进程</h4>
 <p>该样本中存在<code>194</code>个进程目标，其中包含了杀毒软件和监控软件：</p>
-<pre><code>&quot;zlclient&quot;,&quot;egui&quot;,&quot;bdagent&quot;,&quot;npfmsg&quot;,&quot;olydbg&quot;,&quot;anubis&quot;,&quot;wireshark&quot;,&quot;avastui&quot;,&quot;_Avp32&quot;,&quot;vsmon&quot;,&quot;mbam&quot;,&quot;keyscrambler&quot;,&quot;_Avpcc&quot;,&quot;_Avpm&quot;,&quot;Ackwin32&quot;,&quot;Outpost&quot;,&quot;Anti-Trojan&quot;,&quot;ANTIVIR&quot;,&quot;Apvxdwin&quot;,&quot;ATRACK&quot;,&quot;Autodown&quot;,&quot;Avconsol&quot;,&quot;Ave32&quot;,&quot;Avgctrl&quot;,&quot;Avkserv&quot;,&quot;Avnt&quot;,&quot;Avp&quot;,&quot;Avp32&quot;,&quot;Avpcc&quot;,&quot;Avpdos32&quot;,&quot;Avpm&quot;,&quot;Avptc32&quot;,&quot;Avpupd&quot;,&quot;Avsched32&quot;,&quot;AVSYNMGR&quot;,&quot;Avwin95&quot;,&quot;Avwupd32&quot;,&quot;Blackd&quot;,&quot;Blackice&quot;,&quot;Cfiadmin&quot;,&quot;Cfiaudit&quot;,&quot;Cfinet&quot;,&quot;Cfinet32&quot;,&quot;Claw95&quot;,&quot;Claw95cf&quot;,&quot;Cleaner&quot;,&quot;Cleaner3&quot;,&quot;Defwatch&quot;,&quot;Dvp95&quot;,&quot;Dvp95_0&quot;,&quot;Ecengine&quot;,&quot;Esafe&quot;,&quot;Espwatch&quot;,&quot;F-Agnt95&quot;,&quot;Findviru&quot;,&quot;Fprot&quot;,&quot;F-Prot&quot;,&quot;F-Prot95&quot;,&quot;Fp-Win&quot;,&quot;Frw&quot;,&quot;F-Stopw&quot;,&quot;Iamapp&quot;,&quot;Iamserv&quot;,&quot;Ibmasn&quot;,&quot;Ibmavsp&quot;,&quot;Icload95&quot;,&quot;Icloadnt&quot;,&quot;Icmon&quot;,&quot;Icsupp95&quot;,&quot;Icsuppnt&quot;,&quot;Iface&quot;,&quot;Iomon98&quot;,&quot;Jedi&quot;,&quot;Lockdown2000&quot;,&quot;Lookout&quot;,&quot;Luall&quot;,&quot;MCAFEE&quot;,&quot;Moolive&quot;,&quot;Mpftray&quot;,&quot;N32scanw&quot;,&quot;NAVAPSVC&quot;,&quot;NAVAPW32&quot;,&quot;NAVLU32&quot;,&quot;Navnt&quot;,&quot;NAVRUNR&quot;,&quot;Navw32&quot;,&quot;Navwnt&quot;,&quot;NeoWatch&quot;,&quot;NISSERV&quot;,&quot;Nisum&quot;,&quot;Nmain&quot;,&quot;Normist&quot;,&quot;NORTON&quot;,&quot;Nupgrade&quot;,&quot;Nvc95&quot;,&quot;Outpost&quot;,&quot;Padmin&quot;,&quot;Pavcl&quot;,&quot;Pavsched&quot;,&quot;Pavw&quot;,&quot;PCCIOMON&quot;,&quot;PCCMAIN&quot;,&quot;Pccwin98&quot;,&quot;Pcfwallicon&quot;,&quot;Persfw&quot;,&quot;POP3TRAP&quot;,&quot;PVIEW95&quot;,&quot;Rav7&quot;,&quot;Rav7win&quot;,&quot;Rescue&quot;,&quot;Safeweb&quot;,&quot;Scan32&quot;,&quot;Scan95&quot;,&quot;Scanpm&quot;,&quot;Scrscan&quot;,&quot;Serv95&quot;,&quot;Smc&quot;,&quot;SMCSERVICE&quot;,&quot;Snort&quot;,&quot;Sphinx&quot;,&quot;Sweep95&quot;,&quot;SYMPROXYSVC&quot;,&quot;Tbscan&quot;,&quot;Tca&quot;,&quot;Tds2-98&quot;,&quot;Tds2-Nt&quot;,&quot;TermiNET&quot;,&quot;Vet95&quot;,&quot;Vettray&quot;,&quot;Vscan40&quot;,&quot;Vsecomr&quot;,&quot;Vshwin32&quot;,&quot;Vsstat&quot;,&quot;Webscanx&quot;,&quot;WEBTRAP&quot;,&quot;Wfindv32&quot;,&quot;Zonealarm&quot;,&quot;LOCKDOWN2000&quot;,&quot;RESCUE32&quot;,&quot;LUCOMSERVER&quot;,&quot;avgcc&quot;,&quot;avgcc&quot;,&quot;avgamsvr&quot;,&quot;avgupsvc&quot;,&quot;avgw&quot;,&quot;avgcc32&quot;,&quot;avgserv&quot;,&quot;avgserv9&quot;,&quot;avgserv9schedapp&quot;,&quot;avgemc&quot;,&quot;ashwebsv&quot;,&quot;ashdisp&quot;,&quot;ashmaisv&quot;,&quot;ashserv&quot;,&quot;aswUpdSv&quot;,&quot;symwsc&quot;,&quot;norton&quot;,&quot;Norton Auto-Protect&quot;,&quot;norton_av&quot;,&quot;nortonav&quot;,&quot;ccsetmgr&quot;,&quot;ccevtmgr&quot;,&quot;avadmin&quot;,&quot;avcenter&quot;,&quot;avgnt&quot;,&quot;avguard&quot;,&quot;avnotify&quot;,&quot;avscan&quot;,&quot;guardgui&quot;,&quot;nod32krn&quot;,&quot;nod32kui&quot;,&quot;clamscan&quot;,&quot;clamTray&quot;,&quot;clamWin&quot;,&quot;freshclam&quot;,&quot;oladdin&quot;,&quot;sigtool&quot;,&quot;w9xpopen&quot;,&quot;Wclose&quot;,&quot;cmgrdian&quot;,&quot;alogserv&quot;,&quot;mcshield&quot;,&quot;vshwin32&quot;,&quot;avconsol&quot;,&quot;vsstat&quot;,&quot;avsynmgr&quot;,&quot;avcmd&quot;,&quot;avconfig&quot;,&quot;licmgr&quot;,&quot;sched&quot;,&quot;preupd&quot;,&quot;MsMpEng&quot;,&quot;MSASCui&quot;,&quot;Avira.Systray&quot;
+<pre tabindex="0"><code>&quot;zlclient&quot;,&quot;egui&quot;,&quot;bdagent&quot;,&quot;npfmsg&quot;,&quot;olydbg&quot;,&quot;anubis&quot;,&quot;wireshark&quot;,&quot;avastui&quot;,&quot;_Avp32&quot;,&quot;vsmon&quot;,&quot;mbam&quot;,&quot;keyscrambler&quot;,&quot;_Avpcc&quot;,&quot;_Avpm&quot;,&quot;Ackwin32&quot;,&quot;Outpost&quot;,&quot;Anti-Trojan&quot;,&quot;ANTIVIR&quot;,&quot;Apvxdwin&quot;,&quot;ATRACK&quot;,&quot;Autodown&quot;,&quot;Avconsol&quot;,&quot;Ave32&quot;,&quot;Avgctrl&quot;,&quot;Avkserv&quot;,&quot;Avnt&quot;,&quot;Avp&quot;,&quot;Avp32&quot;,&quot;Avpcc&quot;,&quot;Avpdos32&quot;,&quot;Avpm&quot;,&quot;Avptc32&quot;,&quot;Avpupd&quot;,&quot;Avsched32&quot;,&quot;AVSYNMGR&quot;,&quot;Avwin95&quot;,&quot;Avwupd32&quot;,&quot;Blackd&quot;,&quot;Blackice&quot;,&quot;Cfiadmin&quot;,&quot;Cfiaudit&quot;,&quot;Cfinet&quot;,&quot;Cfinet32&quot;,&quot;Claw95&quot;,&quot;Claw95cf&quot;,&quot;Cleaner&quot;,&quot;Cleaner3&quot;,&quot;Defwatch&quot;,&quot;Dvp95&quot;,&quot;Dvp95_0&quot;,&quot;Ecengine&quot;,&quot;Esafe&quot;,&quot;Espwatch&quot;,&quot;F-Agnt95&quot;,&quot;Findviru&quot;,&quot;Fprot&quot;,&quot;F-Prot&quot;,&quot;F-Prot95&quot;,&quot;Fp-Win&quot;,&quot;Frw&quot;,&quot;F-Stopw&quot;,&quot;Iamapp&quot;,&quot;Iamserv&quot;,&quot;Ibmasn&quot;,&quot;Ibmavsp&quot;,&quot;Icload95&quot;,&quot;Icloadnt&quot;,&quot;Icmon&quot;,&quot;Icsupp95&quot;,&quot;Icsuppnt&quot;,&quot;Iface&quot;,&quot;Iomon98&quot;,&quot;Jedi&quot;,&quot;Lockdown2000&quot;,&quot;Lookout&quot;,&quot;Luall&quot;,&quot;MCAFEE&quot;,&quot;Moolive&quot;,&quot;Mpftray&quot;,&quot;N32scanw&quot;,&quot;NAVAPSVC&quot;,&quot;NAVAPW32&quot;,&quot;NAVLU32&quot;,&quot;Navnt&quot;,&quot;NAVRUNR&quot;,&quot;Navw32&quot;,&quot;Navwnt&quot;,&quot;NeoWatch&quot;,&quot;NISSERV&quot;,&quot;Nisum&quot;,&quot;Nmain&quot;,&quot;Normist&quot;,&quot;NORTON&quot;,&quot;Nupgrade&quot;,&quot;Nvc95&quot;,&quot;Outpost&quot;,&quot;Padmin&quot;,&quot;Pavcl&quot;,&quot;Pavsched&quot;,&quot;Pavw&quot;,&quot;PCCIOMON&quot;,&quot;PCCMAIN&quot;,&quot;Pccwin98&quot;,&quot;Pcfwallicon&quot;,&quot;Persfw&quot;,&quot;POP3TRAP&quot;,&quot;PVIEW95&quot;,&quot;Rav7&quot;,&quot;Rav7win&quot;,&quot;Rescue&quot;,&quot;Safeweb&quot;,&quot;Scan32&quot;,&quot;Scan95&quot;,&quot;Scanpm&quot;,&quot;Scrscan&quot;,&quot;Serv95&quot;,&quot;Smc&quot;,&quot;SMCSERVICE&quot;,&quot;Snort&quot;,&quot;Sphinx&quot;,&quot;Sweep95&quot;,&quot;SYMPROXYSVC&quot;,&quot;Tbscan&quot;,&quot;Tca&quot;,&quot;Tds2-98&quot;,&quot;Tds2-Nt&quot;,&quot;TermiNET&quot;,&quot;Vet95&quot;,&quot;Vettray&quot;,&quot;Vscan40&quot;,&quot;Vsecomr&quot;,&quot;Vshwin32&quot;,&quot;Vsstat&quot;,&quot;Webscanx&quot;,&quot;WEBTRAP&quot;,&quot;Wfindv32&quot;,&quot;Zonealarm&quot;,&quot;LOCKDOWN2000&quot;,&quot;RESCUE32&quot;,&quot;LUCOMSERVER&quot;,&quot;avgcc&quot;,&quot;avgcc&quot;,&quot;avgamsvr&quot;,&quot;avgupsvc&quot;,&quot;avgw&quot;,&quot;avgcc32&quot;,&quot;avgserv&quot;,&quot;avgserv9&quot;,&quot;avgserv9schedapp&quot;,&quot;avgemc&quot;,&quot;ashwebsv&quot;,&quot;ashdisp&quot;,&quot;ashmaisv&quot;,&quot;ashserv&quot;,&quot;aswUpdSv&quot;,&quot;symwsc&quot;,&quot;norton&quot;,&quot;Norton Auto-Protect&quot;,&quot;norton_av&quot;,&quot;nortonav&quot;,&quot;ccsetmgr&quot;,&quot;ccevtmgr&quot;,&quot;avadmin&quot;,&quot;avcenter&quot;,&quot;avgnt&quot;,&quot;avguard&quot;,&quot;avnotify&quot;,&quot;avscan&quot;,&quot;guardgui&quot;,&quot;nod32krn&quot;,&quot;nod32kui&quot;,&quot;clamscan&quot;,&quot;clamTray&quot;,&quot;clamWin&quot;,&quot;freshclam&quot;,&quot;oladdin&quot;,&quot;sigtool&quot;,&quot;w9xpopen&quot;,&quot;Wclose&quot;,&quot;cmgrdian&quot;,&quot;alogserv&quot;,&quot;mcshield&quot;,&quot;vshwin32&quot;,&quot;avconsol&quot;,&quot;vsstat&quot;,&quot;avsynmgr&quot;,&quot;avcmd&quot;,&quot;avconfig&quot;,&quot;licmgr&quot;,&quot;sched&quot;,&quot;preupd&quot;,&quot;MsMpEng&quot;,&quot;MSASCui&quot;,&quot;Avira.Systray&quot;
 </code></pre><p><img src="/snake_images/5608937186854.png" alt=""></p>
 <h4 id="353--定时截取屏幕">3.5.3.  定时截取屏幕</h4>
 <p>样本中的<code>Timer1</code>的功能是截取屏幕：</p>
@@ -462,7 +757,7 @@
 <p>后面会有动态解密过程，获取C&amp;C服务器地址端口：<code>45.9.20.182:52236</code></p>
 <p><img src="/redline_images/2791422189493.png" alt=""></p>
 <p>请求报文<code>header</code>格式如下：</p>
-<pre><code>{&lt;Authorization xmlns=&quot;ns1&quot;&gt;a272f3a2850ec3dccdaed97234b7c40e&lt;/Authorization&gt;}
+<pre tabindex="0"><code>{&lt;Authorization xmlns=&quot;ns1&quot;&gt;a272f3a2850ec3dccdaed97234b7c40e&lt;/Authorization&gt;}
 </code></pre><p><img src="/redline_images/4782429177360.png" alt=""></p>
 <p>发送链接请求后等待服务器响应：</p>
 <p><img src="/redline_images/2256927187529.png" alt=""></p>
@@ -479,7 +774,7 @@
 <p><img src="/redline_images/3952608186753.png" alt=""></p>
 <h4 id="222-获取浏览器信息">2.2.2. 获取浏览器信息</h4>
 <p>会读取注册表已获取默认浏览器的信息</p>
-<pre><code>SOFTWARE\\WOW6432Node\\Clients\\StartMenuInternet
+<pre tabindex="0"><code>SOFTWARE\\WOW6432Node\\Clients\\StartMenuInternet
 SOFTWARE\\Clients\\StartMenuInternet
 </code></pre><p><img src="/redline_images/255814182507.png" alt=""></p>
 <h4 id="223-获取软件列表">2.2.3. 获取软件列表</h4>
@@ -518,9 +813,9 @@ SOFTWARE\\Clients\\StartMenuInternet
 <p>如果配置文件中要求窃取加密钱包，则会对<code>BrEx.Init</code>中已加密的钱包进行扫描</p>
 <p><img src="/redline_images/858056117928.png" alt=""></p>
 <p><code>BrEx.Init</code>中存储的是采用了<code>base64</code>编码的钱包字符串：</p>
-<pre><code>ZmZuYmVsZmRvZWlvaGVua2ppYm5tYWRqaWVoamhhamJ8WW9yb2lXYWxsZXQKaWJuZWpkZmptbWtwY25scGVia2xtbmtvZW9paG9mZWN8VHJvbmxpbmsKamJkYW9jbmVpaWlubWpiamxnYWxoY2VsZ2Jlam1uaWR8TmlmdHlXYWxsZXQKbmtiaWhmYmVvZ2FlYW9laGxlZm5rb2RiZWZncGdrbm58TWV0YW1hc2sKYWZiY2JqcGJwZmFkbGttaG1jbGhrZWVvZG1hbWNmbGN8TWF0aFdhbGxldApobmZhbmtub2NmZW9mYmRkZ2Npam5taG5mbmtkbmFhZHxDb2luYmFzZQpmaGJvaGltYWVsYm9ocGpiYmxkY25nY25hcG5kb2RqcHxCaW5hbmNlQ2hhaW4Kb2RiZnBlZWloZGtiaWhtb3BrYmptb29uZmFubGJmY2x8QnJhdmVXYWxsZXQKaHBnbGZoZ2ZuaGJncGpkZW5qZ21kZ29laWFwcGFmbG58R3VhcmRhV2FsbGV0CmJsbmllaWlmZmJvaWxsa25qbmVwb2dqaGtnbm9hcGFjfEVxdWFsV2FsbGV0CmNqZWxmcGxwbGViZGpqZW5sbHBqY2JsbWprZmNmZm5lfEpheHh4TGliZXJ0eQpmaWhrYWtmb2JrbWtqb2pwY2hwZmdjbWhmam5tbmZwaXxCaXRBcHBXYWxsZXQKa25jY2hkaWdvYmdoZW5iYmFkZG9qam5uYW9nZnBwZmp8aVdhbGxldAphbWttamptbWZsZGRvZ21ocGpsb2ltaXBib2ZuZmppaHxXb21iYXQKZmhpbGFoZWltZ2xpZ25kZGtqZ29ma2NiZ2VraGVuYmh8QXRvbWljV2FsbGV0Cm5sYm1ubmlqY25sZWdrampwY2ZqY2xtY2ZnZ2ZlZmRtfE1ld0N4Cm5hbmptZGtuaGtpbmlmbmtnZGNnZ2NmbmhkYWFtbW1qfEd1aWxkV2FsbGV0Cm5rZGRnbmNkamdqZmNkZGFtZmdjbWZubGhjY25pbWlnfFNhdHVybldhbGxldApmbmpobWtoaG1rYmpra2FibmRjbm5vZ2Fnb2dibmVlY3xSb25pbldhbGxldAphaWlmYm5iZm9icG1lZWtpcGhlZWlqaW1kcG5scGdwcHxUZXJyYVN0YXRpb24KZm5uZWdwaGxvYmpkcGtoZWNhcGtpampka2djamhraWJ8SGFybW9ueVdhbGxldAphZWFjaGtubWVmcGhlcGNjaW9uYm9vaGNrb25vZWVtZ3xDb2luOThXYWxsZXQKY2dlZW9kcGZhZ2pjZWVmaWVmbG1kZnBocGxrZW5sZmt8VG9uQ3J5c3RhbApwZGFkamtma2djYWZnYmNlaW1jcGJrYWxuZm5lcGJua3xLYXJkaWFDaGFpbg==
+<pre tabindex="0"><code>ZmZuYmVsZmRvZWlvaGVua2ppYm5tYWRqaWVoamhhamJ8WW9yb2lXYWxsZXQKaWJuZWpkZmptbWtwY25scGVia2xtbmtvZW9paG9mZWN8VHJvbmxpbmsKamJkYW9jbmVpaWlubWpiamxnYWxoY2VsZ2Jlam1uaWR8TmlmdHlXYWxsZXQKbmtiaWhmYmVvZ2FlYW9laGxlZm5rb2RiZWZncGdrbm58TWV0YW1hc2sKYWZiY2JqcGJwZmFkbGttaG1jbGhrZWVvZG1hbWNmbGN8TWF0aFdhbGxldApobmZhbmtub2NmZW9mYmRkZ2Npam5taG5mbmtkbmFhZHxDb2luYmFzZQpmaGJvaGltYWVsYm9ocGpiYmxkY25nY25hcG5kb2RqcHxCaW5hbmNlQ2hhaW4Kb2RiZnBlZWloZGtiaWhtb3BrYmptb29uZmFubGJmY2x8QnJhdmVXYWxsZXQKaHBnbGZoZ2ZuaGJncGpkZW5qZ21kZ29laWFwcGFmbG58R3VhcmRhV2FsbGV0CmJsbmllaWlmZmJvaWxsa25qbmVwb2dqaGtnbm9hcGFjfEVxdWFsV2FsbGV0CmNqZWxmcGxwbGViZGpqZW5sbHBqY2JsbWprZmNmZm5lfEpheHh4TGliZXJ0eQpmaWhrYWtmb2JrbWtqb2pwY2hwZmdjbWhmam5tbmZwaXxCaXRBcHBXYWxsZXQKa25jY2hkaWdvYmdoZW5iYmFkZG9qam5uYW9nZnBwZmp8aVdhbGxldAphbWttamptbWZsZGRvZ21ocGpsb2ltaXBib2ZuZmppaHxXb21iYXQKZmhpbGFoZWltZ2xpZ25kZGtqZ29ma2NiZ2VraGVuYmh8QXRvbWljV2FsbGV0Cm5sYm1ubmlqY25sZWdrampwY2ZqY2xtY2ZnZ2ZlZmRtfE1ld0N4Cm5hbmptZGtuaGtpbmlmbmtnZGNnZ2NmbmhkYWFtbW1qfEd1aWxkV2FsbGV0Cm5rZGRnbmNkamdqZmNkZGFtZmdjbWZubGhjY25pbWlnfFNhdHVybldhbGxldApmbmpobWtoaG1rYmpra2FibmRjbm5vZ2Fnb2dibmVlY3xSb25pbldhbGxldAphaWlmYm5iZm9icG1lZWtpcGhlZWlqaW1kcG5scGdwcHxUZXJyYVN0YXRpb24KZm5uZWdwaGxvYmpkcGtoZWNhcGtpampka2djamhraWJ8SGFybW9ueVdhbGxldAphZWFjaGtubWVmcGhlcGNjaW9uYm9vaGNrb25vZWVtZ3xDb2luOThXYWxsZXQKY2dlZW9kcGZhZ2pjZWVmaWVmbG1kZnBocGxrZW5sZmt8VG9uQ3J5c3RhbApwZGFkamtma2djYWZnYmNlaW1jcGJrYWxuZm5lcGJua3xLYXJkaWFDaGFpbg==
 </code></pre><p>解码后的数据如下：</p>
-<pre><code>ffnbelfdoeiohenkjibnmadjiehjhajb|YoroiWallet
+<pre tabindex="0"><code>ffnbelfdoeiohenkjibnmadjiehjhajb|YoroiWallet
 ibnejdfjmmkpcnlpebklmnkoeoihofec|Tronlink
 jbdaocneiiinmjbjlgalhcelgbejmnid|NiftyWallet
 nkbihfbeogaeaoehlefnkodbefgpgknn|Metamask
@@ -583,7 +878,7 @@ pdadjkfkgcafgbceimcpbkalnfnepbnk|KardiaChain
 <p>当获取到上述数据后，会调用<code>Send()</code>函数，将扫描的详情进行填充，</p>
 <p><img src="/redline_images/5122110168522.png" alt=""></p>
 <p>其中<code>PartsSender.GetLocalInfo()</code>函数，会在主机上访问<code>http://733s.komawai.ru/</code>，该链接将返回主机的相关信息：</p>
-<pre><code>{&quot;city&quot;:&quot;***&quot;,&quot;country_code&quot;:&quot;***&quot;,&quot;postal&quot;:null,&quot;ip&quot;:&quot;*.*.*.*&quot;}
+<pre tabindex="0"><code>{&quot;city&quot;:&quot;***&quot;,&quot;country_code&quot;:&quot;***&quot;,&quot;postal&quot;:null,&quot;ip&quot;:&quot;*.*.*.*&quot;}
 </code></pre><p>解析上述<code>json</code>文件，填充到发送请求中：</p>
 <p><img src="/redline_images/1305416169817.png" alt=""></p>
 <h3 id="24-远程下载">2.4. 远程下载</h3>
@@ -642,7 +937,7 @@ pdadjkfkgcafgbceimcpbkalnfnepbnk|KardiaChain
 <p>然后进行列表比对，杀死指定进程</p>
 <p><img src="/mountlocker_images/2802719119999.png" alt=""></p>
 <p>进程列表如下：</p>
-<pre><code>&quot;msftesql.exe&quot;、&quot;sqlagent.exe&quot;、&quot;sqlbrowser.exe&quot;、&quot;sqlwriter.exe&quot;、&quot;oracle.exe&quot;、&quot;ocssd.exe&quot;、&quot;dbsnmp.exe&quot;、&quot;synctime.exe&quot;、&quot;agntsvc.exe&quot;、&quot;isqlplussvc.exe&quot;、&quot;xfssvccon.exe&quot;、&quot;sqlservr.exe&quot;、&quot;mydesktopservice.exe&quot;、&quot;ocautoupds.exe&quot;、&quot;encsvc.exe&quot;、&quot;firefoxconfig.exe&quot;、&quot;tbirdconfig.exe&quot;、&quot;mydesktopqos.exe&quot;、&quot;ocomm.exe&quot;、&quot;mysqld.exe&quot;、&quot;mysqld-nt.exe&quot;、&quot;mysqld-opt.exe&quot;、&quot;dbeng50.exe&quot;、&quot;sqbcoreservice.exe&quot;、&quot;excel.exe&quot;、&quot;infopath.exe&quot;、&quot;msaccess.exe&quot;、&quot;mspub.exe&quot;、&quot;onenote.exe&quot;、&quot;outlook.exe&quot;、&quot;powerpnt.exe&quot;、&quot;sqlservr.exe&quot;、&quot;thebat.exe&quot;、&quot;steam.exe&quot;、&quot;thebat64.exe&quot;、&quot;thunderbird.exe&quot;、&quot;visio.exe&quot;、&quot;winword.exe&quot;、&quot;wordpad.exe&quot;、&quot;QBW32.exe&quot;、&quot;QBW64.exe&quot;、&quot;ipython.exe&quot;、&quot;wpython.exe&quot;、&quot;python.exe&quot;、&quot;dumpcap.exe&quot;、&quot;procmon.exe&quot;、&quot;procmon64.exe&quot;、&quot;procexp.exe&quot;、&quot;procexp64.exe&quot;
+<pre tabindex="0"><code>&quot;msftesql.exe&quot;、&quot;sqlagent.exe&quot;、&quot;sqlbrowser.exe&quot;、&quot;sqlwriter.exe&quot;、&quot;oracle.exe&quot;、&quot;ocssd.exe&quot;、&quot;dbsnmp.exe&quot;、&quot;synctime.exe&quot;、&quot;agntsvc.exe&quot;、&quot;isqlplussvc.exe&quot;、&quot;xfssvccon.exe&quot;、&quot;sqlservr.exe&quot;、&quot;mydesktopservice.exe&quot;、&quot;ocautoupds.exe&quot;、&quot;encsvc.exe&quot;、&quot;firefoxconfig.exe&quot;、&quot;tbirdconfig.exe&quot;、&quot;mydesktopqos.exe&quot;、&quot;ocomm.exe&quot;、&quot;mysqld.exe&quot;、&quot;mysqld-nt.exe&quot;、&quot;mysqld-opt.exe&quot;、&quot;dbeng50.exe&quot;、&quot;sqbcoreservice.exe&quot;、&quot;excel.exe&quot;、&quot;infopath.exe&quot;、&quot;msaccess.exe&quot;、&quot;mspub.exe&quot;、&quot;onenote.exe&quot;、&quot;outlook.exe&quot;、&quot;powerpnt.exe&quot;、&quot;sqlservr.exe&quot;、&quot;thebat.exe&quot;、&quot;steam.exe&quot;、&quot;thebat64.exe&quot;、&quot;thunderbird.exe&quot;、&quot;visio.exe&quot;、&quot;winword.exe&quot;、&quot;wordpad.exe&quot;、&quot;QBW32.exe&quot;、&quot;QBW64.exe&quot;、&quot;ipython.exe&quot;、&quot;wpython.exe&quot;、&quot;python.exe&quot;、&quot;dumpcap.exe&quot;、&quot;procmon.exe&quot;、&quot;procmon64.exe&quot;、&quot;procexp.exe&quot;、&quot;procexp64.exe&quot;
 </code></pre><p><img src="/mountlocker_images/4202625116554.png" alt=""></p>
 <h3 id="加密文件">加密文件</h3>
 <p>根据<code>/NOLOCK</code>参数，选择加密函数，默认是执行第一条：</p>
@@ -655,7 +950,7 @@ pdadjkfkgcafgbceimcpbkalnfnepbnk|KardiaChain
 <p><code>ResultCheckDir</code>文件夹检查，如果满足以下要求，则跳过该文件夹（保留基础服务）：</p>
 <p><img src="/mountlocker_images/2884701155729.png" alt=""></p>
 <p>查看<code>off_14000A100</code>内容得出<code>black_list</code>文件列表如下：</p>
-<pre><code>&quot;:\\Windows\\&quot;,&quot;:\\System Volume Information\\&quot;,&quot;:\\$RECYCLE.BIN\\&quot;,&quot;:\\SYSTEM.SAV&quot;,&quot;:\\WINNT&quot;,&quot;:\\$WINDOWS.~BT\\&quot;,&quot;:\\Windows.old\\&quot;,&quot;:\\PerfLog\\&quot;,&quot;:\\Boot&quot;,&quot;:\\ProgramData\\Microsoft\\&quot;,&quot;:\\ProgramData\\Packages\\&quot;,&quot;$\\Windows\\&quot;,&quot;$\\System Volume Information\\&quot;,&quot;$\\$RECYCLE.BIN\\&quot;,&quot;$\\SYSTEM.SAV&quot;,&quot;$\\WINNT&quot;,&quot;$\\$WINDOWS.~BT\\&quot;,&quot;$\\Windows.old\\&quot;,&quot;$\\PerfLog\\&quot;,&quot;$\\Boot&quot;,&quot;$\\ProgramData\\Microsoft\\&quot;,&quot;$\\ProgramData\\Packages\\&quot;,&quot;\\WindowsApps\\&quot;,&quot;\\Microsoft\\Windows\\&quot;,&quot;\\Local\\Packages\\&quot;,&quot;\\Windows Defender&quot;,&quot;\\microsoft shared\\&quot;,&quot;\\Google\\Chrome\\&quot;,&quot;\\Mozilla Firefox\\&quot;,&quot;\\Mozilla\\Firefox\\&quot;,&quot;\\Internet Explorer\\&quot;,&quot;\\MicrosoftEdge\\&quot;,&quot;\\Tor Browser\\&quot;,&quot;\\AppData\\Local\\Temp\\&quot;
+<pre tabindex="0"><code>&quot;:\\Windows\\&quot;,&quot;:\\System Volume Information\\&quot;,&quot;:\\$RECYCLE.BIN\\&quot;,&quot;:\\SYSTEM.SAV&quot;,&quot;:\\WINNT&quot;,&quot;:\\$WINDOWS.~BT\\&quot;,&quot;:\\Windows.old\\&quot;,&quot;:\\PerfLog\\&quot;,&quot;:\\Boot&quot;,&quot;:\\ProgramData\\Microsoft\\&quot;,&quot;:\\ProgramData\\Packages\\&quot;,&quot;$\\Windows\\&quot;,&quot;$\\System Volume Information\\&quot;,&quot;$\\$RECYCLE.BIN\\&quot;,&quot;$\\SYSTEM.SAV&quot;,&quot;$\\WINNT&quot;,&quot;$\\$WINDOWS.~BT\\&quot;,&quot;$\\Windows.old\\&quot;,&quot;$\\PerfLog\\&quot;,&quot;$\\Boot&quot;,&quot;$\\ProgramData\\Microsoft\\&quot;,&quot;$\\ProgramData\\Packages\\&quot;,&quot;\\WindowsApps\\&quot;,&quot;\\Microsoft\\Windows\\&quot;,&quot;\\Local\\Packages\\&quot;,&quot;\\Windows Defender&quot;,&quot;\\microsoft shared\\&quot;,&quot;\\Google\\Chrome\\&quot;,&quot;\\Mozilla Firefox\\&quot;,&quot;\\Mozilla\\Firefox\\&quot;,&quot;\\Internet Explorer\\&quot;,&quot;\\MicrosoftEdge\\&quot;,&quot;\\Tor Browser\\&quot;,&quot;\\AppData\\Local\\Temp\\&quot;
 </code></pre><p>数据文件夹<code>&quot;Program Files&quot;</code>，<code>&quot;Program Files (x86)&quot;</code>，<code>&quot;ProgramData&quot;</code>，<code>&quot;SQL&quot;</code>：</p>
 <p><img src="/mountlocker_images/2166505156338.png" alt=""></p>
 <p><code>ResultCheckFile</code>文件名检查如下，如果文件小于最小，大于最大，或者是指定后缀名则跳过该文件：</p>
@@ -663,7 +958,7 @@ pdadjkfkgcafgbceimcpbkalnfnepbnk|KardiaChain
 <p>后缀名检查如下：</p>
 <p><img src="/mountlocker_images/5143325151055.png" alt=""></p>
 <p>查看数组可知<code>suffix_list</code>如下：</p>
-<pre><code>&quot;exe&quot;,&quot;dll&quot;,&quot;sys&quot;,&quot;msi&quot;,&quot;mui&quot;,&quot;inf&quot;,&quot;cat&quot;,&quot;bat&quot;,&quot;cmd&quot;,&quot;ps1&quot;,&quot;vbs&quot;,&quot;ttf&quot;,&quot;fon&quot;,&quot;lnk&quot;
+<pre tabindex="0"><code>&quot;exe&quot;,&quot;dll&quot;,&quot;sys&quot;,&quot;msi&quot;,&quot;mui&quot;,&quot;inf&quot;,&quot;cat&quot;,&quot;bat&quot;,&quot;cmd&quot;,&quot;ps1&quot;,&quot;vbs&quot;,&quot;ttf&quot;,&quot;fon&quot;,&quot;lnk&quot;
 </code></pre><p>然后扫描文件，以<code>FindFirstFileW</code>和<code>FindNextFileW</code>来查找文件， 循环调用以确保所有文件夹都被扫描到：</p>
 <p><img src="/mountlocker_images/1884021169047.png" alt=""></p>
 <h4 id="文件加密流程">文件加密流程</h4>
@@ -700,7 +995,7 @@ pdadjkfkgcafgbceimcpbkalnfnepbnk|KardiaChain
 <p>在蠕虫攻击结束后，退出前的最后一个函数是自我删除函数：</p>
 <p><img src="/mountlocker_images/4854100184184.png" alt=""></p>
 <p>创建一个<code>bat</code>文件，取消文件系统、只读、隐藏属性，安静模式强制删除文件</p>
-<pre><code>attrib -s -r -h %1
+<pre tabindex="0"><code>attrib -s -r -h %1
 :l
 del /F /Q %1
 if exist %1 goto l
@@ -737,7 +1032,7 @@ del %0
 <p><code>hash</code>计算采用了循环右移<code>0xD</code>位的方式，<code>Get_Dll_Name_Hash</code>函数内容如下：</p>
 <p><img src="/blackmatter_images/1502623187424.png" alt=""></p>
 <p>采用<code>python</code>代码重写就美观了许多：</p>
-<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">Calc_Dll_Hash</span><span class="p">(</span><span class="n">dll_name</span><span class="p">):</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">Calc_Dll_Hash</span><span class="p">(</span><span class="n">dll_name</span><span class="p">):</span>
     <span class="n">mask</span> <span class="o">=</span> <span class="mh">0xFFFFFFFF</span>
     <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">dll_name</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">:</span>
@@ -750,7 +1045,7 @@ del %0
 </code></pre></div><p><code>Get_Func_Name_Hash</code>函数略有不同，但大同小异：</p>
 <p><img src="/blackmatter_images/1134525180093.png" alt=""></p>
 <p><code>python</code>代码如下：</p>
-<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">Calc_Func_Hash</span><span class="p">(</span><span class="n">dll_name</span><span class="p">,</span> <span class="n">func_name</span><span class="p">):</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">Calc_Func_Hash</span><span class="p">(</span><span class="n">dll_name</span><span class="p">,</span> <span class="n">func_name</span><span class="p">):</span>
     <span class="n">mask</span> <span class="o">=</span> <span class="mh">0xFFFFFFFF</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">dll_name</span>
     <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">func_name</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">:</span>
@@ -760,7 +1055,7 @@ del %0
     <span class="k">return</span> <span class="n">result</span>
 </code></pre></div><p><strong>检验代码的有效性</strong></p>
 <p>实际上要调用的函数散列可以如下这般进行计算：</p>
-<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="n">dll_name</span> <span class="o">=</span> <span class="s2">&#34;kernel32.dll&#34;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="n">dll_name</span> <span class="o">=</span> <span class="s2">&#34;kernel32.dll&#34;</span>
 <span class="n">func_name</span> <span class="o">=</span> <span class="s2">&#34;LoadLibraryA&#34;</span>
 <span class="nb">print</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">Calc_Func_Hash</span><span class="p">(</span><span class="n">Calc_Dll_Hash</span><span class="p">(</span><span class="n">dll_name</span><span class="p">),</span> <span class="n">func_name</span><span class="p">)))</span>
 
@@ -768,7 +1063,7 @@ del %0
 <span class="n">func_name</span> <span class="o">=</span> <span class="s2">&#34;GetProcAddress&#34;</span>
 <span class="nb">print</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">Calc_Func_Hash</span><span class="p">(</span><span class="n">Calc_Dll_Hash</span><span class="p">(</span><span class="n">dll_name</span><span class="p">),</span> <span class="n">func_name</span><span class="p">)))</span>
 </code></pre></div><p>返回结果如下：</p>
-<pre><code>0x27d05eb2
+<pre tabindex="0"><code>0x27d05eb2
 0xbb93705c
 </code></pre><p>实际上加载<code>LoadLibraryA</code>和<code>GetProcAddress</code>的<code>hash</code>确实如此：</p>
 <p><img src="/blackmatter_images/3960033176648.png" alt=""></p>
@@ -778,7 +1073,7 @@ del %0
 <p>加载函数前有两个<code>push</code>，通过动态调试可以知道第一个<code>push</code>是加载函数存放起始地址，第二个<code>push</code>是需要解密的函数<code>hash</code>存放起始地址。简单调试后可以得到知道每个<code>dll</code>加载时的<code>hash</code></p>
 <p><img src="/blackmatter_images/3452450090969.png" alt=""></p>
 <p>可以检索一下所有的本地dll文件，计算hash进行比对，</p>
-<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&#34;C:</span><span class="se">\\</span><span class="s2">Windows</span><span class="se">\\</span><span class="s2">System32&#34;</span><span class="p">):</span>
     <span class="k">if</span> <span class="s1">&#39;.dll&#39;</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
         <span class="n">dll_hash</span> <span class="o">=</span> <span class="n">Calc_Dll_Hash</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
@@ -799,7 +1094,7 @@ del %0
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;C3BC5607:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0XC3BC5607&#39;</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;76E87915:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0X76E87915&#39;</span><span class="p">])</span>
 </code></pre></div><p>最终计算结果如下：</p>
-<pre><code>411677B7:ntdll.dll
+<pre tabindex="0"><code>411677B7:ntdll.dll
 B1FC7F66:kernel32.dll
 BCFA1667:advapi32.dll
 7132A177:user32.dll
@@ -817,7 +1112,7 @@ C3BC5607:activeds.dll
 <img src="/blackmatter_images/4401659177428.png" alt=""></p>
 <h3 id="23-idapython解密">2.3. IDAPython解密</h3>
 <p>根据上面的结论，可以进行简单的逻辑实现：</p>
-<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="c1"># 传入Resolve_API_Hash函数的的地址</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># 传入Resolve_API_Hash函数的的地址</span>
 <span class="k">def</span> <span class="nf">Resolve_All_APIs</span><span class="p">(</span><span class="n">resolve_ea</span><span class="p">):</span>
     <span class="c1"># 获取dll加载函数的交叉引用地址</span>
     <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">idautils</span><span class="o">.</span><span class="n">CodeRefsTo</span><span class="p">(</span><span class="n">resolve_ea</span><span class="p">,</span><span class="mi">1</span><span class="p">):</span>
@@ -867,7 +1162,7 @@ C3BC5607:activeds.dll
 <p>如果不是<code>admin</code>权限运行，则进行提权，使用<code>LdrEnumerateLoadedModules</code>将<code>C:\\Windows\\System32\\dllhost.exe</code>注入到进程的<code>PEB</code>中，这样可以使用<code>dllhost.exe</code>接管<code>COM</code>对象。</p>
 <p><img src="/blackmatter_images/3381612236730.png" alt=""></p>
 <p>调用<code>CoGetObject</code>创建以下对象：</p>
-<pre><code>Elevation:Administrator!new:{3E5FC7F9-9A51-4367-9063-A120244FBEC7}
+<pre tabindex="0"><code>Elevation:Administrator!new:{3E5FC7F9-9A51-4367-9063-A120244FBEC7}
 </code></pre><p>通过<code>COM</code>库重载自身，从而达到权限提升的目的，整个<code>BypassUAC</code>过程如下：</p>
 <p><img src="/blackmatter_images/5558435232484.png" alt=""></p>
 <p>最后再调用<code>NtTerminateProcess</code>终止自身。</p>
@@ -886,7 +1181,7 @@ C3BC5607:activeds.dll
 <p><img src="/blackmatter_images/4842829189475.png" alt=""></p>
 <h3 id="61-命令参数解析">6.1. 命令参数解析</h3>
 <p>可以看到<code>BlackMatter</code>支持以下四个命令参数：</p>
-<pre><code>-path &lt;pwd&gt;      加密&lt;pwd&gt;路径的文件
+<pre tabindex="0"><code>-path &lt;pwd&gt;      加密&lt;pwd&gt;路径的文件
 &lt;pwd&gt;            加密&lt;pwd&gt;路径的文件
 -safe            安全模式重启
 -wall            设置壁纸
@@ -905,7 +1200,7 @@ C3BC5607:activeds.dll
 <p>随机生成一个12位的密码：由3个随机大写字母、1个随机字符（<code>#</code>或<code>&amp;</code>）、3个随机数字、1个随机字符（<code>#</code>或<code>&amp;</code>）、4个随机小写字母组成。然后使用<code>NetUserSetInfo</code>创建<code>administrator</code>，密码则是刚才生成的12位字符串。</p>
 <p><img src="/blackmatter_images/4580448107343.png" alt=""></p>
 <p>然后创建注册表：<code>SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon</code>，设置以下键值：</p>
-<pre><code>AutoAdminLogon:1
+<pre tabindex="0"><code>AutoAdminLogon:1
 DefaultUserName:Administrator
 DefaultDomainName:[GetComputerNameW()]
 DefaultPassword:[Random_Password()]
@@ -921,7 +1216,7 @@ DefaultPassword:[Random_Password()]
 <p><img src="/blackmatter_images/524210140367.png" alt=""></p>
 <p><!-- raw HTML omitted -->壁纸生成的具体细节如下：<!-- raw HTML omitted --></p>
 <p>创建<code>Times New Roman</code>字体的句柄，从内存中获取壁纸突显的字符串：</p>
-<pre><code>BlackMatter Ransomware encrypted all your files!
+<pre tabindex="0"><code>BlackMatter Ransomware encrypted all your files!
 To get your data back and keep your privacy safe,
 you must find [readme.txt] file
 and follow the instructions!
@@ -929,16 +1224,16 @@ and follow the instructions!
 <p>然后以二进制形式将图片写入到<code>C:\ProgramData\[id].bmp</code>，从而生成壁纸文件：</p>
 <p><img src="/blackmatter_images/3919418135473.png" alt=""></p>
 <p>修改注册表<code>HKEY_CURRENT_USER\Control Panel\Desktop</code>的键值，设置桌面壁纸：</p>
-<pre><code>WallPaper:C:\ProgramData\[id].bmp
+<pre tabindex="0"><code>WallPaper:C:\ProgramData\[id].bmp
 WallpaperStyle:10
 </code></pre><p><img src="/blackmatter_images/992920116714.png" alt=""></p>
 <h4 id="634-重启进入安全模式">6.3.4. 重启进入安全模式</h4>
 <p><code>BlackMatter</code>会根据当前运行的操作系统版本，选择相应的命令使用<code>WinExec</code>执行，并重启操作系统。
 当传递的参数为<code>True</code>时（从上方可以得知，当前模式传递的是<code>True</code>），启用安全模式：</p>
-<pre><code>winsows vista 之前的操作系统：bcdedit /set {{current}} safeboot network
+<pre tabindex="0"><code>winsows vista 之前的操作系统：bcdedit /set {{current}} safeboot network
 winsows vista 之后的操作系统：bootcfg /raw /a /safeboot:network /id 1
 </code></pre><p>当传递的参数为<code>False</code>时，该函数还提供了关闭功能：</p>
-<pre><code>winsows vista 之前的操作系统：bcdedit /deletevalue {{current}} safeboot
+<pre tabindex="0"><code>winsows vista 之前的操作系统：bcdedit /deletevalue {{current}} safeboot
 winsows vista 之后的操作系统：bootcfg /raw /fastdetect /id 1
 </code></pre><p><img src="/blackmatter_images/1700123139154.png" alt=""></p>
 <h3 id="64-壁纸模式">6.4. 壁纸模式</h3>
@@ -954,7 +1249,7 @@ winsows vista 之后的操作系统：bootcfg /raw /fastdetect /id 1
 <h4 id="652-网络请求">6.5.2. 网络请求</h4>
 <p>如果配置文件中的<code>Post_Flag</code>为真，则会收集数据并发送到<code>C2</code>服务器。</p>
 <p>在加密前会进行一次基本信息的收集，数据结构的<code>json</code>格式如下：</p>
-<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
    <span class="nt">&#34;bot_version&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
    <span class="nt">&#34;bot_id&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
    <span class="nt">&#34;bot_company&#34;</span><span class="p">:</span><span class="s2">&#34;%.8x%.8x%.8x%.8x%&#34;</span><span class="p">,</span>
@@ -965,15 +1260,15 @@ winsows vista 之后的操作系统：bootcfg /raw /fastdetect /id 1
    <span class="nt">&#34;host_arch&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
    <span class="nt">&#34;host_lang&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
    <span class="nt">&#34;disks_info&#34;</span><span class="p">:[</span>
-      <span class="p">{</span>						<span class="err">//当存在多个磁盘，该字典将变多</span>
-         <span class="nt">&#34;disk_name&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
+      <span class="p">{</span>						<span class="c1">//当存在多个磁盘，该字典将变多
+</span><span class="c1"></span>         <span class="nt">&#34;disk_name&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
          <span class="nt">&#34;disk_size&#34;</span><span class="p">:</span><span class="s2">&#34;%u&#34;</span><span class="p">,</span>
          <span class="nt">&#34;free_size&#34;</span><span class="p">:</span><span class="s2">&#34;%u&#34;</span>
       <span class="p">}</span>
    <span class="p">]</span>
 <span class="p">}</span>
 </code></pre></div><p>以下是我在虚拟机中获取的加密前发送数据：</p>
-<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
 	<span class="nt">&#34;bot_version&#34;</span><span class="p">:</span><span class="s2">&#34;1.2&#34;</span><span class="p">,</span>
 	<span class="nt">&#34;bot_id&#34;</span><span class="p">:</span><span class="s2">&#34;26a3ebea3de1f2c535eb81c5456fc830&#34;</span><span class="p">,</span>
 	<span class="nt">&#34;bot_company&#34;</span><span class="p">:</span><span class="s2">&#34;512478c08dada2af19e49808fbda5b0b&#34;</span><span class="p">,</span>
@@ -992,7 +1287,7 @@ winsows vista 之后的操作系统：bootcfg /raw /fastdetect /id 1
 	<span class="p">]</span>
 <span class="p">}</span>
 </code></pre></div><p>当加密完成以后，还会进行一次结果统计，数据结构的<code>json</code>格式如下：</p>
-<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
 	<span class="nt">&#34;bot_version&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
 	<span class="nt">&#34;bot_id&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
 	<span class="nt">&#34;bot_company&#34;</span><span class="p">:</span><span class="s2">&#34;%.8x%.8x%.8x%.8x%&#34;</span><span class="p">,</span>
@@ -1004,7 +1299,7 @@ winsows vista 之后的操作系统：bootcfg /raw /fastdetect /id 1
 	<span class="nt">&#34;stop_time&#34;</span><span class="p">:</span><span class="s2">&#34;%u&#34;</span>
 <span class="p">}</span>
 </code></pre></div><p>以下是我在虚拟机中获取的加密后发送数据</p>
-<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
 	<span class="nt">&#34;bot_version&#34;</span><span class="p">:</span><span class="s2">&#34;1.2&#34;</span><span class="p">,</span>
 	<span class="nt">&#34;bot_id&#34;</span><span class="p">:</span><span class="s2">&#34;26a3ebea3de1f2c535eb81c5456fc830&#34;</span><span class="p">,</span>
 	<span class="nt">&#34;bot_company&#34;</span><span class="p">:</span><span class="s2">&#34;512478c08dada2af19e49808fbda5b0b&#34;</span><span class="p">,</span>
@@ -1032,11 +1327,11 @@ winsows vista 之后的操作系统：bootcfg /raw /fastdetect /id 1
 <p>调用<code>IEnumWbemClassObject::Next</code>枚举系统上的所有卷影副本，调用<code>IEnumWbemClassObject::Get</code>获取每个卷影副本的 ID，并调用<code>IWbemServices::DeleteInstance</code>删除它们。</p>
 <h4 id="655-终止服务">6.5.5. 终止服务</h4>
 <p>当<code>Kill_Service_Flag</code>为<code>True</code>时，使用<code>OpenSCManagerW</code>获取服务控制管理器句柄，然后使用<code>EnumServicesStatusExW</code>枚举所有服务，对比是否在终止名单中，如果是，则使用<code>ControlService</code>发送控制代码，使用<code>DeleteService</code>删除服务，服务列表如下：</p>
-<pre><code>&quot;mepocs&quot;、&quot;memtas&quot;、&quot;veeam&quot;、&quot;svc$&quot;、&quot;backup&quot;、&quot;sql&quot;、&quot;vss&quot;
+<pre tabindex="0"><code>&quot;mepocs&quot;、&quot;memtas&quot;、&quot;veeam&quot;、&quot;svc$&quot;、&quot;backup&quot;、&quot;sql&quot;、&quot;vss&quot;
 </code></pre><p><img src="/blackmatter_images/3309612136445.png" alt=""></p>
 <h4 id="656-杀死进程">6.5.6. 杀死进程</h4>
 <p>当<code>Kill_Process_Flag</code>为<code>True</code>时，使用<code>NtQuerySystemInformation</code>检索进程列表，对比是否在杀死名单中，如果是，使用<code>NtOpenProcess</code>确认句柄，使用<code>NtTerminateProcess</code>杀死进程，进程列表如下：</p>
-<pre><code>&quot;encsvc&quot;、&quot;thebat&quot;、&quot;mydesktopqos&quot;、&quot;xfssvccon&quot;、&quot;firefox&quot;、&quot;infopath&quot;、&quot;winword&quot;、&quot;steam&quot;、&quot;synctime&quot;、&quot;notepad&quot;、&quot;ocomm&quot;、&quot;onenote&quot;、&quot;mspub&quot;、&quot;thunderbird&quot;、&quot;agntsvc&quot;、&quot;sql&quot;、&quot;excel&quot;、&quot;powerpnt&quot;、&quot;outlook&quot;、&quot;wordpad&quot;、&quot;dbeng50&quot;、&quot;isqlplussvc&quot;、&quot;sqbcoreservice&quot;、&quot;oracle&quot;、&quot;ocautoupds&quot;、&quot;dbsnmp&quot;、&quot;msaccess&quot;、&quot;tbirdconfig&quot;、&quot;ocssd&quot;、&quot;mydesktopservice&quot;、&quot;visio&quot;
+<pre tabindex="0"><code>&quot;encsvc&quot;、&quot;thebat&quot;、&quot;mydesktopqos&quot;、&quot;xfssvccon&quot;、&quot;firefox&quot;、&quot;infopath&quot;、&quot;winword&quot;、&quot;steam&quot;、&quot;synctime&quot;、&quot;notepad&quot;、&quot;ocomm&quot;、&quot;onenote&quot;、&quot;mspub&quot;、&quot;thunderbird&quot;、&quot;agntsvc&quot;、&quot;sql&quot;、&quot;excel&quot;、&quot;powerpnt&quot;、&quot;outlook&quot;、&quot;wordpad&quot;、&quot;dbeng50&quot;、&quot;isqlplussvc&quot;、&quot;sqbcoreservice&quot;、&quot;oracle&quot;、&quot;ocautoupds&quot;、&quot;dbsnmp&quot;、&quot;msaccess&quot;、&quot;tbirdconfig&quot;、&quot;ocssd&quot;、&quot;mydesktopservice&quot;、&quot;visio&quot;
 </code></pre><p><img src="/blackmatter_images/5616521163400.png" alt=""></p>
 <h4 id="657-io多线程加密">6.5.7. I/O多线程加密</h4>
 <p>创建用于处理<code>I/O</code>数据包的子线程，这些子线程使用<code>GetQueuedCompletionStatus</code>与<code>PostQueuedCompletionStatus</code>与主线程进行通信。接收到的数据包，都是需要处理的文件。</p>
@@ -1085,7 +1380,7 @@ winsows vista 之后的操作系统：bootcfg /raw /fastdetect /id 1
 <p>然后使用<code>CreateIoCompletionPort</code>向全局<code>I/O</code>注册文件句柄，让<code>I/O</code>子线程进行加密：</p>
 <p><img src="/blackmatter_images/1081156172547.png" alt=""></p>
 <p><strong>参考链接</strong></p>
-<pre><code>RID 说明：https://docs.microsoft.com/zh-tw/dotnet/api/system.security.principal.windowsprincipal.isinrole?redirectedfrom=MSDN&amp;view=windowsdesktop-5.0#overloads
+<pre tabindex="0"><code>RID 说明：https://docs.microsoft.com/zh-tw/dotnet/api/system.security.principal.windowsprincipal.isinrole?redirectedfrom=MSDN&amp;view=windowsdesktop-5.0#overloads
 OSMajorVersion 与 OSMinorVersion 对照表：https://docs.microsoft.com/en-us/windows-hardware/drivers/install/inf-manufacturer-section
 样本配置文件提取器：https://github.com/advanced-threat-research/DarkSide-Config-Extract
 </code></pre>]]></content>
@@ -1104,7 +1399,7 @@ OSMajorVersion 与 OSMinorVersion 对照表：https://docs.microsoft.com/en-us/w
 <p><img src="/workminer_images/2436651160000.png" alt=""></p>
 <h2 id="脱壳">脱壳</h2>
 <p>使用<code>upx3.93</code>脱壳失败，提示：</p>
-<pre><code>upx: work64: CantUnpackException: p_info corrupted
+<pre tabindex="0"><code>upx: work64: CantUnpackException: p_info corrupted
 </code></pre><p>使用文本标记其查看二进制文件，发现<code>p_info</code>被修改了：</p>
 <p><img src="/workminer_images/2446734175295.png" alt=""></p>
 <p>从末尾找到文件大小：</p>
@@ -1120,7 +1415,7 @@ OSMajorVersion 与 OSMinorVersion 对照表：https://docs.microsoft.com/en-us/w
 <p>执行命令终止其他挖矿进程</p>
 <p><img src="/workminer_images/980700198976.png" alt=""></p>
 <p>命令列表如下：</p>
-<pre><code>ps -ef | grep ddg | grep -v grep | awk '{print $2}' | xargs kill -9
+<pre tabindex="0"><code>ps -ef | grep ddg | grep -v grep | awk '{print $2}' | xargs kill -9
 ps -ef | grep xmr | grep -v grep | awk '{print $2}' | xargs kill -9
 ps -ef | grep tcp: | grep -v grep | awk '{print $2}' | xargs kill -9
 ps -ef | grep x86_ | grep -v grep | awk '{print $2}' | xargs kill -9
@@ -1144,7 +1439,7 @@ ps -ef | grep /usr/bin/bsd-port/getty | grep -v grep | awk '{print $2}' | xargs 
 <p>生成配置文件：<code>/tmp/config.json</code></p>
 <p><img src="/workminer_images/4658020187658.png" alt=""></p>
 <p>配置文件内容如下（其中包含了挖矿钱包）：</p>
-<pre><code>{
+<pre tabindex="0"><code>{
 	&quot;api&quot;: {
 		&quot;id&quot;: null,
 		&quot;worker-id&quot;: null
@@ -1223,7 +1518,7 @@ ps -ef | grep /usr/bin/bsd-port/getty | grep -v grep | awk '{print $2}' | xargs 
 <p>生成<code>/tmp/secure.sh</code>脚本并添加可执行权限：</p>
 <p><img src="/workminer_images/5877555184733.png" alt=""></p>
 <p>脚本内容如下：</p>
-<pre><code>#!/bin/bash
+<pre tabindex="0"><code>#!/bin/bash
 
 LIMIT=8
 while true ; do
@@ -1243,7 +1538,7 @@ done
 </code></pre><p>生成<code>/tmp/auth.sh</code>脚本并添加可执行权限：</p>
 <p><img src="/workminer_images/141357180984.png" alt=""></p>
 <p>脚本内容如下：</p>
-<pre><code>#!/bin/bash
+<pre tabindex="0"><code>#!/bin/bash
 
 LIMIT=8
 while true ; do
@@ -1270,26 +1565,26 @@ done
 <p>生成<code>/root/.ssh/authorized_keys</code>，设置权限为<code>600</code>，并使用<code>echo</code>写入内容：</p>
 <p><img src="/workminer_images/5574831203213.png" alt=""></p>
 <p>写入公钥命令为：</p>
-<pre><code>echo &quot;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDc3BlbiQaznPT8TScrs9YIzmrpI9Lpa4LtCjB5z0LuQ4o6XwvzomxAixn2F1jaUl175Cxcg3PmUsPOLE+WeWicKqL2YZ46SotjZgnS6JjXpuZVi7V0DSiXu0itlwWDC9m8huBvUBSIsDCsgb9OeG6rlrCyZgTW+qZciK+KZ8rwlFp3CFyxoF2122ueOnl5pAUCy1iHqGun03dMdUxA1d3KnxSZ3NQrYiH69dc8/YhV4SriOW9psc0pv9KeBLF0OXHtEAdbnSlwfk2uTjjBMK0nDidl7wS52Ygi/H4+P+4EXkSzf4Jj4/L6P3c5rLC3/l3RFdo1T7EQ8fH6NsTYJNZ7 root@u911&quot; &gt;&gt; /root/.ssh/authorized_keys
+<pre tabindex="0"><code>echo &quot;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDc3BlbiQaznPT8TScrs9YIzmrpI9Lpa4LtCjB5z0LuQ4o6XwvzomxAixn2F1jaUl175Cxcg3PmUsPOLE+WeWicKqL2YZ46SotjZgnS6JjXpuZVi7V0DSiXu0itlwWDC9m8huBvUBSIsDCsgb9OeG6rlrCyZgTW+qZciK+KZ8rwlFp3CFyxoF2122ueOnl5pAUCy1iHqGun03dMdUxA1d3KnxSZ3NQrYiH69dc8/YhV4SriOW9psc0pv9KeBLF0OXHtEAdbnSlwfk2uTjjBMK0nDidl7wS52Ygi/H4+P+4EXkSzf4Jj4/L6P3c5rLC3/l3RFdo1T7EQ8fH6NsTYJNZ7 root@u911&quot; &gt;&gt; /root/.ssh/authorized_keys
 </code></pre><p>检测是否存在以下文件：</p>
-<pre><code>/etc/rc.d/rc.local
+<pre tabindex="0"><code>/etc/rc.d/rc.local
 /etc/rc.local
 /etc/rc.conf
 /etc/crontab
 </code></pre><p><img src="/workminer_images/1157936208252.png" alt=""></p>
 <p>检测是否存在以下文件：</p>
-<pre><code>/var/spool/cron/root
+<pre tabindex="0"><code>/var/spool/cron/root
 /var/spool/cron/crontabs
 </code></pre><p><img src="/workminer_images/1021943209547.png" alt=""></p>
 <p>附加文件：</p>
-<pre><code>/var/spool/cron/root
+<pre tabindex="0"><code>/var/spool/cron/root
 /var/spool/cron/crontabs/root
 </code></pre><p><img src="/workminer_images/4794654210549.png" alt=""></p>
 <h3 id="修改防火墙规则">修改防火墙规则</h3>
 <p>执行命令，修改防火墙规则：</p>
 <p><img src="/workminer_images/5133802220726.png" alt=""></p>
 <p>修改命令如下：</p>
-<pre><code>iptables -I INPUT  -p tcp --dport
+<pre tabindex="0"><code>iptables -I INPUT  -p tcp --dport
 iptables -I OUTPUT -p tcp --sport
 iptables -I POSTROUTING -t nat -p tcp --sport
 iptables -I PREROUTING  -t nat -p tcp --dport
@@ -1345,7 +1640,7 @@ iptables -I POSTROUTING -t nat -p udp --sport %d -j ACCEPT
 <p>进入其中可以看到明显的<code>socket</code>、<code>bind</code>函数：</p>
 <p><img src="/workminer_images/3633214122380.png" alt=""></p>
 <p>外联过程分析结束，链接分析如下：</p>
-<pre><code>P2P节点如下：
+<pre tabindex="0"><code>P2P节点如下：
 router.bittorrent.com:6881
 bttracker.debian.org:6881
 router.utorrent.com:6881
@@ -1391,7 +1686,7 @@ dht.transmissionbt.com:6881
 <p>Agent Tesla 病毒在其自己的网站上进行营销和销售，该网站错误地声称该程序是为个人使用而创建的合法键盘记录器，因此在黑客社区中非常流行。不仅仅是因为它的易用性和技术支持，可以在攻击者出售此恶意软件的“官方”网站以及专用的 Discord 服务器上找到。尽管声称该软件是合法的，但售卖人员还是会就非法使用该病毒提出建议。</p>
 <h2 id="2-样本详情">2. 样本详情</h2>
 <p>本次分析的样本哈希如下：</p>
-<pre><code>MD5：af98b88c0b5dc353fbe536bd6fb8c4ec
+<pre tabindex="0"><code>MD5：af98b88c0b5dc353fbe536bd6fb8c4ec
 SHA256：cc262fd3fa1f646aff2f5bcdea33beca5ed081260028b8604d5f714dd23c03ac
 </code></pre><p>可以从<a href="https://app.any.run/tasks/84fc78ab-2695-4a5a-9a89-45f2497c38de/">any.run沙箱</a>查看到样本的行为及下载样本。</p>
 <p>将样本用PEStudio打开，可以看到<code>Mircrosoft</code>将其标记为<code>AgentTesla</code>：</p>
@@ -1427,7 +1722,7 @@ SHA256：cc262fd3fa1f646aff2f5bcdea33beca5ed081260028b8604d5f714dd23c03ac
 <p>这里可以使用<code>de4dot</code>对其进行动态解密，作者在<code>readme</code>中进行了如下说明：</p>
 <p><img src="/tesla_images/1697150189976.png" alt=""></p>
 <p><code>de4dot</code>对<code>--strtyp</code>参数的说明如下：</p>
-<pre><code>String decrypter types
+<pre tabindex="0"><code>String decrypter types
   none             Don't decrypt strings
   default          Use default string decrypter type (usually static)
   static           Use static string decrypter if available
@@ -1436,7 +1731,7 @@ SHA256：cc262fd3fa1f646aff2f5bcdea33beca5ed081260028b8604d5f714dd23c03ac
 </code></pre><p>这里选取了<code>emulate</code>进行尝试，但是作者显然并不想我们这么容易就解除了混淆，加密字符串居然有<code>6000535h - 600022Bh = 30Ah</code>处！</p>
 <p><img src="/tesla_images/440434116345.png" alt=""></p>
 <p>所以我简单生成了一个粗糙的bat：</p>
-<pre><code>de4dot.exe dump2.bin --strtyp emulate --strtok 600022B
+<pre tabindex="0"><code>de4dot.exe dump2.bin --strtyp emulate --strtok 600022B
 rename dump2-cleaned.bin dump3.bin
 de4dot.exe dump3.bin --strtyp emulate --strtok 600022C
 del dump3.bin
@@ -1496,11 +1791,11 @@ rename dump3-cleaned.bin dump3.bin
 <p>特殊软件的凭证窃取（下图是Edge浏览器的窃取函数段）</p>
 <p><img src="/tesla_images/3238651188043.png" alt=""></p>
 <p>从Edge凭证窃取函数可以看出，窃取函数存在以下特征：</p>
-<pre><code>UserName =
+<pre tabindex="0"><code>UserName =
 Password =
 Browser = &quot;&quot;
 </code></pre><p>检索全部代码，反复确认后，发现窃取目标包含以下对象：</p>
-<pre><code>Browser = &quot;IE/Edge&quot;
+<pre tabindex="0"><code>Browser = &quot;IE/Edge&quot;
 Browser = &quot;Edge Chromium&quot;
 Browser = &quot;QQ Browser&quot;
 Browser = &quot;incredimail&quot;
@@ -1548,7 +1843,7 @@ x.Browser = &quot;Internet Download Manager&quot;
 <p>进入程序入口，会生成一串字符串，用于标识受害者主机，然后会设置一个30s的定时循环任务，接着开始进行浏览器用户数据窃取；</p>
 <p><img src="/tesla_images/2016144140664.png" alt=""></p>
 <p>汇总如下：</p>
-<pre><code>@&quot;C:\Users\alee\AppData\Local\7Star\7Star\User Data&quot;
+<pre tabindex="0"><code>@&quot;C:\Users\alee\AppData\Local\7Star\7Star\User Data&quot;
 @&quot;C:\Users\alee\AppData\Local\uCozMedia\Uran\User Data&quot;
 @&quot;C:\Users\alee\AppData\Local\MapleStudio\ChromePlus\User Data&quot;
 @&quot;C:\Users\alee\AppData\Local\Yandex\YandexBrowser\User Data&quot;
@@ -1579,7 +1874,7 @@ x.Browser = &quot;Internet Download Manager&quot;
 <p>针对<code>logins</code>内的文件窃取函数内容如下：</p>
 <p><img src="/tesla_images/4252004160664.png" alt=""></p>
 <p>往下则是一列窃取函数的调用，核实并整理后如下：</p>
-<pre><code>list.AddRange(global::A.b.E.LoginsSteal(x.A, x.A));
+<pre tabindex="0"><code>list.AddRange(global::A.b.E.LoginsSteal(x.A, x.A));
 list.AddRange(global::A.b.E.RimArtsSteal());
 list.AddRange(global::A.b.E.ChromeSteal());
 list.AddRange(global::A.b.E.FlockSteal());
@@ -1623,7 +1918,7 @@ list.AddRange(global::A.b.E.PaleMoonSteal());
 			<content type="html"><![CDATA[<h1 id="darksideransomware样本分析">DarksideRansomware样本分析</h1>
 <h2 id="样本信息">样本信息</h2>
 <p>本次分析的样本来源于<a href="https://bazaar.abuse.ch/sample/151fbd6c299e734f7853497bd083abfa29f8c186a9db31dbe330ace2d35660d5/">MALWAREbazaar</a>。具体的SHA、MD5如下：</p>
-<pre><code>SHA256 hash:151fbd6c299e734f7853497bd083abfa29f8c186a9db31dbe330ace2d35660d5
+<pre tabindex="0"><code>SHA256 hash:151fbd6c299e734f7853497bd083abfa29f8c186a9db31dbe330ace2d35660d5
 SHA1 hash:eeb28144f39b275ee1ec008859e80f215710dc57
 MD5 hash:9d418ecc0f3bf45029263b0944236884
 </code></pre><p>本次分析的环境是：<code>windows 7 ultimate sp1 x64</code></p>
@@ -1639,14 +1934,14 @@ MD5 hash:9d418ecc0f3bf45029263b0944236884
 <p>dll的加载又解密函数解密dll名称，再使用<code>loardlibrary</code>加载。解密函数核心流程如下：</p>
 <p><img src="/darkside_images/3880452197020.png" alt=""></p>
 <p>最后解出来的dll名称为：</p>
-<pre><code>ntdll,kernel32,advapi32,shell32,ole32,oleaut32,mpr,iphlpapi,shlwapi,gdi32,user32,netapi32,wsock32,wininet,wtsapi32
+<pre tabindex="0"><code>ntdll,kernel32,advapi32,shell32,ole32,oleaut32,mpr,iphlpapi,shlwapi,gdi32,user32,netapi32,wsock32,wininet,wtsapi32
 </code></pre><h4 id="字符串解析">字符串解析</h4>
 <p>以下就是字符串解析的核心算法：</p>
 <p><img src="/darkside_images/5527236106855.png" alt=""></p>
 <p>当解密函数运行结束，可以看到以下调用关系：</p>
 <p><img src="/darkside_images/1727847127021.png" alt=""></p>
 <p>手动导出字符串，内容如下：</p>
-<pre><code>$recycle.bin，config.msi，$windows.~bt，$windows.~ws，windows，appdata，application data，boot，google，mozilla，program files，program files (x86)，programdata，system volume information，tor browser，windows.old，intel，msocache，perflogs，x64dbg，public，all users，default
+<pre tabindex="0"><code>$recycle.bin，config.msi，$windows.~bt，$windows.~ws，windows，appdata，application data，boot，google，mozilla，program files，program files (x86)，programdata，system volume information，tor browser，windows.old，intel，msocache，perflogs，x64dbg，public，all users，default
 
 autorun.inf，boot.ini，bootfont.bin，bootsect.bak，desktop.ini，iconcache.db，ntldr，ntuser.dat，ntuser.dat.log，ntuser.ini，thumbs.db
 
@@ -1696,7 +1991,7 @@ DO NOT MODIFY or try to RECOVER any files yourself. We WILL NOT be able to RESTO
 <p>进入函数内部，根据api调用情况可以看到该函数结构简单：</p>
 <p><img src="/darkside_images/2427851119690.png" alt=""></p>
 <p>这里有两个判断较为重要</p>
-<pre><code>cmp dword ptr ds:[eax+0x8], 0x20
+<pre tabindex="0"><code>cmp dword ptr ds:[eax+0x8], 0x20
 cmp dword ptr ds:[eax+0xC], 0x220
 </code></pre><p>在微软官方的<a href="https://docs.microsoft.com/en-us/windows/win32/secauthz/well-known-sids">安全标识符说明</a>中可以找到sid的值为32和544的角色权限分别如下：</p>
 <p><img src="/darkside_images/5706513170561.png" alt=""></p>
@@ -1832,7 +2127,7 @@ cmp dword ptr ds:[eax+0xC], 0x220
 </table>
 <h4 id="发送信息至服务器函数">发送信息至服务器函数</h4>
 <p>将本地的系统相关信息发送到攻击者的服务器：json格式内容如下：</p>
-<pre><code>{
+<pre tabindex="0"><code>{
 	&quot;bot&quot;:{
 	&quot;ver&quot;:&quot;1.8.6.2&quot;,
 	&quot;uid&quot;:&quot;060108efb510c98&quot;
@@ -1854,9 +2149,9 @@ cmp dword ptr ds:[eax+0xC], 0x220
 <p>核心代码如下：</p>
 <p><img src="/darkside_images/5604835168666.png" alt=""></p>
 <p>powershell命令如下：</p>
-<pre><code>40B5E2:L&quot;powershell -ep bypass -c \&quot;(0..61)|%{{$s+=[char][byte]('0x'+'4765742D576D694F626A6563742057696E33325F536861646F77636F7079207C20466F72456163682D4F626A656374207B245F2E44656C65746528293B7D20'.Substring(2*$_,2))}};iex $s\&quot;&quot;
+<pre tabindex="0"><code>40B5E2:L&quot;powershell -ep bypass -c \&quot;(0..61)|%{{$s+=[char][byte]('0x'+'4765742D576D694F626A6563742057696E33325F536861646F77636F7079207C20466F72456163682D4F626A656374207B245F2E44656C65746528293B7D20'.Substring(2*$_,2))}};iex $s\&quot;&quot;
 </code></pre><p>将十六进制转换成字符串如下：</p>
-<pre><code>Get-WmiObject Win32_Shadowcopy | ForEach-Object {$_.Delete();}
+<pre tabindex="0"><code>Get-WmiObject Win32_Shadowcopy | ForEach-Object {$_.Delete();}
 </code></pre><h4 id="检索本地磁盘空闲空间">检索本地磁盘空闲空间</h4>
 <p>空闲空间检索存在两个判断，但至少保证有100mb才会进行下一步。</p>
 <p><img src="/darkside_images/192720173802.png" alt=""></p>
@@ -1875,9 +2170,9 @@ cmp dword ptr ds:[eax+0xC], 0x220
 <p>自我删除的主函数如下：</p>
 <p><img src="/darkside_images/33802100566.png" alt=""></p>
 <p>使用<code>Procmon</code>检测到的指令如下：</p>
-<pre><code>&quot;C:\Windows\system32\cmd.exe&quot; /C DEL /F /Q C:\Users\alee\Desktop\DARKSI~1\Darkside.exe &gt;&gt; NUL
+<pre tabindex="0"><code>&quot;C:\Windows\system32\cmd.exe&quot; /C DEL /F /Q C:\Users\alee\Desktop\DARKSI~1\Darkside.exe &gt;&gt; NUL
 </code></pre><p>在命令行使用<code>cmd /?</code>可以了解到：</p>
-<pre><code>/C      执行字符串指定的命令然后终止
+<pre tabindex="0"><code>/C      执行字符串指定的命令然后终止
 /Q      关闭回显
 /F      启用文件和目录名完成字符
 </code></pre><h2 id="总结">总结</h2>
@@ -1907,7 +2202,7 @@ cmp dword ptr ds:[eax+0xC], 0x220
 <p>这是我分析的第一个样本，其中一定会有遗漏的地方，以及牵强之处，希望大家多多批评指正。</p>
 <h2 id="1-行为捕获">1. 行为捕获</h2>
 <p>直接运行样本，并使用火绒剑进行行为捕获：</p>
-<pre><code>16:43:31:605,	tsay.exe,	1064:0,	1064,	EXEC_create,	C:\Users\ALEE\Desktop\incaseformat\tsay.exe,	parent_pid:4700 cmdline:'&quot;C:\Users\ALEE\Desktop\incaseformat\tsay.exe&quot; ' image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
+<pre tabindex="0"><code>16:43:31:605,	tsay.exe,	1064:0,	1064,	EXEC_create,	C:\Users\ALEE\Desktop\incaseformat\tsay.exe,	parent_pid:4700 cmdline:'&quot;C:\Users\ALEE\Desktop\incaseformat\tsay.exe&quot; ' image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
 16:43:31:745,	tsay.exe,	1064:0,	1064,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_5.82.19041.488_none_89e6152f0b32762e\comctl32.dll,	base:0x0000000074DB0000 size:0x0008D000 ,	0x00000000 [操作成功完成。  ],	
 16:43:31:823,	tsay.exe,	1064:0,	1064,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.19041.488_none_11b1e5df2ffd8627\comctl32.dll,	base:0x0000000073CB0000 size:0x00212000 ,	0x00000000 [操作成功完成。  ],	
 16:43:31:870,	tsay.exe,	1064:2276,	1064,	FILE_touch,	C:\windows\tsay.exe,	access:0x0017019F alloc_size:460288 attrib:0x00000020 share_access:0x00000000 disposition:0x00000002 options:0x00000044 ,	0x00000000 [操作成功完成。  ],	
@@ -1918,7 +2213,7 @@ cmp dword ptr ds:[eax+0xC], 0x220
 16:43:31:901,	tsay.exe,	1064:2276,	1064,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\RunOnce\msfsa,	type:0x00000001 datalen:40 data:'43 3A 5C 77 69 6E 64 6F 77 73 5C 74 73 61 79 2E ' ,	0x00000000 [操作成功完成。  ],	
 16:43:31:917,	tsay.exe,	1064:0,	1064,	EXEC_destroy,	C:\Users\ALEE\Desktop\incaseformat\tsay.exe,	parent_pid:4700 cmdline:'&quot;C:\Users\ALEE\Desktop\incaseformat\tsay.exe&quot; ' ,	0x00000000 [操作成功完成。  ],	
 </code></pre><p>将时间设置为1月13日，以管理员权限运行木马程序：</p>
-<pre><code>16:42:32:202,	tsay.exe,	2568:0,	0,	EXEC_create,	C:\Windows\system32\SystemSettingsAdminFlows.exe,	parent_pid:5808 cmdline:'&quot;C:\Windows\system32\SystemSettingsAdminFlows.exe&quot; SetDateTime' image_base:0x00007FF6B6C80000 image_size:0x00080000 ,	0x00000000 [操作成功完成。  ],	
+<pre tabindex="0"><code>16:42:32:202,	tsay.exe,	2568:0,	0,	EXEC_create,	C:\Windows\system32\SystemSettingsAdminFlows.exe,	parent_pid:5808 cmdline:'&quot;C:\Windows\system32\SystemSettingsAdminFlows.exe&quot; SetDateTime' image_base:0x00007FF6B6C80000 image_size:0x00080000 ,	0x00000000 [操作成功完成。  ],	
 16:42:32:499,	tsay.exe,	2568:0,	0,	EXEC_module_load,	C:\Windows\System32\vm3dum64_10.dll,	base:0x00007FFB01970000 size:0x00061000 ,	0x00000000 [操作成功完成。  ],	
 16:42:33:321,	tsay.exe,	2568:6180,	0,	REG_setval,	HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\bam\State\UserSettings\S-1-5-21-655661564-3040666061-2252561177-1000\\Device\HarddiskVolume3\Windows\System32\SystemSettingsAdminFlows.exe,	type:0x00000003 datalen:24 data:'28 BB 33 09 88 E9 D6 01 00 00 00 00 00 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
 16:42:33:321,	tsay.exe,	2568:0,	0,	EXEC_destroy,	C:\Windows\system32\SystemSettingsAdminFlows.exe,	parent_pid:5808 cmdline:'&quot;C:\Windows\system32\SystemSettingsAdminFlows.exe&quot; SetDateTime' ,	0x00000000 [操作成功完成。  ],	
@@ -1986,7 +2281,7 @@ cmp dword ptr ds:[eax+0xC], 0x220
 16:48:07:010,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Notifications\Data\418A073AA3BC3475,	type:0x00000003 datalen:446 data:'05 09 00 00 00 00 00 00 04 00 04 00 01 02 06 00 ' ,	0x00000000 [操作成功完成。  ],	
 16:48:07:072,	tsay.exe,	5748:0,	5748,	EXEC_destroy,	C:\Windows\tsay.exe,	parent_pid:4700 cmdline:'&quot;C:\Windows\tsay.exe&quot; ' ,	0x00000000 [操作成功完成。  ],	
 </code></pre><p>生成的ttry.exe文件的动作如下：</p>
-<pre><code>17:18:04:679,	ttry.exe,	9128:0,	9076,	EXEC_create,	C:\windows\ttry.exe,	parent_pid:9076 cmdline:'&quot;C:\windows\ttry.exe&quot; ' image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
+<pre tabindex="0"><code>17:18:04:679,	ttry.exe,	9128:0,	9076,	EXEC_create,	C:\windows\ttry.exe,	parent_pid:9076 cmdline:'&quot;C:\windows\ttry.exe&quot; ' image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
 17:18:04:710,	ttry.exe,	9128:0,	9076,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_5.82.19041.488_none_89e6152f0b32762e\comctl32.dll,	base:0x0000000075BA0000 size:0x0008D000 ,	0x00000000 [操作成功完成。  ],	
 17:18:04:757,	ttry.exe,	9128:0,	9076,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.19041.488_none_11b1e5df2ffd8627\comctl32.dll,	base:0x0000000074810000 size:0x00212000 ,	0x00000000 [操作成功完成。  ],	
 17:18:04:757,	ttry.exe,	9128:9132,	9076,	FILE_truncate,	C:\windows\tsay.exe,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
@@ -2004,7 +2299,7 @@ cmp dword ptr ds:[eax+0xC], 0x220
 17:18:06:757,	ttry.exe,	9128:9132,	9076,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\Hidden\SHOWALL\checkedvalue,	type:0x00000004 datalen:4 data:'00 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
 17:18:06:757,	ttry.exe,	9128:9132,	9076,	REG_rmval,	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\HideFileExt\checkedvalue,	keyname:'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\HideFileExt' ,	0x00000000 [操作成功完成。  ],	
 </code></pre><p>当时间调整为1月13日，运行ttry.exe动作如下：</p>
-<pre><code>17:25:44:420,	ttry.exe,	7808:588,	7808,	FILE_truncate,	D:\incaseformat.log,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
+<pre tabindex="0"><code>17:25:44:420,	ttry.exe,	7808:588,	7808,	FILE_truncate,	D:\incaseformat.log,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
 
 ......
 
@@ -2022,7 +2317,7 @@ cmp dword ptr ds:[eax+0xC], 0x220
 <p>在删除文件夹日期运行C:\windows\ttry.exe，将会新建incaseformat.log，并删除其他文件。</p>
 <h2 id="3样本分析">3.样本分析</h2>
 <h3 id="31样本信息">3.1样本信息</h3>
-<pre><code>C:\Users\ALEE\Desktop\incaseformat样本&gt;certutil -hashfile tsay.exe sha256
+<pre tabindex="0"><code>C:\Users\ALEE\Desktop\incaseformat样本&gt;certutil -hashfile tsay.exe sha256
 SHA256 的 tsay.exe 哈希:
 8c8793eb7c80a09e1542e424ea89c23c195d364892620562e06b3df602890929
 CertUtil: -hashfile 命令成功完成。

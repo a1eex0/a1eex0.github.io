@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#494f5c">
+	<meta name="msapplication-TileColor" content="#494f5c">
+<meta itemprop="name" content="NjRat">
+<meta itemprop="description" content="NjRat 样本分析 1. 样本信息 NjRat (Bladabindi) 是一种 .NET RAT（远程访问木马），允许攻击者控制受感染的机器。 IOC 类别 特征值 MD5 556FE886EDD2DB888EE3A33A103C2364 SHA1 9D58E7B157FE41D86398FF587E10AE2FF3FB3EE9 SHA256 833F86074592648C0A758098E34AB605A2B922D94DBAB7141E2CE87ACEC03C35 C2 44gang44.duckdns.org:2222 2. 样本分析 采用dnSpy加载"><meta itemprop="datePublished" content="2022-01-06T09:10:58+08:00" />
+<meta itemprop="dateModified" content="2022-01-06T09:10:58+08:00" />
+<meta itemprop="wordCount" content="7633"><meta itemprop="image" content="https://www.a1ee.cn/bg.png">
+<meta itemprop="keywords" content="NjRat,Sample," /><meta property="og:title" content="NjRat" />
+<meta property="og:description" content="NjRat 样本分析 1. 样本信息 NjRat (Bladabindi) 是一种 .NET RAT（远程访问木马），允许攻击者控制受感染的机器。 IOC 类别 特征值 MD5 556FE886EDD2DB888EE3A33A103C2364 SHA1 9D58E7B157FE41D86398FF587E10AE2FF3FB3EE9 SHA256 833F86074592648C0A758098E34AB605A2B922D94DBAB7141E2CE87ACEC03C35 C2 44gang44.duckdns.org:2222 2. 样本分析 采用dnSpy加载" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.a1ee.cn/medium/njrat/" /><meta property="og:image" content="https://www.a1ee.cn/bg.png" /><meta property="article:section" content="medium" />
+<meta property="article:published_time" content="2022-01-06T09:10:58+08:00" />
+<meta property="article:modified_time" content="2022-01-06T09:10:58+08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://www.a1ee.cn/bg.png"/>
+
+<meta name="twitter:title" content="NjRat"/>
+<meta name="twitter:description" content="NjRat 样本分析 1. 样本信息 NjRat (Bladabindi) 是一种 .NET RAT（远程访问木马），允许攻击者控制受感染的机器。 IOC 类别 特征值 MD5 556FE886EDD2DB888EE3A33A103C2364 SHA1 9D58E7B157FE41D86398FF587E10AE2FF3FB3EE9 SHA256 833F86074592648C0A758098E34AB605A2B922D94DBAB7141E2CE87ACEC03C35 C2 44gang44.duckdns.org:2222 2. 样本分析 采用dnSpy加载"/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<title>NjRat</title>
+	<link rel="stylesheet" href="https://www.a1ee.cn/css/style.min.eac77496566fd7d5768fd650ddb0b2b181ca6a2d7c5fdd6fe6b8ba4bf47e566f.css" integrity="sha256-6sd0llZv19V2j9ZQ3bCysYHKai18X91v5ri6S/R+Vm8=" crossorigin="anonymous">
+	<style>.bg-img {background-image: url('https://www.a1ee.cn/bg.png');}</style>
+</head>
+
+<body id="page">
+	
+	<header id="site-header" class="animated slideInUp">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="https://www.a1ee.cn">alee</a>
+				</div>
+				<nav class="site-nav hide-in-mobile">
+					
+				<a href="https://www.a1ee.cn/basic/">BASIC</a>
+				<a href="https://www.a1ee.cn/simple/">SIMPLE</a>
+				<a href="https://www.a1ee.cn/medium/">MEDIUM</a>
+				<a href="https://www.a1ee.cn/about-me/">ABOUT</a>
+
+				</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<button id="img-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-image"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></button><span class="hdr-social hide-in-mobile"><a href="https://github.com/a1eex0" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="https://www.a1ee.cn/basic/">BASIC</a></li>
+			<li><a href="https://www.a1ee.cn/simple/">SIMPLE</a></li>
+			<li><a href="https://www.a1ee.cn/medium/">MEDIUM</a></li>
+			<li><a href="https://www.a1ee.cn/about-me/">ABOUT</a></li>
+		</ul>
+	</div>
+
+
+	<div class="bg-img"></div>
+	<main class="site-main section-inner animated fadeIn faster">
+		<article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>Jan 6, 2022</span></div>
+				<h1>NjRat</h1>
+			</header>
+			<div class="content">
+				<h1 id="njrat-样本分析">NjRat 样本分析<a href="#njrat-样本分析" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
+<h2 id="1-样本信息">1. 样本信息<a href="#1-样本信息" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p><code>NjRat</code> (<code>Bladabindi</code>) 是一种 <code>.NET</code> <code>RAT</code>（远程访问木马），允许攻击者控制受感染的机器。</p>
+<p><img src="/njrat_images/18402611211250.png" alt=""></p>
+<p><strong>IOC</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">类别</th>
+<th style="text-align:left">特征值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">MD5</td>
+<td style="text-align:left">556FE886EDD2DB888EE3A33A103C2364</td>
+</tr>
+<tr>
+<td style="text-align:left">SHA1</td>
+<td style="text-align:left">9D58E7B157FE41D86398FF587E10AE2FF3FB3EE9</td>
+</tr>
+<tr>
+<td style="text-align:left">SHA256</td>
+<td style="text-align:left">833F86074592648C0A758098E34AB605A2B922D94DBAB7141E2CE87ACEC03C35</td>
+</tr>
+<tr>
+<td style="text-align:left">C2</td>
+<td style="text-align:left">44gang44.duckdns.org:2222</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-样本分析">2. 样本分析<a href="#2-样本分析" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>采用<code>dnSpy</code>加载样本，得知样本原始文件名为：<code>ClassLibrary1.exe</code></p>
+<p><img src="/njrat_images/532053111229676.png" alt=""></p>
+<h3 id="21-初始命令参数判断">2.1. 初始命令参数判断<a href="#21-初始命令参数判断" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>样本执行后，会检查是否存在参数命令，如果参数命令为<code>UP:[ProcessID]</code>，则设置<code>HKEY_CURRENT_USER\di</code>的值为<code>!</code>，关联指定进程并等待<code>5000</code>毫秒后退出；如果参数命令为<code>..</code>，则休眠<code>5000</code>毫秒：</p>
+<p><img src="/njrat_images/346784910211251.png" alt=""></p>
+<h3 id="22-互斥锁检查">2.2. 互斥锁检查<a href="#22-互斥锁检查" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>打开指定的已命名的互斥体<code>OK.RG</code>(<code>&quot;49e91d08e684b1770e0cefa60401157a&quot;</code>)，如果存在，关闭当前进程，如果不存在，则新建此互斥锁：</p>
+<p><img src="/njrat_images/128955610229677.png" alt=""></p>
+<p><img src="/njrat_images/299430211217544.png" alt=""></p>
+<h3 id="23-准备工作">2.3. 准备工作<a href="#23-准备工作" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<h4 id="231-检查文件路径">2.3.1. 检查文件路径<a href="#231-检查文件路径" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p>作者定义了一个<code>OK.CompDir</code>函数，将当前执行路径与<code>%AppData%\services64.exe</code>进行比较：</p>
+<p><img src="/njrat_images/27884509217554.png" alt=""></p>
+<p>如果当前执行的文件不是<code>%AppData%\services64.exe</code>，且存在<code>%AppData%\services64.exe</code>，则将<code>%AppData%\services64.exe</code>删除，然后将自身复制到<code>%AppData%\services64.exe</code>，采用<code>Process.Start</code>启动目标进程，并采用<code>ProjectData.EndApp()</code>关闭当前进程：</p>
+<p><img src="/njrat_images/271083210216925.png" alt=""></p>
+<p><code>OK.DR</code>与<code>OK.EXE</code>的内容如下：</p>
+<p><img src="/njrat_images/423073109229687.png" alt=""></p>
+<h4 id="232-关闭附件管理器检查">2.3.2. 关闭附件管理器检查<a href="#232-关闭附件管理器检查" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p>在检查完执行路径后，会修改环境变量<code>SEE_MASK_NOZONECHECKS</code>的值为<code>1</code>，已关闭关闭附件管理器检查的弹框提醒：</p>
+<p><img src="/njrat_images/11745909237720.png" alt=""></p>
+<h4 id="233-修改防火墙规则">2.3.3. 修改防火墙规则<a href="#233-修改防火墙规则" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p>接着会执行<code>netsh firewall add allowedprogram</code>命令，添加出栈规则：</p>
+<p><img src="/njrat_images/141490310230389.png" alt=""></p>
+<p>其中<code>OK.LO</code>便是当前执行的文件信息类（<code>FileInfo</code>类）：</p>
+<p><img src="/njrat_images/400370910226944.png" alt=""></p>
+<h4 id="234-开机自启项">2.3.4. 开机自启项<a href="#234-开机自启项" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p>在注册表<code>HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run</code>和<code>HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run</code>中，添加<code>49e91d08e684b1770e0cefa60401157a</code>项，指向样本的执行路径（<code>%AppData%\services64.exe</code>）：</p>
+<p><img src="/njrat_images/5001310222698.png" alt=""></p>
+<p><code>OK.sf</code>与<code>OK.RG</code>的值如下:</p>
+<p><img src="/njrat_images/278201810240578.png" alt=""></p>
+<p><img src="/njrat_images/500451810238182.png" alt=""></p>
+<h4 id="235-文件复制功能">2.3.5. 文件复制功能<a href="#235-文件复制功能" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p>将文件复制到用户的“开始”程序组目录下，并已<code>49e91d08e684b1770e0cefa60401157a.exe</code>命名：</p>
+<p><img src="/njrat_images/31652810235684.png" alt=""></p>
+<p>注：由于<code>OK.IsF</code>的定义为：<code>public static bool IsF = Conversions.ToBoolean(&quot;False&quot;);</code>，故该功能未执行！</p>
+<h3 id="24-网络通信">2.4. 网络通信<a href="#24-网络通信" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>准备工作结束后，将多线程执行<code>OK.RC</code>函数：</p>
+<p><img src="/njrat_images/85163410239365.png" alt=""></p>
+<h4 id="241-连接c2">2.4.1. 连接C2<a href="#241-连接c2" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p>该函数用于<code>TCP</code>网络通信连接，其中存在一个<code>OK.connect</code>函数，用于同<code>C2</code>（<code>44gang44.duckdns.org:2222</code>）连接，并发送关于主机的相关信息（<code>OK.inf()</code>返回内容）：</p>
+<p><img src="/njrat_images/163664410234501.png" alt=""></p>
+<p><code>OK.H</code>与<code>OK.P</code>的值如下：</p>
+<p><img src="/njrat_images/408534410228047.png" alt=""></p>
+<h4 id="242-发送本地主机信息">2.4.2. 发送本地主机信息<a href="#242-发送本地主机信息" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p>发送的内容是已<code>lv</code>开头，已<code>|'|'|</code>分割的字符串（<code>OK.Y</code>的定义为<code>public static string Y = &quot;|'|'|&quot;;</code>）。</p>
+<p><strong>获取系统磁盘序号</strong></p>
+<p>首先检索注册表<code>HKEY_CURRENT_USER\Software\49e91d08e684b1770e0cefa60401157a\vn</code>的值是否为空，再通过<code>OK.HWD()</code>获取信息，然后将<code>OK.VN</code>与信息拼接起来再通过<code>OK.ENB()</code>编码：</p>
+<p><img src="/njrat_images/352070711221181.png" alt=""></p>
+<p>其中<code>OK.VN</code>的定义是：<code>c3BsaXRnYXRldWtyYXluYQ==</code>，通过<code>Base64</code>解码得到的字符串是：<code>splitgateukrayna</code>（分裂门乌克兰）不知道这是不是组织的标签。</p>
+<p><code>OK.HWD()</code>将首先获取当前系统磁盘符，然后通过<code>GetVolumeInformation</code>获取磁盘序号：</p>
+<p><img src="/njrat_images/153143511211711.png" alt=""></p>
+<p><strong>获取主机名和用户名</strong></p>
+<p>通过调用系统<code>API</code>：<code>Environment.MachineName</code>、<code>Environment.UserName</code>，获取此本地计算机的 NetBIOS 名称和当前线程相关联的用户的用户名：</p>
+<p><img src="/njrat_images/118024411214215.png" alt=""></p>
+<p><strong>获取文件最后一次修改时间</strong></p>
+<p>然后将调用<code>OK.FR()</code>获取上次修改当前文件的时间：</p>
+<p><img src="/njrat_images/202434811223162.png" alt=""></p>
+<p><strong>获取操作系统名称</strong></p>
+<p>从<code>My.Computer.Info.OSFullName</code>属性中获取完整的操作系统名称：</p>
+<p><img src="/njrat_images/504005514211261.png" alt=""></p>
+<p><strong>获取操作系统 ServicePack 版本</strong></p>
+<p>从<code>Environment.OSVersion</code>属性中获取<code>ServicePack</code>版本：</p>
+<p><img src="/njrat_images/9980015229687.png" alt=""></p>
+<p><strong>判断操作系统版本</strong></p>
+<p>通过检索<code>x86 Program Files</code>文件夹（<code>Program Files (x86)</code>）是否存在，判断操作系统版本并记录：</p>
+<p><img src="/njrat_images/497980615217554.png" alt=""></p>
+<p><strong>判断摄像头是否存在</strong></p>
+<p>调用<code>Ok.Cam()</code>，判断是否存在摄像头：</p>
+<p><img src="/njrat_images/537180715237720.png" alt=""></p>
+<p><code>Ok.Cam()</code>中调用了<code>Win32API</code>：<code>capGetDriverDescriptionA</code>，检索捕获驱动程序的版本说明，成功则返回<code>TRUE</code>，否则返回<code>FALSE</code>：</p>
+<p><img src="/njrat_images/255500915230389.png" alt=""></p>
+<p><strong>获取当前窗口信息</strong></p>
+<p>调用<code>OK.ACT()</code>函数，获取当前窗口的相关信息，并采用<code>OK.ENB</code>进行<code>Base64</code>编码，<code>API</code>调用如下：</p>
+<ul>
+<li>调用<code>GetForegroundWindow()</code>，检索前景窗口（用户当前正在使用的窗口）的句柄；</li>
+<li>调用<code>GetWindowTextLength()</code>，检索指定窗口标题栏文本的长度；</li>
+<li>调用<code>GetWindowText()</code>，将指定窗口标题栏的文本复制到缓冲区中；</li>
+<li>调用<code>GetWindowThreadProcessId()</code>，检索创建指定窗口的线程的标识符，以及创建该窗口的进程的标识符；</li>
+<li>调用<code>Process.GetProcessById().MainWindowTitle</code>，获取进程主窗口的标题；</li>
+</ul>
+<p><img src="/njrat_images/254663715226944.png" alt=""></p>
+<p><strong>创建注册表项</strong></p>
+<p>样本会创建<code>HKEY_CURRENT_USER\Software\49e91d08e684b1770e0cefa60401157a</code></p>
+<p><img src="/njrat_images/551502016222698.png" alt=""></p>
+<h4 id="243-响应内容处理">2.4.3. 响应内容处理<a href="#243-响应内容处理" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p>样本采用<code>Receive</code>将响应的内容存储到本地缓冲区，其长度为<code>5121</code>字节（<code>private static byte[] b = new byte[5121];</code>）</p>
+<p><img src="/njrat_images/100580417216925.png" alt=""></p>
+<p>创建新的线程执行<code>OK.Ind</code>以处理提取的响应命令（该部分将放在后面的命令解析中进行说明）：</p>
+<p><img src="/njrat_images/246810917234501.png" alt=""></p>
+<h3 id="25-键盘监控">2.5. 键盘监控<a href="#25-键盘监控" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>新建一个<code>kl</code>类，用于存储键盘记录相关的信息：</p>
+<p><img src="/njrat_images/292755616238182.png" alt=""></p>
+<p>然后创建线程执行<code>WRK()</code>函数：</p>
+<p><img src="/njrat_images/58585516240578.png" alt=""></p>
+<p>使用<code>File.ReadAllText()</code>读取日志文件，然后进行按键捕获，最终通过<code>File.WriteAllText()</code>写入日志到当前路径下的<code>services64.exe.tmp</code>中：</p>
+<p><img src="/njrat_images/365555716235684.png" alt=""></p>
+<p>调用<code>GetAsyncKeyState()</code>检测键盘是否被按下，然后调用<code>this.Fix()</code>捕获按键内容，特殊及组合按键的捕获方式如下：</p>
+<p><img src="/njrat_images/366310810211262.png" alt=""></p>
+<p>普通按键的的捕获则是通过来<code>kl.VKCodeToUnicode()</code>实现的：</p>
+<p><img src="/njrat_images/273741310229688.png" alt=""></p>
+<p><code>kl.VKCodeToUnicode()</code>中使用<code>GetKeyboardState()</code>将256个虚拟键的状态复制到指定的缓冲区，然后通过<code>MapVirtualKey()</code>将虚拟键代码转换（映射）为扫描代码或字符值，再使用<code>GetKeyboardLayout()</code>检索活动输入区域的键盘布局，最后调用<code>ToUnicodeEx()</code>将指定的虚拟键代码和键盘状态转换为相应的 Unicode 字符：</p>
+<p><img src="/njrat_images/584851410217555.png" alt=""></p>
+<p>调用<code>this.AV()</code>，将获取的信息整合起来，准备写入到日志中去：</p>
+<p><img src="/njrat_images/491632910237721.png" alt=""></p>
+<h3 id="26-命令解析">2.6. 命令解析<a href="#26-命令解析" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>在<code>OK.Ind</code>函数中，会对响应内容进行分割，其中分割符<code>OK.Y</code>的值为<code>|'|'|</code>，这为命令的下发组合的反推提供了依据：</p>
+<p><img src="/njrat_images/22665510230390.png" alt=""></p>
+<h4 id="261-proc-命令">2.6.1. proc 命令<a href="#261-proc-命令" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><strong>当命令组合为：<code>proc|'|'|~</code>时</strong></p>
+<p>将发送当前活动进程的<code>Id</code>及数量到<code>C2</code>服务器：</p>
+<p><img src="/njrat_images/434665810226945.png" alt=""></p>
+<p>采用<code>process.MainModule.FileVersionInfo.FileDescription</code>获取进程描述代码后进行<code>Base64</code>编码，然后构造成包含进程ID、完整进程路径、编码描述代码的字符串：</p>
+<p><img src="/njrat_images/538301311222699.png" alt=""></p>
+<p>对于<code>Windows</code>系统进程处理略有不同：</p>
+<p><img src="/njrat_images/40071911240579.png" alt=""></p>
+<p>最后将收集到的信息发送到<code>C2</code>服务器：</p>
+<p><img src="/njrat_images/337912011238183.png" alt=""></p>
+<p><strong>当命令组合为：<code>proc|'|'|k|'|'|&lt;ProcessID&gt;..</code>时</strong></p>
+<p>当采用了<code>k</code>子命令时，将循环检索<code>&lt;ProcessID&gt;</code>，杀死进程，每次执行后都将反馈结果至<code>C2</code>服务器：</p>
+<p><img src="/njrat_images/354302211235685.png" alt=""></p>
+<p><strong>当命令组合为：<code>proc|'|'|kd|'|'|&lt;ProcessID&gt;..</code>时</strong></p>
+<p>当采用了<code>kd</code>子命令时，将循环检索<code>&lt;ProcessID&gt;</code>，杀死进程并删除进程文件，每次执行后都将反馈结果至<code>C2</code>服务器（彩蛋：这里<code>Delete</code>后作者的标识依然是<code>ER</code> -_-!）：</p>
+<p><img src="/njrat_images/253812911216926.png" alt=""></p>
+<p><strong>当命令组合为：<code>proc|'|'|re|'|'|&lt;ProcessID&gt;..</code>时</strong></p>
+<p>当采用了<code>re</code>子命令时，将循环检索<code>&lt;ProcessID&gt;</code>，重启进程，每次执行后都将反馈结果至<code>C2</code>服务器：</p>
+<p><img src="/njrat_images/472993411239366.png" alt=""></p>
+<h4 id="262-rss-命令">2.6.2. rss 命令<a href="#262-rss-命令" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><strong>当命令组合为：<code>rss|'|'|</code>时</strong></p>
+<p>新建一个<code>ProcessStartInfo</code>类并启动，该类的作用是附加一个子进程到当前进程，其中进行了如下配置：</p>
+<ol>
+<li>设置<code>RedirectStandardInput</code>属性为<code>true</code>，应用程序的输入是从<code>StandardInput</code>流中读取的值；</li>
+<li>设置<code>RedirectStandardOutput</code>属性为<code>true</code>，将应用程序的文本输出写入<code>StandardOutput</code>流中的值；</li>
+<li>设置<code>RedirectStandardError</code>属性为<code>true</code>，将应用程序的错误输出写入<code>StandardError</code>流中的值；</li>
+<li>设置子进程名为<code>cmd.exe</code>；</li>
+<li>指定<code>OK.RS()</code>处理<code>OutputDataReceived</code>（输出）和<code>ErrorDataReceived</code>（报错）事件；</li>
+<li>指定<code>OK.ex()</code>处理<code>Exited</code>（退出）事件；</li>
+<li>设置<code>UseShellExecute</code> 设置为<code>false</code> ，表示子进程将继承调用进程的标准输入、标准输出和标准错误流；</li>
+<li>设置<code>CreateNoWindow</code>属性为<code>true</code>，表示启动子进程而不创建包含它的新窗口；</li>
+<li>设置启动进程时使用的窗口状态为<code>Hidden</code>（隐藏）；</li>
+<li>设置<code>EnableRaisingEvents</code>属性为<code>true</code>，表示如果关联的进程终止时应引发<code>Exited</code>事件。</li>
+</ol>
+<p><img src="/njrat_images/182490214234502.png" alt=""></p>
+<p><code>OK.RS()</code>函数从后期绑定值中检索<code>Data</code>字段，该字段包含子进程的<code>StandardOutput/StandardError</code>流，然后采用<code>Base64</code>编码后发送到<code>C2</code>服务器：</p>
+<p><img src="/njrat_images/590630915228048.png" alt=""></p>
+<h4 id="263-rs-命令">2.6.3. rs 命令<a href="#263-rs-命令" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><strong>当命令组合为：<code>rs|'|'|&lt;EnBase64[command]&gt;</code>时</strong></p>
+<p>将通过<code>Base64</code>解码第二个参数，然后通过<code>StandardInput.WriteLine</code>向之前创建的<code>StandardInput</code>流写入数据：</p>
+<p><img src="/njrat_images/263611415221182.png" alt=""></p>
+<h4 id="264-rsc-命令">2.6.4. rsc 命令<a href="#264-rsc-命令" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><strong>当命令组合为：<code>rsc|'|'|</code>时</strong></p>
+<p>将调用<code>Kill()</code>，杀死之前创建的子进程：</p>
+<p><img src="/njrat_images/108482115211712.png" alt=""></p>
+<h4 id="265-kl-命令">2.6.5. kl 命令<a href="#265-kl-命令" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><strong>当命令组合为：<code>rsc|'|'|</code>时</strong></p>
+<p>将对键盘记录的日志进行<code>Base64</code>编码后发送到<code>C2</code>服务器：</p>
+<p><img src="/njrat_images/227352315214216.png" alt=""></p>
+<h4 id="266-inf-命令">2.6.6. inf 命令<a href="#266-inf-命令" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><strong>当命令组合为：<code>inf|'|'|</code>时</strong></p>
+<p>检索注册表<code>HKEY_CURRENT_USER\Software\49e91d08e684b1770e0cefa60401157a\vn</code>的值是否为空，再通过<code>OK.HWD()</code>获取系统磁盘卷序列号，与<code>OK.VN</code>拼接后通过<code>Base64</code>编码，然后将<code>C2</code>域名、端口、<code>AppData</code>、可执行文件名、当前进程名拼接后发送到<code>C2</code>服务器：</p>
+<p><img src="/njrat_images/266782715223163.png" alt=""></p>
+<h4 id="267-prof-命令">2.6.7. prof 命令<a href="#267-prof-命令" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><strong>当命令组合为：<code>prof|'|'|~|'|'|&lt;name&gt;|'|'|&lt;value&gt;</code>时</strong></p>
+<p>将调用<code>OK.STV()</code>添加注册表项：</p>
+<p><img src="/njrat_images/63635115225825.png" alt=""></p>
+<p><code>OK.STV()</code>函数则是编辑注册表<code>HKEY_CURRENT_USER\Software\49e91d08e684b1770e0cefa60401157a</code>，为其添加新的项，并设置对应键值：</p>
+<p><img src="/njrat_images/395084515216657.png" alt=""></p>
+<p><strong>当命令组合为：<code>prof|'|'|!|'|'|&lt;name&gt;|'|'|&lt;value&gt;</code>时</strong></p>
+<p>将调用<code>OK.STV()</code>添加注册表项，然后调用<code>OK.GTV()</code>获取<code>!</code>的键值，并将键值发送到<code>C2</code>服务器。</p>
+<p><img src="/njrat_images/406185115215123.png" alt=""></p>
+<p><code>OK.GTV()</code>函数内容如下：</p>
+<p><img src="/njrat_images/91094815243612.png" alt=""></p>
+<p><strong>当命令组合为：<code>prof|'|'|@|'|'|&lt;name&gt;</code>时</strong></p>
+<p>将调用<code>OK.DLV()</code>删除对应名称的键值：</p>
+<p><img src="/njrat_images/10115415211374.png" alt=""></p>
+<p><code>OK.DLV()</code>函数内容如下：</p>
+<p><img src="/njrat_images/420645515211513.png" alt=""></p>
+<h4 id="268-rn-命令">2.6.8. rn 命令<a href="#268-rn-命令" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><strong>当命令组合为：<code>rn|'|'|&lt;Extension_Name&gt;|'|'|&lt;URL&gt;/&lt;Base64[Gzip_Bit]&gt;</code>时</strong></p>
+<p>首先将判断第三个参数是否是<code>http</code>开头的连接，如果不是，则调用<code>FromBase64String</code>解码第三个参数，再调用<code>OK.ZIP()</code>对解码内容进行处理：</p>
+<p><img src="/njrat_images/198180416223603.png" alt=""></p>
+<p><code>OK.ZIP()</code>函数会调用<code>GZipStream</code>压缩和解压缩数据内容，不过当前的执行流程是解压缩：</p>
+<p><img src="/njrat_images/31141216228642.png" alt=""></p>
+<p>如果第三个参数是<code>http</code>开头的链接，则会使用<code>WebClient.DownloadData()</code>下载文件：</p>
+<p><img src="/njrat_images/474271917229937.png" alt=""></p>
+<p>上述两个步骤二选一执行后，将对在<code>%Temp%</code>目录下，将所有字节写入随机命名的<code>.&lt;Extension_Name&gt;</code>文件，新建进程执行该文件并向<code>C2</code>服务器发送文件名：
+<img src="/njrat_images/263612717230939.png" alt=""></p>
+<h4 id="269-inv-命令">2.6.9. inv 命令<a href="#269-inv-命令" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><strong>当命令组合为：<code>inv|'|'|&lt;Registry_Name&gt;|'|'|&lt;String1&gt;|'|'|&lt;String2&gt;</code>时</strong></p>
+<p>首先检索<code>HKEY_CURRENT_USER\Software\49e91d08e684b1770e0cefa60401157a</code>中<code>&lt;Registry_Name&gt;</code>的键值，如果其不为空，则将该键值返回到<code>C2</code>服务器，并继续执行；</p>
+<p>如果<code>&lt;Registry_Name&gt;</code>的键值为空，且<code>&lt;String2&gt;</code>长度为<code>1</code>，则返回<code>C2</code>服务器错误信息并结束此轮命令解析；如果<code>&lt;String2&gt;</code>长度不为<code>1</code>，则调用<code>OK.ZIP()</code>对<code>&lt;String2&gt;</code>进行解压缩，并设置<code>&lt;Registry_Name&gt;</code>键值为<code>&lt;String2&gt;</code>解压缩后的内容，成功则发送信息至<code>C2</code>服务器；</p>
+<p>但从整个流程来看，<code>&lt;Registry_Name&gt;</code>中存放的是一个插件。样本首先检索<code>&lt;Registry_Name&gt;</code>是否已包含插件，如果没有，则判断<code>&lt;String2&gt;</code>是否是插件内容，如果是则写入<code>&lt;Registry_Name&gt;</code>，然后通过<code>OK.Plugin()</code>进行插件调用：</p>
+<p><img src="/njrat_images/330533609211263.png" alt=""></p>
+<p><code>OK.Plugin()</code>函数首先调用<code>Assembly.Load()</code>加载插件程序集，然后通过<code>Assembly.GetModules()</code>枚举程序集的所有模块，再寻找<code>.A</code>结尾的类，找到后使用<code>Assembly.CreateInstance()</code>创建它的实例：</p>
+<p><img src="/njrat_images/292373909229689.png" alt=""></p>
+<p>然后使用<code>NewLateBinding.LateSet()</code>方法向后期绑定字段写入：<code>h</code>（<code>C2</code>域名）、<code>p</code>（<code>C2</code>端口）、<code>osk</code>（<code>&lt;String1&gt;</code>），然后调用<code>NewLateBinding.LateCall()</code>执行<code>start</code>函数，最后写入<code>off</code>为<code>true</code>：</p>
+<p><img src="/njrat_images/149061110226946.png" alt=""></p>
+<h4 id="2610-ret-命令">2.6.10. ret 命令<a href="#2610-ret-命令" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><strong>当命令组合为：<code>ret|'|'|&lt;Registry_Name&gt;|'|'|&lt;String&gt;</code>时</strong></p>
+<p>从函数结构可以看出功能同<code>inv</code>命令类似，首先查找本地注册表<code>&lt;Registry_Name&gt;</code>的键值，不存在则将<code>&lt;String&gt;</code>写入并进行插件加载：</p>
+<p><img src="/njrat_images/454520710237722.png" alt=""></p>
+<p>然后调用<code>NewLateBinding.LateGet()</code>获取<code>GT</code>的值，编码后发送给<code>C2</code>服务器：</p>
+<p><img src="/njrat_images/449611010230391.png" alt=""></p>
+<h4 id="2611-cap-命令">2.6.11. CAP 命令<a href="#2611-cap-命令" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><strong>当命令组合为：<code>CAP|'|'|&lt;Width&gt;|'|'|&lt;Height&gt;</code>时</strong></p>
+<p>将通过<code>Bitmap.GetThumbnailImage()</code>方法，截取<code>&lt;Width&gt;</code>宽，<code>&lt;Height&gt;</code>高的屏幕，然后使用<code>OK.getMD5Hash()</code>将截图加密，最后通过<code>OK.Sendb()</code>发送到<code>C2</code>服务器：</p>
+<p><img src="/njrat_images/98111810222700.png" alt=""></p>
+<p><code>OK.getMD5Hash()</code>函数内容如下：</p>
+<p><img src="/njrat_images/83462210240580.png" alt=""></p>
+<p><code>OK.Sendb()</code>函数内容如下：</p>
+<p><img src="/njrat_images/415142210238184.png" alt=""></p>
+<h4 id="2612-p-命令">2.6.12. P 命令<a href="#2612-p-命令" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><strong>当命令组合为：<code>P</code>时</strong></p>
+<p>将向<code>C2</code>服务器发送<code>P</code>字符：</p>
+<p><img src="/njrat_images/452492410235686.png" alt=""></p>
+<h4 id="2613-un-命令">2.6.13. un 命令<a href="#2613-un-命令" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><code>un</code>命令存在三个子项：<code>~</code>、<code>!</code>、<code>@</code>：</p>
+<p><img src="/njrat_images/81072610216927.png" alt=""></p>
+<p><strong>当命令组合为：<code>un|'|'|~</code>时</strong></p>
+<p>调用<code>OK.UNS()</code>会首先执行<code>OK.pr(0)</code>将当前进程设置为非关键进程，然后删除被修改的注册表项及防火墙规则，删除启动文件夹下的样本文件，调用<code>cmd</code>隐藏窗口删除自身文件，最后结束当前进程：</p>
+<p><img src="/njrat_images/216722910239367.png" alt=""></p>
+<p><code>OK.pr(0)</code>调用了未公开的<code>API</code>函数<code>NtSetInformationProcess()</code>将当前进程设置为非关键进程，防止进程结束时触发<code>BSOD</code>：</p>
+<p><img src="/njrat_images/323273010234503.png" alt=""></p>
+<p><strong>当命令组合为：<code>un|'|'|!</code>时</strong></p>
+<p>调用<code>OK.pr(0)</code>将当前进程设置为非关键进程，然后退出当前进程。</p>
+<p><strong>当命令组合为：<code>un|'|'|@</code>时</strong></p>
+<p>调用<code>OK.pr(0)</code>将当前进程设置为非关键进程，然后新进程启动自身并退出当前进程，可以理解为安全的重启。</p>
+<h4 id="2614-up-命令">2.6.14. up 命令<a href="#2614-up-命令" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><strong>当命令组合为：<code>up|'|'|&lt;URL&gt;/&lt;Base64[Gzip_Bit]&gt;</code>时</strong></p>
+<p>前半段与<code>rn</code>命令下载功能类似，不过<code>up</code>命令指向的文件只能是<code>exe</code>，首先会根据第二个参数的内容获取目标文件的二进制，设置注册表<code>di</code>为空，将二进制文件保存到本地<code>%temp%</code>目录下，然后将随机生成的文件名发送到<code>C2</code>服务器，然后调用<code>Process.Start()</code>启动该文件，参数命令为<code>UP：&lt;当前进程ID&gt;</code>，然后进入一个循环，当<code>di</code>被设置为<code>!</code>时，卸载自身：</p>
+<p><img src="/njrat_images/360291411228049.png" alt=""></p>
+<h4 id="2615-rg-命令">2.6.15. RG 命令<a href="#2615-rg-命令" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><strong>当命令组合为：<code>RG|'|'|~|'|'|&lt;Registry_Item&gt;</code>时</strong></p>
+<p>首先会调用<code>OK.GetKey()</code>获取<code>&lt;Registry_Item&gt;</code>项，然后通过<code>GetSubKeyNames()</code>和<code>GetValueNames()</code>枚举该项中的所有子项和对应键值，最后发送到<code>C2</code>服务器：</p>
+<p><img src="/njrat_images/348183411211713.png" alt=""></p>
+<p><code>OK.GetKey()</code>函数构造如下：</p>
+<p><img src="/njrat_images/293383711214217.png" alt=""></p>
+<p><strong>当命令组合为：<code>RG|'|'|!|'|'|&lt;Registry_Item&gt;|'|'|&lt;Registry_Name&gt;|'|'|&lt;Registry_Value&gt;|'|'|&lt;Registry_Kind&gt;</code>时</strong></p>
+<p>设置<code>&lt;Registry_Name&gt;</code>项的键值为<code>&lt;Registry_Value&gt;</code>，类型为<code>&lt;Registry_Kind&gt;</code>：</p>
+<p><img src="/njrat_images/556894111223164.png" alt=""></p>
+<p><strong>当命令组合为：<code>RG|'|'|@|'|'|&lt;Registry_Item&gt;|'|'|&lt;Registry_Name&gt;</code>时</strong></p>
+<p>将删除<code>&lt;Registry_Name&gt;</code>的项：</p>
+<p><img src="/njrat_images/260094611216049.png" alt=""></p>
+<p><strong>当命令组合为：<code>RG|'|'|#|'|'|&lt;Registry_Item&gt;|'|'|&lt;Registry_Name&gt;</code>时</strong></p>
+<p>将创建<code>&lt;Registry_Name&gt;</code>的项：</p>
+<p><img src="/njrat_images/505854711216658.png" alt=""></p>
+<p><strong>当命令组合为：<code>RG|'|'|$|'|'|&lt;Registry_Item&gt;|'|'|&lt;Registry_Name&gt;</code>时</strong></p>
+<p>将递归删除<code>&lt;Registry_Name&gt;</code>项和它的其它子项：</p>
+<p><img src="/njrat_images/510814811243613.png" alt=""></p>
+<h2 id="3-参考资料">3. 参考资料<a href="#3-参考资料" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p><a href="https://cybergeeks.tech/just-another-analysis-of-the-njrat-malware-a-step-by-step-approach/">https://cybergeeks.tech/just-another-analysis-of-the-njrat-malware-a-step-by-step-approach/</a>
+<a href="https://www.secpulse.com/archives/73878.html">https://www.secpulse.com/archives/73878.html</a>
+<a href="https://app.any.run/tasks/78913e0b-1419-4571-8611-ac3372ffd578/#">https://app.any.run/tasks/78913e0b-1419-4571-8611-ac3372ffd578/#</a>
+<a href="https://www.virustotal.com/gui/file/833f86074592648c0a758098e34ab605a2b922d94dbab7141e2ce87acec03c35">https://www.virustotal.com/gui/file/833f86074592648c0a758098e34ab605a2b922d94dbab7141e2ce87acec03c35</a></p>
+
+			</div>
+			<hr class="post-end">
+			<footer class="post-info">
+				<p>
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://www.a1ee.cn/tags/njrat">NjRat</a></span><span class="tag"><a href="https://www.a1ee.cn/tags/sample">Sample</a></span>
+				</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2022-01-06 09:10 &#43;0800</p>
+			</footer>
+		</article>
+		<div class="post-nav thin">
+			<a class="prev-post" href="https://www.a1ee.cn/medium/snakekeylogger/">
+				<span class="post-nav-label">&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>SnakeKeylogger</span>
+			</a>
+		</div>
+		<div id="comments" class="thin">
+</div>
+	</main>
+
+	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+		<p>&copy; 2022 <a href="https://www.a1ee.cn">alee</a></p>
+	</footer>
+
+
+
+	<script src="https://www.a1ee.cn/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	
+
+</body>
+
+</html>

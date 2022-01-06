@@ -47,7 +47,7 @@
 				<nav class="site-nav hide-in-mobile">
 					
 				<a href="https://www.a1ee.cn/basic/">BASIC</a>
-				<a href="https://www.a1ee.cn/simaple/">SIMAPLE</a>
+				<a href="https://www.a1ee.cn/simple/">SIMPLE</a>
 				<a href="https://www.a1ee.cn/medium/">MEDIUM</a>
 				<a href="https://www.a1ee.cn/about-me/">ABOUT</a>
 
@@ -61,7 +61,7 @@
 	<div id="mobile-menu" class="animated fast">
 		<ul>
 			<li><a href="https://www.a1ee.cn/basic/">BASIC</a></li>
-			<li><a href="https://www.a1ee.cn/simaple/">SIMAPLE</a></li>
+			<li><a href="https://www.a1ee.cn/simple/">SIMPLE</a></li>
 			<li><a href="https://www.a1ee.cn/medium/">MEDIUM</a></li>
 			<li><a href="https://www.a1ee.cn/about-me/">ABOUT</a></li>
 		</ul>
@@ -86,7 +86,7 @@
 <p><code>DOM</code>就是用来干这个的，接收到代码数据时，浏览器会通过<code>解析器</code>解析代码构造<code>DOM结构树</code>。</p>
 <p><strong>这里说明一下<code>解析器</code>，首先我没有仔细的查过相关文档，其次下面写的说明，纯粹是我自己的理解，请怀着质疑的态度审阅！</strong></p>
 <p><code>解析器</code>也可以理解成<code>解释器</code>，顾名思义，就是解释开发语言的一种东西，解释语言，就需要遵循语法，所以不同的语法，对应的解释器是不一样的，类比：英语、汉语、日语、等等语言，如果不是懂语法结构，虽然都是人发出来的声音，但却是听不懂的，虽然我们小时候学习说话时莫名其妙就学会了这东西，但理解说话意思的，还是基于语法结构的解释。例如：<code>学习使我快乐</code>，能理解这句话，是因为明白每个组成的部分的意思：“学习”“使”“我”“快乐”，开发语言也是一样，例如：</p>
-<pre><code>&lt;html&gt;
+<pre tabindex="0"><code>&lt;html&gt;
  &lt;head&gt;
   &lt;title&gt;文档标题&lt;/title&gt;
  &lt;/head&gt;
@@ -119,9 +119,9 @@
 <p><img src="/dvwa_images/20201012154055503_24494.png" alt=""></p>
 <p>过滤了<code>&lt;script</code>，但是还有很多可以用来进行测试的payload，例如：<code>&lt;a/href=javascript&amp;colon;alert(document.cookie)&gt;click</code>（该payload需要点击click才能触发）</p>
 <p>直接在url尾部添加payload，并不会正常的将代码插到可被正常解析的地方，反而是在<code>English</code>后面直接添加上了<code>click</code>：</p>
-<pre><code>&lt;option value=&quot;English%3Ca/href=javascript:alert(document.cookie)%3Eclick&quot;&gt;Englishclick&lt;/option&gt;
+<pre tabindex="0"><code>&lt;option value=&quot;English%3Ca/href=javascript:alert(document.cookie)%3Eclick&quot;&gt;Englishclick&lt;/option&gt;
 </code></pre><p>根据代码前后关系，可闭合标签进行尝试，首先闭合<code>option</code>标签：</p>
-<pre><code>&lt;option value=&quot;English%3C/option%3E%3Ca/href=javascript:alert(document.cookie)%3Eclick&quot;&gt;English&lt;/option&gt;
+<pre tabindex="0"><code>&lt;option value=&quot;English%3C/option%3E%3Ca/href=javascript:alert(document.cookie)%3Eclick&quot;&gt;English&lt;/option&gt;
 </code></pre><p>闭合代码被直接插入到了<code>English</code>后方，可是依旧没有正常解析，于是再向上闭合一个标签，发现可以被解析了，最终payload：<code>&lt;/option&gt;&lt;/select&gt;&lt;a/href=javascript&amp;colon;alert(document.cookie)&gt;click</code></p>
 <p>浏览器解析及触发结果如下：</p>
 <p><img src="/dvwa_images/20201012155803851_14535.png" alt=""></p>
@@ -130,7 +130,7 @@
 <p>从源码上看，对参数进行了校验，但是还是有一种方式可以绕过：<code>#&lt;script&gt;alert(1)&lt;/script&gt;</code></p>
 <p><img src="/dvwa_images/20201012172728622_28854.png" alt=""></p>
 <p>实际插入代码如下：</p>
-<pre><code>&lt;option value=&quot;English#%3Cscript%3Ealert(1)%3C/script%3E&quot;&gt;English#&lt;script&gt;alert(1)&lt;/script&gt;&lt;/option&gt;
+<pre tabindex="0"><code>&lt;option value=&quot;English#%3Cscript%3Ealert(1)%3C/script%3E&quot;&gt;English#&lt;script&gt;alert(1)&lt;/script&gt;&lt;/option&gt;
 </code></pre><h3 id="impossible">Impossible<a href="#impossible" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>查看源码，前端代码并未做限制，但直接插入并没有正常弹窗，前端显示反而出现了编码字符，所以是后端进行了编码：</p>
 <p><img src="/dvwa_images/20201012173115486_61.png" alt=""></p>
@@ -196,7 +196,7 @@
 	</main>
 
 	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
-		<p>&copy; 2021 <a href="https://www.a1ee.cn">alee</a></p>
+		<p>&copy; 2022 <a href="https://www.a1ee.cn">alee</a></p>
 	</footer>
 
 

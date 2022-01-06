@@ -47,7 +47,7 @@
 				<nav class="site-nav hide-in-mobile">
 					
 				<a href="https://www.a1ee.cn/basic/">BASIC</a>
-				<a href="https://www.a1ee.cn/simaple/">SIMAPLE</a>
+				<a href="https://www.a1ee.cn/simple/">SIMPLE</a>
 				<a href="https://www.a1ee.cn/medium/">MEDIUM</a>
 				<a href="https://www.a1ee.cn/about-me/">ABOUT</a>
 
@@ -61,7 +61,7 @@
 	<div id="mobile-menu" class="animated fast">
 		<ul>
 			<li><a href="https://www.a1ee.cn/basic/">BASIC</a></li>
-			<li><a href="https://www.a1ee.cn/simaple/">SIMAPLE</a></li>
+			<li><a href="https://www.a1ee.cn/simple/">SIMPLE</a></li>
 			<li><a href="https://www.a1ee.cn/medium/">MEDIUM</a></li>
 			<li><a href="https://www.a1ee.cn/about-me/">ABOUT</a></li>
 		</ul>
@@ -97,7 +97,7 @@
 <p><code>hash</code>计算采用了循环右移<code>0xD</code>位的方式，<code>Get_Dll_Name_Hash</code>函数内容如下：</p>
 <p><img src="/blackmatter_images/1502623187424.png" alt=""></p>
 <p>采用<code>python</code>代码重写就美观了许多：</p>
-<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">Calc_Dll_Hash</span><span class="p">(</span><span class="n">dll_name</span><span class="p">):</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">Calc_Dll_Hash</span><span class="p">(</span><span class="n">dll_name</span><span class="p">):</span>
     <span class="n">mask</span> <span class="o">=</span> <span class="mh">0xFFFFFFFF</span>
     <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">dll_name</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">:</span>
@@ -110,7 +110,7 @@
 </code></pre></div><p><code>Get_Func_Name_Hash</code>函数略有不同，但大同小异：</p>
 <p><img src="/blackmatter_images/1134525180093.png" alt=""></p>
 <p><code>python</code>代码如下：</p>
-<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">Calc_Func_Hash</span><span class="p">(</span><span class="n">dll_name</span><span class="p">,</span> <span class="n">func_name</span><span class="p">):</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">Calc_Func_Hash</span><span class="p">(</span><span class="n">dll_name</span><span class="p">,</span> <span class="n">func_name</span><span class="p">):</span>
     <span class="n">mask</span> <span class="o">=</span> <span class="mh">0xFFFFFFFF</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">dll_name</span>
     <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">func_name</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">:</span>
@@ -120,7 +120,7 @@
     <span class="k">return</span> <span class="n">result</span>
 </code></pre></div><p><strong>检验代码的有效性</strong></p>
 <p>实际上要调用的函数散列可以如下这般进行计算：</p>
-<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="n">dll_name</span> <span class="o">=</span> <span class="s2">&#34;kernel32.dll&#34;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="n">dll_name</span> <span class="o">=</span> <span class="s2">&#34;kernel32.dll&#34;</span>
 <span class="n">func_name</span> <span class="o">=</span> <span class="s2">&#34;LoadLibraryA&#34;</span>
 <span class="nb">print</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">Calc_Func_Hash</span><span class="p">(</span><span class="n">Calc_Dll_Hash</span><span class="p">(</span><span class="n">dll_name</span><span class="p">),</span> <span class="n">func_name</span><span class="p">)))</span>
 
@@ -128,7 +128,7 @@
 <span class="n">func_name</span> <span class="o">=</span> <span class="s2">&#34;GetProcAddress&#34;</span>
 <span class="nb">print</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">Calc_Func_Hash</span><span class="p">(</span><span class="n">Calc_Dll_Hash</span><span class="p">(</span><span class="n">dll_name</span><span class="p">),</span> <span class="n">func_name</span><span class="p">)))</span>
 </code></pre></div><p>返回结果如下：</p>
-<pre><code>0x27d05eb2
+<pre tabindex="0"><code>0x27d05eb2
 0xbb93705c
 </code></pre><p>实际上加载<code>LoadLibraryA</code>和<code>GetProcAddress</code>的<code>hash</code>确实如此：</p>
 <p><img src="/blackmatter_images/3960033176648.png" alt=""></p>
@@ -138,7 +138,7 @@
 <p>加载函数前有两个<code>push</code>，通过动态调试可以知道第一个<code>push</code>是加载函数存放起始地址，第二个<code>push</code>是需要解密的函数<code>hash</code>存放起始地址。简单调试后可以得到知道每个<code>dll</code>加载时的<code>hash</code></p>
 <p><img src="/blackmatter_images/3452450090969.png" alt=""></p>
 <p>可以检索一下所有的本地dll文件，计算hash进行比对，</p>
-<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&#34;C:</span><span class="se">\\</span><span class="s2">Windows</span><span class="se">\\</span><span class="s2">System32&#34;</span><span class="p">):</span>
     <span class="k">if</span> <span class="s1">&#39;.dll&#39;</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
         <span class="n">dll_hash</span> <span class="o">=</span> <span class="n">Calc_Dll_Hash</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
@@ -159,7 +159,7 @@
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;C3BC5607:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0XC3BC5607&#39;</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;76E87915:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0X76E87915&#39;</span><span class="p">])</span>
 </code></pre></div><p>最终计算结果如下：</p>
-<pre><code>411677B7:ntdll.dll
+<pre tabindex="0"><code>411677B7:ntdll.dll
 B1FC7F66:kernel32.dll
 BCFA1667:advapi32.dll
 7132A177:user32.dll
@@ -177,7 +177,7 @@ C3BC5607:activeds.dll
 <img src="/blackmatter_images/4401659177428.png" alt=""></p>
 <h3 id="23-idapython解密">2.3. IDAPython解密<a href="#23-idapython解密" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>根据上面的结论，可以进行简单的逻辑实现：</p>
-<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="c1"># 传入Resolve_API_Hash函数的的地址</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># 传入Resolve_API_Hash函数的的地址</span>
 <span class="k">def</span> <span class="nf">Resolve_All_APIs</span><span class="p">(</span><span class="n">resolve_ea</span><span class="p">):</span>
     <span class="c1"># 获取dll加载函数的交叉引用地址</span>
     <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">idautils</span><span class="o">.</span><span class="n">CodeRefsTo</span><span class="p">(</span><span class="n">resolve_ea</span><span class="p">,</span><span class="mi">1</span><span class="p">):</span>
@@ -227,7 +227,7 @@ C3BC5607:activeds.dll
 <p>如果不是<code>admin</code>权限运行，则进行提权，使用<code>LdrEnumerateLoadedModules</code>将<code>C:\\Windows\\System32\\dllhost.exe</code>注入到进程的<code>PEB</code>中，这样可以使用<code>dllhost.exe</code>接管<code>COM</code>对象。</p>
 <p><img src="/blackmatter_images/3381612236730.png" alt=""></p>
 <p>调用<code>CoGetObject</code>创建以下对象：</p>
-<pre><code>Elevation:Administrator!new:{3E5FC7F9-9A51-4367-9063-A120244FBEC7}
+<pre tabindex="0"><code>Elevation:Administrator!new:{3E5FC7F9-9A51-4367-9063-A120244FBEC7}
 </code></pre><p>通过<code>COM</code>库重载自身，从而达到权限提升的目的，整个<code>BypassUAC</code>过程如下：</p>
 <p><img src="/blackmatter_images/5558435232484.png" alt=""></p>
 <p>最后再调用<code>NtTerminateProcess</code>终止自身。</p>
@@ -246,7 +246,7 @@ C3BC5607:activeds.dll
 <p><img src="/blackmatter_images/4842829189475.png" alt=""></p>
 <h3 id="61-命令参数解析">6.1. 命令参数解析<a href="#61-命令参数解析" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>可以看到<code>BlackMatter</code>支持以下四个命令参数：</p>
-<pre><code>-path &lt;pwd&gt;      加密&lt;pwd&gt;路径的文件
+<pre tabindex="0"><code>-path &lt;pwd&gt;      加密&lt;pwd&gt;路径的文件
 &lt;pwd&gt;            加密&lt;pwd&gt;路径的文件
 -safe            安全模式重启
 -wall            设置壁纸
@@ -265,7 +265,7 @@ C3BC5607:activeds.dll
 <p>随机生成一个12位的密码：由3个随机大写字母、1个随机字符（<code>#</code>或<code>&amp;</code>）、3个随机数字、1个随机字符（<code>#</code>或<code>&amp;</code>）、4个随机小写字母组成。然后使用<code>NetUserSetInfo</code>创建<code>administrator</code>，密码则是刚才生成的12位字符串。</p>
 <p><img src="/blackmatter_images/4580448107343.png" alt=""></p>
 <p>然后创建注册表：<code>SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon</code>，设置以下键值：</p>
-<pre><code>AutoAdminLogon:1
+<pre tabindex="0"><code>AutoAdminLogon:1
 DefaultUserName:Administrator
 DefaultDomainName:[GetComputerNameW()]
 DefaultPassword:[Random_Password()]
@@ -281,7 +281,7 @@ DefaultPassword:[Random_Password()]
 <p><img src="/blackmatter_images/524210140367.png" alt=""></p>
 <p><!-- raw HTML omitted -->壁纸生成的具体细节如下：<!-- raw HTML omitted --></p>
 <p>创建<code>Times New Roman</code>字体的句柄，从内存中获取壁纸突显的字符串：</p>
-<pre><code>BlackMatter Ransomware encrypted all your files!
+<pre tabindex="0"><code>BlackMatter Ransomware encrypted all your files!
 To get your data back and keep your privacy safe,
 you must find [readme.txt] file
 and follow the instructions!
@@ -289,16 +289,16 @@ and follow the instructions!
 <p>然后以二进制形式将图片写入到<code>C:\ProgramData\[id].bmp</code>，从而生成壁纸文件：</p>
 <p><img src="/blackmatter_images/3919418135473.png" alt=""></p>
 <p>修改注册表<code>HKEY_CURRENT_USER\Control Panel\Desktop</code>的键值，设置桌面壁纸：</p>
-<pre><code>WallPaper:C:\ProgramData\[id].bmp
+<pre tabindex="0"><code>WallPaper:C:\ProgramData\[id].bmp
 WallpaperStyle:10
 </code></pre><p><img src="/blackmatter_images/992920116714.png" alt=""></p>
 <h4 id="634-重启进入安全模式">6.3.4. 重启进入安全模式<a href="#634-重启进入安全模式" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
 <p><code>BlackMatter</code>会根据当前运行的操作系统版本，选择相应的命令使用<code>WinExec</code>执行，并重启操作系统。
 当传递的参数为<code>True</code>时（从上方可以得知，当前模式传递的是<code>True</code>），启用安全模式：</p>
-<pre><code>winsows vista 之前的操作系统：bcdedit /set {{current}} safeboot network
+<pre tabindex="0"><code>winsows vista 之前的操作系统：bcdedit /set {{current}} safeboot network
 winsows vista 之后的操作系统：bootcfg /raw /a /safeboot:network /id 1
 </code></pre><p>当传递的参数为<code>False</code>时，该函数还提供了关闭功能：</p>
-<pre><code>winsows vista 之前的操作系统：bcdedit /deletevalue {{current}} safeboot
+<pre tabindex="0"><code>winsows vista 之前的操作系统：bcdedit /deletevalue {{current}} safeboot
 winsows vista 之后的操作系统：bootcfg /raw /fastdetect /id 1
 </code></pre><p><img src="/blackmatter_images/1700123139154.png" alt=""></p>
 <h3 id="64-壁纸模式">6.4. 壁纸模式<a href="#64-壁纸模式" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
@@ -314,7 +314,7 @@ winsows vista 之后的操作系统：bootcfg /raw /fastdetect /id 1
 <h4 id="652-网络请求">6.5.2. 网络请求<a href="#652-网络请求" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
 <p>如果配置文件中的<code>Post_Flag</code>为真，则会收集数据并发送到<code>C2</code>服务器。</p>
 <p>在加密前会进行一次基本信息的收集，数据结构的<code>json</code>格式如下：</p>
-<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
    <span class="nt">&#34;bot_version&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
    <span class="nt">&#34;bot_id&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
    <span class="nt">&#34;bot_company&#34;</span><span class="p">:</span><span class="s2">&#34;%.8x%.8x%.8x%.8x%&#34;</span><span class="p">,</span>
@@ -325,15 +325,15 @@ winsows vista 之后的操作系统：bootcfg /raw /fastdetect /id 1
    <span class="nt">&#34;host_arch&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
    <span class="nt">&#34;host_lang&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
    <span class="nt">&#34;disks_info&#34;</span><span class="p">:[</span>
-      <span class="p">{</span>						<span class="err">//当存在多个磁盘，该字典将变多</span>
-         <span class="nt">&#34;disk_name&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
+      <span class="p">{</span>						<span class="c1">//当存在多个磁盘，该字典将变多
+</span><span class="c1"></span>         <span class="nt">&#34;disk_name&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
          <span class="nt">&#34;disk_size&#34;</span><span class="p">:</span><span class="s2">&#34;%u&#34;</span><span class="p">,</span>
          <span class="nt">&#34;free_size&#34;</span><span class="p">:</span><span class="s2">&#34;%u&#34;</span>
       <span class="p">}</span>
    <span class="p">]</span>
 <span class="p">}</span>
 </code></pre></div><p>以下是我在虚拟机中获取的加密前发送数据：</p>
-<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
 	<span class="nt">&#34;bot_version&#34;</span><span class="p">:</span><span class="s2">&#34;1.2&#34;</span><span class="p">,</span>
 	<span class="nt">&#34;bot_id&#34;</span><span class="p">:</span><span class="s2">&#34;26a3ebea3de1f2c535eb81c5456fc830&#34;</span><span class="p">,</span>
 	<span class="nt">&#34;bot_company&#34;</span><span class="p">:</span><span class="s2">&#34;512478c08dada2af19e49808fbda5b0b&#34;</span><span class="p">,</span>
@@ -352,7 +352,7 @@ winsows vista 之后的操作系统：bootcfg /raw /fastdetect /id 1
 	<span class="p">]</span>
 <span class="p">}</span>
 </code></pre></div><p>当加密完成以后，还会进行一次结果统计，数据结构的<code>json</code>格式如下：</p>
-<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
 	<span class="nt">&#34;bot_version&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
 	<span class="nt">&#34;bot_id&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
 	<span class="nt">&#34;bot_company&#34;</span><span class="p">:</span><span class="s2">&#34;%.8x%.8x%.8x%.8x%&#34;</span><span class="p">,</span>
@@ -364,7 +364,7 @@ winsows vista 之后的操作系统：bootcfg /raw /fastdetect /id 1
 	<span class="nt">&#34;stop_time&#34;</span><span class="p">:</span><span class="s2">&#34;%u&#34;</span>
 <span class="p">}</span>
 </code></pre></div><p>以下是我在虚拟机中获取的加密后发送数据</p>
-<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
 	<span class="nt">&#34;bot_version&#34;</span><span class="p">:</span><span class="s2">&#34;1.2&#34;</span><span class="p">,</span>
 	<span class="nt">&#34;bot_id&#34;</span><span class="p">:</span><span class="s2">&#34;26a3ebea3de1f2c535eb81c5456fc830&#34;</span><span class="p">,</span>
 	<span class="nt">&#34;bot_company&#34;</span><span class="p">:</span><span class="s2">&#34;512478c08dada2af19e49808fbda5b0b&#34;</span><span class="p">,</span>
@@ -392,11 +392,11 @@ winsows vista 之后的操作系统：bootcfg /raw /fastdetect /id 1
 <p>调用<code>IEnumWbemClassObject::Next</code>枚举系统上的所有卷影副本，调用<code>IEnumWbemClassObject::Get</code>获取每个卷影副本的 ID，并调用<code>IWbemServices::DeleteInstance</code>删除它们。</p>
 <h4 id="655-终止服务">6.5.5. 终止服务<a href="#655-终止服务" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
 <p>当<code>Kill_Service_Flag</code>为<code>True</code>时，使用<code>OpenSCManagerW</code>获取服务控制管理器句柄，然后使用<code>EnumServicesStatusExW</code>枚举所有服务，对比是否在终止名单中，如果是，则使用<code>ControlService</code>发送控制代码，使用<code>DeleteService</code>删除服务，服务列表如下：</p>
-<pre><code>&quot;mepocs&quot;、&quot;memtas&quot;、&quot;veeam&quot;、&quot;svc$&quot;、&quot;backup&quot;、&quot;sql&quot;、&quot;vss&quot;
+<pre tabindex="0"><code>&quot;mepocs&quot;、&quot;memtas&quot;、&quot;veeam&quot;、&quot;svc$&quot;、&quot;backup&quot;、&quot;sql&quot;、&quot;vss&quot;
 </code></pre><p><img src="/blackmatter_images/3309612136445.png" alt=""></p>
 <h4 id="656-杀死进程">6.5.6. 杀死进程<a href="#656-杀死进程" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
 <p>当<code>Kill_Process_Flag</code>为<code>True</code>时，使用<code>NtQuerySystemInformation</code>检索进程列表，对比是否在杀死名单中，如果是，使用<code>NtOpenProcess</code>确认句柄，使用<code>NtTerminateProcess</code>杀死进程，进程列表如下：</p>
-<pre><code>&quot;encsvc&quot;、&quot;thebat&quot;、&quot;mydesktopqos&quot;、&quot;xfssvccon&quot;、&quot;firefox&quot;、&quot;infopath&quot;、&quot;winword&quot;、&quot;steam&quot;、&quot;synctime&quot;、&quot;notepad&quot;、&quot;ocomm&quot;、&quot;onenote&quot;、&quot;mspub&quot;、&quot;thunderbird&quot;、&quot;agntsvc&quot;、&quot;sql&quot;、&quot;excel&quot;、&quot;powerpnt&quot;、&quot;outlook&quot;、&quot;wordpad&quot;、&quot;dbeng50&quot;、&quot;isqlplussvc&quot;、&quot;sqbcoreservice&quot;、&quot;oracle&quot;、&quot;ocautoupds&quot;、&quot;dbsnmp&quot;、&quot;msaccess&quot;、&quot;tbirdconfig&quot;、&quot;ocssd&quot;、&quot;mydesktopservice&quot;、&quot;visio&quot;
+<pre tabindex="0"><code>&quot;encsvc&quot;、&quot;thebat&quot;、&quot;mydesktopqos&quot;、&quot;xfssvccon&quot;、&quot;firefox&quot;、&quot;infopath&quot;、&quot;winword&quot;、&quot;steam&quot;、&quot;synctime&quot;、&quot;notepad&quot;、&quot;ocomm&quot;、&quot;onenote&quot;、&quot;mspub&quot;、&quot;thunderbird&quot;、&quot;agntsvc&quot;、&quot;sql&quot;、&quot;excel&quot;、&quot;powerpnt&quot;、&quot;outlook&quot;、&quot;wordpad&quot;、&quot;dbeng50&quot;、&quot;isqlplussvc&quot;、&quot;sqbcoreservice&quot;、&quot;oracle&quot;、&quot;ocautoupds&quot;、&quot;dbsnmp&quot;、&quot;msaccess&quot;、&quot;tbirdconfig&quot;、&quot;ocssd&quot;、&quot;mydesktopservice&quot;、&quot;visio&quot;
 </code></pre><p><img src="/blackmatter_images/5616521163400.png" alt=""></p>
 <h4 id="657-io多线程加密">6.5.7. I/O多线程加密<a href="#657-io多线程加密" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
 <p>创建用于处理<code>I/O</code>数据包的子线程，这些子线程使用<code>GetQueuedCompletionStatus</code>与<code>PostQueuedCompletionStatus</code>与主线程进行通信。接收到的数据包，都是需要处理的文件。</p>
@@ -445,7 +445,7 @@ winsows vista 之后的操作系统：bootcfg /raw /fastdetect /id 1
 <p>然后使用<code>CreateIoCompletionPort</code>向全局<code>I/O</code>注册文件句柄，让<code>I/O</code>子线程进行加密：</p>
 <p><img src="/blackmatter_images/1081156172547.png" alt=""></p>
 <p><strong>参考链接</strong></p>
-<pre><code>RID 说明：https://docs.microsoft.com/zh-tw/dotnet/api/system.security.principal.windowsprincipal.isinrole?redirectedfrom=MSDN&amp;view=windowsdesktop-5.0#overloads
+<pre tabindex="0"><code>RID 说明：https://docs.microsoft.com/zh-tw/dotnet/api/system.security.principal.windowsprincipal.isinrole?redirectedfrom=MSDN&amp;view=windowsdesktop-5.0#overloads
 OSMajorVersion 与 OSMinorVersion 对照表：https://docs.microsoft.com/en-us/windows-hardware/drivers/install/inf-manufacturer-section
 样本配置文件提取器：https://github.com/advanced-threat-research/DarkSide-Config-Extract
 </code></pre>
@@ -472,7 +472,7 @@ OSMajorVersion 与 OSMinorVersion 对照表：https://docs.microsoft.com/en-us/w
 	</main>
 
 	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
-		<p>&copy; 2021 <a href="https://www.a1ee.cn">alee</a></p>
+		<p>&copy; 2022 <a href="https://www.a1ee.cn">alee</a></p>
 	</footer>
 
 

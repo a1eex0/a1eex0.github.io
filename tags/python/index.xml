@@ -9,28 +9,28 @@
     <lastBuildDate>Mon, 28 Dec 2020 14:20:32 +0800</lastBuildDate><atom:link href="https://www.a1ee.cn/tags/python/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Python_tkinter_info</title>
-      <link>https://www.a1ee.cn/simaple/python_tkinter_info/</link>
+      <link>https://www.a1ee.cn/simple/python_tkinter_info/</link>
       <pubDate>Mon, 28 Dec 2020 14:20:32 +0800</pubDate>
       
-      <guid>https://www.a1ee.cn/simaple/python_tkinter_info/</guid>
+      <guid>https://www.a1ee.cn/simple/python_tkinter_info/</guid>
       <description>tkinter库说明 这是一个相对轻量化的GUI库，因为它是python的原生库，不需要额外的安装库文件，因此存在很强的可移植性。 但不建议用它</description>
     </item>
     
     <item>
       <title>Python_nmap_info</title>
-      <link>https://www.a1ee.cn/simaple/python_nmap_info/</link>
+      <link>https://www.a1ee.cn/simple/python_nmap_info/</link>
       <pubDate>Mon, 28 Dec 2020 14:20:25 +0800</pubDate>
       
-      <guid>https://www.a1ee.cn/simaple/python_nmap_info/</guid>
+      <guid>https://www.a1ee.cn/simple/python_nmap_info/</guid>
       <description>python-nmap库说明 python-nmap库的官方说明文档，作者给出了一个实例代码。 实践代码 参考这两个资料，写出了如下的功能代码： #</description>
     </item>
     
     <item>
       <title>Python_webdriver_selenium_info</title>
-      <link>https://www.a1ee.cn/simaple/python_webdriver_selenium_info/</link>
+      <link>https://www.a1ee.cn/simple/python_webdriver_selenium_info/</link>
       <pubDate>Mon, 28 Dec 2020 14:20:15 +0800</pubDate>
       
-      <guid>https://www.a1ee.cn/simaple/python_webdriver_selenium_info/</guid>
+      <guid>https://www.a1ee.cn/simple/python_webdriver_selenium_info/</guid>
       <description>webdriver_selenium库说明 原型 当遇到一些受动态防御系统保护的站点时，需要一个模拟登陆的脚本来进行爆破尝试。 模拟登陆的pyth</description>
     </item>
     

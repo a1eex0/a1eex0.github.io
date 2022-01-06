@@ -18,12 +18,12 @@
 			<content type="html"><![CDATA[<h1 id="3python语法二">3.Python语法（二）</h1>
 <h2 id="31条件判断">3.1.条件判断</h2>
 <p>Python程序语言指定任何非0和非空（null）值为true，0 或者 null为false。Python 编程中 if 语句用于控制程序的执行，基本形式为：</p>
-<pre><code>if 判断条件：
+<pre tabindex="0"><code>if 判断条件：
     执行语句……
 else：
     执行语句……
 </code></pre><p>if 语句的判断条件可以用&gt;（大于）、&lt;(小于)、==（等于）、&gt;=（大于等于）、&lt;=（小于等于）来表示其关系。当判断条件为多个值时，可以使用以下形式：</p>
-<pre><code>if 判断条件1:
+<pre tabindex="0"><code>if 判断条件1:
     执行语句1……
 elif 判断条件2:
     执行语句2……
@@ -33,7 +33,7 @@ else:
     执行语句4……
 </code></pre><p>由于 python 并不支持 switch 语句，所以多个条件判断，只能用 elif 来实现，如果判断需要多个条件需同时判断时，可以使用 or （或），表示两个条件有一个成立时判断条件成功；使用 and （与）时，表示只有两个条件同时成立的情况下，判断条件才成功。
 示例：</p>
-<pre><code>num = 9
+<pre tabindex="0"><code>num = 9
 if num &gt;= 0 and num &lt;= 5:
 	print('num belong [0,5]')
 elif num &gt;=5 and num &lt; 8:
@@ -55,37 +55,37 @@ if (num &gt;=0 and num &lt;=10) or (num &gt;=15 and num &lt;=20):
 else:
 	print('num is not here')
 </code></pre><p>输出结果如下：</p>
-<pre><code>num belong [8,10]
+<pre tabindex="0"><code>num belong [8,10]
 var belong [5,10]
 num belong [0,10] or [15,20]
 </code></pre><h2 id="32循环">3.2.循环</h2>
 <p>循环分为遍历循环（for）和条件循环（while）</p>
 <h3 id="321for-循环">3.2.1.for 循环</h3>
 <p>for循环的语法格式如下：</p>
-<pre><code>for iterating_var in sequence:
+<pre tabindex="0"><code>for iterating_var in sequence:
    statements(s)
 </code></pre><p>通过索引遍历的示例：</p>
-<pre><code>fruits = ['banana', 'apple',  'mango']
+<pre tabindex="0"><code>fruits = ['banana', 'apple',  'mango']
 for index in range(len(fruits)):
    print ('当前水果 :', fruits[index])
 </code></pre><p>输出如下：</p>
-<pre><code>当前水果 : banana
+<pre tabindex="0"><code>当前水果 : banana
 当前水果 : apple
 当前水果 : mango
 </code></pre><p>以上示例使用了内置函数 len() 和 range(),函数 len() 返回列表的长度，即元素的个数。 range返回一个序列的数。</p>
 <h3 id="322while-循环">3.2.2.while 循环</h3>
 <p>while 语句用于循环执行程序，即在某条件下，循环执行某段程序，以处理需要重复处理的相同任务。其基本形式为：</p>
-<pre><code>while 判断条件(condition)：
+<pre tabindex="0"><code>while 判断条件(condition)：
     执行语句(statements)……
 </code></pre><p>执行语句可以是单个语句或语句块。判断条件可以是任何表达式，任何非零、或非空（null）的值均为true。当判断条件假 false 时，循环结束。</p>
 <p>生成随机数示例：</p>
-<pre><code>import random
+<pre tabindex="0"><code>import random
 random_numbers = []
 while len(random_numbers) &lt; 20:
 	random_numbers.append(random.randint(1,10))
 print(random_numbers, len(random_numbers))
 </code></pre><p>输出为：</p>
-<pre><code>2, 8, 5, 2, 8, 7, 5, 3, 4, 6, 4, 8, 8, 7, 8, 10, 10, 10, 5, 7] 20
+<pre tabindex="0"><code>2, 8, 5, 2, 8, 7, 5, 3, 4, 6, 4, 8, 8, 7, 8, 10, 10, 10, 5, 7] 20
 </code></pre><h3 id="323函数">3.2.3.函数</h3>
 <p>你可以定义一个由自己想要功能的函数，以下是简单的规则：</p>
 <ul>
@@ -96,7 +96,7 @@ print(random_numbers, len(random_numbers))
 <li>return [表达式] 结束函数，选择性地返回一个值给调用方。不带表达式的return相当于返回 None。</li>
 </ul>
 <p>语法</p>
-<pre><code>def functionname( parameters ):
+<pre tabindex="0"><code>def functionname( parameters ):
    &quot;函数_文档字符串&quot;
    function_suite
    return [expression]
@@ -124,7 +124,7 @@ print(random_numbers, len(random_numbers))
 			<content type="html"><![CDATA[<h1 id="2python语法一">2.Python语法（一）</h1>
 <h2 id="21-转义字符--">2.1 转义字符  \</h2>
 <p>在 <code>print</code> 中想要输出单双引号，可以使用转义字符 <code>\</code> 来进行输出，当然了也可以直接分开使用，因为单引号和双引号配套使用的时候，对另一个是没有影响的，所以可以直接输出，如下代码其实是等价的：</p>
-<pre><code>print(&quot;hello 'world'&quot;)
+<pre tabindex="0"><code>print(&quot;hello 'world'&quot;)
 print('hello \'world\'')
 print('hello &quot;world&quot;')
 print(&quot;hello \&quot;world\&quot;&quot;)
@@ -133,7 +133,7 @@ print(&quot;hello \&quot;world\&quot;&quot;)
 所以之前的彩蛋 <code>python之诗</code>，其实是导入了 <code>this</code> 模块，而这个模块的功能就是输出 <code>python之诗</code></p>
 <h2 id="23-输出函数-print">2.3 输出函数 print</h2>
 <p>在python中实现计算功能很方便，示例如下：</p>
-<pre><code>print(&quot;加法：1 + 2 = %d&quot; %(1+2))
+<pre tabindex="0"><code>print(&quot;加法：1 + 2 = %d&quot; %(1+2))
 print(&quot;减法：3 - 2 = %d&quot; %(3-2))
 print(&quot;乘法：10 * 10 = %d&quot; %(10*10))
 print(&quot;除法：100 / 10 = %d&quot; %(100/10))
@@ -144,11 +144,11 @@ import math
 print(&quot;Π = %f&quot; %(math.pi))
 </code></pre><h2 id="24-格式化字符串函数-format">2.4 格式化字符串函数 format</h2>
 <p>需要在一次输出的时候加入多个参数时，直接使用format会方便许多，示例如下：</p>
-<pre><code>print(&quot;我 是 {} ，\n爱 是 {} ，\n你 是 {} ，\n所以：‘{}’ 的意思是 ‘我爱你’&quot; .format(5,2,0,520))
+<pre tabindex="0"><code>print(&quot;我 是 {} ，\n爱 是 {} ，\n你 是 {} ，\n所以：‘{}’ 的意思是 ‘我爱你’&quot; .format(5,2,0,520))
 </code></pre><p><strong>注意：format 前面有一个 <code>·</code></strong></p>
 <h2 id="25-神奇的语法糖">2.5 神奇的语法糖</h2>
 <p><code>python</code> 中交换两个变量的值，可以直接采用语法糖的格式，非常的方便快捷：</p>
-<pre><code>a = 11010
+<pre tabindex="0"><code>a = 11010
 b = 10101
 print(&quot;a = {} , b = {} &quot; .format(a,b))
 print(&quot;语法糖开始&quot;)
@@ -203,9 +203,9 @@ print(&quot;a = {} , b = {} &quot; .format(a,b))
 </ul>
 <h3 id="272python字符串">2.7.2Python字符串</h3>
 <p>字符串或串(String)是由数字、字母、下划线组成的一串字符。</p>
-<pre><code>s=&quot;a1a2···an&quot;(n&gt;=0)
+<pre tabindex="0"><code>s=&quot;a1a2···an&quot;(n&gt;=0)
 </code></pre><p>它是编程语言中表示文本的数据类型。python的字串列表有2种取值顺序:</p>
-<pre><code>示例字符串：s = &quot;string&quot;
+<pre tabindex="0"><code>示例字符串：s = &quot;string&quot;
 </code></pre><ul>
 <li>从左到右索引默认0开始的，最大范围是字符串长度少1</li>
 <li>从右到左索引默认-1开始的，最大范围是字符串开头</li>
@@ -242,13 +242,13 @@ print(&quot;a = {} , b = {} &quot; .format(a,b))
 </table>
 <p>如果你要实现从字符串中获取一段子字符串的话，可以使用 [头下标:尾下标] 来截取相应的字符串，其中下标是从 0 开始算起，可以是正数或负数，下标可以为空表示取到头或尾。[头下标:尾下标] 获取的子字符串包含头下标的字符，但不包含尾下标的字符。
 示例代码：</p>
-<pre><code>s = &quot;string&quot;
+<pre tabindex="0"><code>s = &quot;string&quot;
 print (s)
 print (s[0:2])
 print (s[-6:-4])
 print (s[2:-1])
 </code></pre><p>运行结果：</p>
-<pre><code>string
+<pre tabindex="0"><code>string
 st
 st
 rin
@@ -315,27 +315,27 @@ rin
 </tbody>
 </table>
 <p>示例代码：</p>
-<pre><code>demo_list = ['tom','100','john','10']
+<pre tabindex="0"><code>demo_list = ['tom','100','john','10']
 print (demo_list)
 print (demo_list[0:2])
 print (demo_list[-4:-2])
 print (demo_list[:-1])
 </code></pre><p>输出结果：</p>
-<pre><code>['tom', '100', 'john', '10']
+<pre tabindex="0"><code>['tom', '100', 'john', '10']
 ['tom', '100']
 ['tom', '100']
 ['tom', '100', 'john']
 </code></pre><h3 id="274python元组">2.7.4Python元组</h3>
 <p>元组是另一个数据类型，类似于 List（列表）。元组用 <code>()</code> 标识。内部元素用逗号隔开。但是元组不能二次赋值，相当于只读列表。
 示例代码：</p>
-<pre><code>demo_list = ['tom','100','john','10']
+<pre tabindex="0"><code>demo_list = ['tom','100','john','10']
 demo_tuple = ('tom','100','john','10')
 demo_list[2] = 10
 print (demo_list)
 demo_tuple[2] = 1000
 print (demo_tuple)
 </code></pre><p>会出现如下报错：</p>
-<pre><code>['tom', '100', 10, '10']Traceback (most recent call last):
+<pre tabindex="0"><code>['tom', '100', 10, '10']Traceback (most recent call last):
   File &quot;D:\学习记录\Python\Demo.py&quot;, line 5, in &lt;module&gt;
 
     demo_tuple[2] = 1000
@@ -343,7 +343,7 @@ TypeError: 'tuple' object does not support item assignment
 </code></pre><h3 id="275python字典">2.7.5Python字典</h3>
 <p>字典(dictionary)是除列表以外python之中最灵活的内置数据结构类型。列表是有序的对象集合，字典是无序的对象集合。两者之间的区别在于：字典当中的元素是通过键来存取的，而不是通过偏移存取。字典用&quot;{ }&ldquo;标识。字典由索引(key)和它对应的值value组成。
 示例如下：</p>
-<pre><code>demo_dict = {}
+<pre tabindex="0"><code>demo_dict = {}
 demo_dict['demo'] = &quot;this is demo&quot;
 demo_dict[1] = &quot;this is one&quot;
 test_dict = {2:'this is two','year':2020}
@@ -352,7 +352,7 @@ print(test_dict)
 print(test_dict.keys())
 print(demo_dict.values())
 </code></pre><p>输出如下：</p>
-<pre><code>this is one
+<pre tabindex="0"><code>this is one
 {2: 'this is two', 'year': 2020}
 dict_keys([2, 'year'])
 dict_values(['this is demo', 'this is one'])
@@ -376,11 +376,11 @@ dict_values(['this is demo', 'this is one'])
 <p>接下来配置 <code>sublime</code>开发环境：依次点击：<code>Tools &gt; Build System &gt; New Build System</code></p>
 <p><img src="/python_info_images/20200109105115596_15915.png" alt="配置sublime"></p>
 <p>会打开一个新的页面，将内容：</p>
-<pre><code>{
+<pre tabindex="0"><code>{
 	&quot;shell_cmd&quot;: &quot;make&quot;
 }
 </code></pre><p>修改为：</p>
-<pre><code>{
+<pre tabindex="0"><code>{
     &quot;cmd&quot;: [&quot;C:/Program Files/Python38/python.exe&quot;,&quot;-u&quot;,&quot;$file&quot;],
     &quot;file_regex&quot;: &quot;^[ ]*File \&quot;(...*?)\&quot;, line ([0-9]*)&quot;,
     &quot;selector&quot;: &quot;source.python&quot;,
@@ -415,7 +415,7 @@ dict_values(['this is demo', 'this is one'])
 <p><code>DOM</code>就是用来干这个的，接收到代码数据时，浏览器会通过<code>解析器</code>解析代码构造<code>DOM结构树</code>。</p>
 <p><strong>这里说明一下<code>解析器</code>，首先我没有仔细的查过相关文档，其次下面写的说明，纯粹是我自己的理解，请怀着质疑的态度审阅！</strong></p>
 <p><code>解析器</code>也可以理解成<code>解释器</code>，顾名思义，就是解释开发语言的一种东西，解释语言，就需要遵循语法，所以不同的语法，对应的解释器是不一样的，类比：英语、汉语、日语、等等语言，如果不是懂语法结构，虽然都是人发出来的声音，但却是听不懂的，虽然我们小时候学习说话时莫名其妙就学会了这东西，但理解说话意思的，还是基于语法结构的解释。例如：<code>学习使我快乐</code>，能理解这句话，是因为明白每个组成的部分的意思：“学习”“使”“我”“快乐”，开发语言也是一样，例如：</p>
-<pre><code>&lt;html&gt;
+<pre tabindex="0"><code>&lt;html&gt;
  &lt;head&gt;
   &lt;title&gt;文档标题&lt;/title&gt;
  &lt;/head&gt;
@@ -448,9 +448,9 @@ dict_values(['this is demo', 'this is one'])
 <p><img src="/dvwa_images/20201012154055503_24494.png" alt=""></p>
 <p>过滤了<code>&lt;script</code>，但是还有很多可以用来进行测试的payload，例如：<code>&lt;a/href=javascript&amp;colon;alert(document.cookie)&gt;click</code>（该payload需要点击click才能触发）</p>
 <p>直接在url尾部添加payload，并不会正常的将代码插到可被正常解析的地方，反而是在<code>English</code>后面直接添加上了<code>click</code>：</p>
-<pre><code>&lt;option value=&quot;English%3Ca/href=javascript:alert(document.cookie)%3Eclick&quot;&gt;Englishclick&lt;/option&gt;
+<pre tabindex="0"><code>&lt;option value=&quot;English%3Ca/href=javascript:alert(document.cookie)%3Eclick&quot;&gt;Englishclick&lt;/option&gt;
 </code></pre><p>根据代码前后关系，可闭合标签进行尝试，首先闭合<code>option</code>标签：</p>
-<pre><code>&lt;option value=&quot;English%3C/option%3E%3Ca/href=javascript:alert(document.cookie)%3Eclick&quot;&gt;English&lt;/option&gt;
+<pre tabindex="0"><code>&lt;option value=&quot;English%3C/option%3E%3Ca/href=javascript:alert(document.cookie)%3Eclick&quot;&gt;English&lt;/option&gt;
 </code></pre><p>闭合代码被直接插入到了<code>English</code>后方，可是依旧没有正常解析，于是再向上闭合一个标签，发现可以被解析了，最终payload：<code>&lt;/option&gt;&lt;/select&gt;&lt;a/href=javascript&amp;colon;alert(document.cookie)&gt;click</code></p>
 <p>浏览器解析及触发结果如下：</p>
 <p><img src="/dvwa_images/20201012155803851_14535.png" alt=""></p>
@@ -459,7 +459,7 @@ dict_values(['this is demo', 'this is one'])
 <p>从源码上看，对参数进行了校验，但是还是有一种方式可以绕过：<code>#&lt;script&gt;alert(1)&lt;/script&gt;</code></p>
 <p><img src="/dvwa_images/20201012172728622_28854.png" alt=""></p>
 <p>实际插入代码如下：</p>
-<pre><code>&lt;option value=&quot;English#%3Cscript%3Ealert(1)%3C/script%3E&quot;&gt;English#&lt;script&gt;alert(1)&lt;/script&gt;&lt;/option&gt;
+<pre tabindex="0"><code>&lt;option value=&quot;English#%3Cscript%3Ealert(1)%3C/script%3E&quot;&gt;English#&lt;script&gt;alert(1)&lt;/script&gt;&lt;/option&gt;
 </code></pre><h3 id="impossible">Impossible</h3>
 <p>查看源码，前端代码并未做限制，但直接插入并没有正常弹窗，前端显示反而出现了编码字符，所以是后端进行了编码：</p>
 <p><img src="/dvwa_images/20201012173115486_61.png" alt=""></p>
@@ -543,7 +543,7 @@ dict_values(['this is demo', 'this is one'])
 			<content type="html"><![CDATA[<h1 id="dvwa_file-upload文件上传">DVWA_File Upload（文件上传）</h1>
 <h2 id="low">LOW</h2>
 <p>上传的，当然是webshell，但是为了演示，我就传个输出phpinfo的代码吧</p>
-<pre><code>&lt;?php
+<pre tabindex="0"><code>&lt;?php
 	phpinfo();
 ?&gt;
 </code></pre><p><img src="/dvwa_images/20200909094852831_5128.png" alt=""></p>
@@ -632,7 +632,7 @@ dict_values(['this is demo', 'this is one'])
 <p>为了演示漏洞，这是一个密码修改的功能，low级可以直观的感受到整个业务流，发送请求，在请求中填写新密码，后端接受到请求报文进行操作，</p>
 <p><img src="/dvwa_images/20200908143310557_20556.png" alt=""></p>
 <p>使用burpsuite生成的poc如下：</p>
-<pre><code>&lt;html&gt;
+<pre tabindex="0"><code>&lt;html&gt;
   &lt;!-- CSRF PoC - generated by Burp Suite Professional --&gt;
   &lt;body&gt;
   &lt;script&gt;history.pushState('', '', '/')&lt;/script&gt;
@@ -729,9 +729,9 @@ dict_values(['this is demo', 'this is one'])
 <p>工具使用完成后，再来看看源代码上是怎么实现的：</p>
 <p><img src="/dvwa_images/20200824223358938_7412.png" alt=""></p>
 <p>这个代码原理很简陋，并未做任何过滤。</p>
-<pre><code>$query  = &quot;SELECT * FROM `users` WHERE user = '$user' AND password = '$pass';&quot;;
+<pre tabindex="0"><code>$query  = &quot;SELECT * FROM `users` WHERE user = '$user' AND password = '$pass';&quot;;
 </code></pre><p>这条很直白的说明了，万用密码的可能：</p>
-<pre><code>admin' #
+<pre tabindex="0"><code>admin' #
 admin' -- -
 admin' and 1=1#
 </code></pre><h2 id="medium">MEDIUM</h2>
@@ -747,7 +747,7 @@ admin' and 1=1#
 <p><img src="/dvwa_images/20200826215202955_9563.png" alt=""></p>
 <p>多发送几次数据报文，得知：当前发送的<code>token</code>值存在于当前页面，响应页面中存在的<code>token</code>值是下次发送的token值。</p>
 <p>这个时候就可以写脚本来进行爆破了：</p>
-<pre><code>import requests,re,click
+<pre tabindex="0"><code>import requests,re,click
 
 @click.command()
 @click.option('-u', '--username', prompt='Your username file path: ', help='需要加载的用户名字典路径.')
@@ -792,7 +792,7 @@ if __name__ == '__main__':
 <p><img src="/dvwa_images/20200905194634960_340.png" alt=""></p>
 <p>输入错误1次，账号锁定15分钟，也就是说存在账号锁定机制，一般情况下，真实的业务上不可能错误一次就会锁定账号，但是三五次后锁定账号的还是很普遍的。这种就不可能用爆破的方式来进行密码枚举了，但是如果你的密码足够弱，例如88888888，那么，在有限次数内被猜解出来还是有可能的。</p>
 <p>接下来看看代码实现：</p>
-<pre><code>&lt;?php
+<pre tabindex="0"><code>&lt;?php
 
 if( isset( $_POST[ 'Login' ] ) &amp;&amp; isset ($_POST['username']) &amp;&amp; isset ($_POST['password']) ) {
     // Check Anti-CSRF token
@@ -907,7 +907,7 @@ generateSessionToken();
 			<description>Ubuntu Server 安装 Vulhub 根据官方网站的说明，需要安装docker和docker-compose，需要用pip安装docker-compose，官方的演示视</description>
 			<content type="html"><![CDATA[<h1 id="ubuntu-server-安装-vulhub">Ubuntu Server 安装 Vulhub</h1>
 <p>根据<a href="https://vulhub.org/">官方网站</a>的说明，需要安装<code>docker</code>和<code>docker-compose</code>，需要用<code>pip</code>安装<code>docker-compose</code>，官方的演示视频中使用的命令如下：</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># If you don&#39;t have a docker installed, you&#39;ll need to install docker</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># If you don&#39;t have a docker installed, you&#39;ll need to install docker</span>
 curl -s https://get.docker.com/ <span class="p">|</span> sh
 
 <span class="c1"># If you don&#39;t have a pip installed, you&#39;ll need to install pip</span>
@@ -934,7 +934,7 @@ docker-compose up -d
 <p>安装<code>pip</code>，命令：<code>curl -s https://bootstrap.pypa.io/get-pip.py | python3</code>，在本地网络环境下的<code>Ubuntu 18.04.5</code>中，很遗憾的无法正常执行该命令，取消-s参数后，将看到并未进行下载安装（猜测是网络原因导致的问题）：</p>
 <p><img src="/vulhub_images/20200827090852112_9538.png" alt=""></p>
 <p>于是只能采用apt命令安装，具体命令如下：</p>
-<pre><code>apt-get install python3-pip
+<pre tabindex="0"><code>apt-get install python3-pip
 </code></pre><p>安装完成以后的pip版本如下：</p>
 <p><img src="/vulhub_images/20200827100049007_28795.png" alt=""></p>
 <p>安装<code>docker-compose</code>，命令：<code>pip3 install docker-compose</code>，你可能会因为网络原因而失败很多次，我没有很好的建议，因为我的做法是不断的重复执行该条命令，由于pip安装的时候会将下载的包缓存到本地，所以我就利用这个特性，慢慢的把整个安装所需的包下载到了本地最后成功安装了，当前安装的版本如下：</p>
@@ -944,14 +944,14 @@ docker-compose up -d
 <h2 id="配置下载源">配置下载源</h2>
 <p>下载了vulhub的框架后，先不要进行实验，添加国内镜像地址，可以使下载镜像的时候，快上许多。
 创建daemon.json文件<code>vim /etc/docker/daemon.json</code>，再往里写入镜像地址，我这里用的中科大的地址：</p>
-<pre><code>{
+<pre tabindex="0"><code>{
 	&quot;registry-mirrors&quot;: [&quot;http://docker.mirrors.ustc.edu.cn&quot;]
 }
 </code></pre><p><img src="/vulhub_images/20201202101721106_19536.png" alt=""></p>
 <p>更新好了以后，需要重启一下docker：<code>systemctl restart docker</code></p>
 <h2 id="docker命令">docker命令</h2>
 <p>整个vulhub实验中需要用到的docker命令很少，基础命令即可：</p>
-<pre><code>docker-compose build        当修改dockerfile或者docker-compose时，运行docker-compose build 重建镜像
+<pre tabindex="0"><code>docker-compose build        当修改dockerfile或者docker-compose时，运行docker-compose build 重建镜像
 docker-compose up -d        构建并启动容器（需要进入到容器目录）（-d表示后台运行）
 docker ps                   列出当前多有的容器及相关信息
 docker start/stop 容器名/id 启动/停止 指定容器
@@ -976,7 +976,7 @@ docker rmi 镜像名/id         删除指定镜像
 <h2 id="环境下载">环境下载</h2>
 <p>本地虚拟机安装<code>ubuntu server 20.04.1 LTS</code>
 然后使用<code>xshell</code>连接服务器，采用<code>xftp</code>上传一键下载环境的脚本，脚本内命令如下：</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/sh
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/sh
 </span><span class="cp"></span><span class="nb">echo</span> <span class="s1">&#39;\n1、新增ppa源\n&#39;</span><span class="p">;</span>
 add-apt-repository ppa:ondrej/php<span class="p">;</span>
 <span class="nb">echo</span> <span class="s1">&#39;\n2、更新本地源\n&#39;</span><span class="p">;</span>
@@ -1007,18 +1007,18 @@ ehco <span class="s1">&#39;\n========web服务路径为：/var/www/html/========
 </code></pre></div><h2 id="环境配置">环境配置</h2>
 <h3 id="1php-56-环境配置">1、PHP 5.6 环境配置</h3>
 <p>首先使用<code>root</code>权限打开<code>php</code>中关于<code>apache2</code>的配置文件</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">vim /etc/php/5.6/apache2/php.ini
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">vim /etc/php/5.6/apache2/php.ini
 </code></pre></div><p>然后在命令模式下输入：<code>/allow_url_include</code> 将后面的值，按如下方式修改：</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">allow_url_include</span> <span class="o">=</span> On
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">allow_url_include</span> <span class="o">=</span> On
 </code></pre></div><h3 id="2mysql-数据库配置">2、MYSQL 数据库配置</h3>
 <p>本次安装的是最新版本的<code>mysql 8.0.21</code>，在终端直接输入<code>mysql</code>即可登录，因为密码是空！
 创建一个用于dvwa操作的数据库，命令如下：</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">mysql&gt; create database dvwa<span class="p">;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">mysql&gt; create database dvwa<span class="p">;</span>
 </code></pre></div><p><strong>特别说明：如果按照上面的操作，在老版本的mysql数据库中，就满足要求并可以正常连接了，但由于版本更迭，mysql 8对数据库默认配置进行了更新，为了兼容老版本的php，还请进行以下修改！</strong>
 打开编辑mysqld配置文件：</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">vim /etc/mysql/mysql.conf.d/mysqld.cnf
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">vim /etc/mysql/mysql.conf.d/mysqld.cnf
 </code></pre></div><p>在<code>[mysqld]</code>下方新增以下三行命令：</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># 设置密码编码格式</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># 设置密码编码格式</span>
 <span class="nv">default_authentication_plugin</span><span class="o">=</span>mysql_native_password
 <span class="c1"># 设置编码格式</span>
 character-set-server <span class="o">=</span> utf8mb4
@@ -1026,11 +1026,11 @@ collation-server <span class="o">=</span> utf8mb4_unicode_ci
 
 </code></pre></div><h3 id="3-dvwa-环境配置">3、 DVWA 环境配置</h3>
 <p>首先进入<code>DVWA</code>配置文件路径；</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> /var/www/html/DVWA/config/
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> /var/www/html/DVWA/config/
 </code></pre></div><p>进行配置文件的创建；</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">cp config.inc.php.dist config.inc.php
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">cp config.inc.php.dist config.inc.php
 </code></pre></div><p>修改配置文件中的数据库连接项；</p>
-<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="c1">#####原始数据如下#####
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="c1">#####原始数据如下#####
 </span><span class="c1"></span><span class="nv">$_DVWA</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
 <span class="nv">$_DVWA</span><span class="p">[</span> <span class="s1">&#39;db_server&#39;</span> <span class="p">]</span>   <span class="o">=</span> <span class="s1">&#39;127.0.0.1&#39;</span><span class="p">;</span>
 <span class="nv">$_DVWA</span><span class="p">[</span> <span class="s1">&#39;db_database&#39;</span> <span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;dvwa&#39;</span><span class="p">;</span>
@@ -1043,13 +1043,13 @@ collation-server <span class="o">=</span> utf8mb4_unicode_ci
 <span class="nv">$_DVWA</span><span class="p">[</span> <span class="s1">&#39;db_user&#39;</span> <span class="p">]</span>     <span class="o">=</span> <span class="s1">&#39;root&#39;</span><span class="p">;</span>
 <span class="nv">$_DVWA</span><span class="p">[</span> <span class="s1">&#39;db_password&#39;</span> <span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
 </code></pre></div><p>设置文件夹可写权限：</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">chmod <span class="m">777</span> -R /var/www/html/dvwa/hackable/uploads/
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">chmod <span class="m">777</span> -R /var/www/html/dvwa/hackable/uploads/
 chmod <span class="m">777</span> /var/www/html/dvwa/external/phpids/0.6/lib/IDS/tmp/phpids_log.txt
 chmod <span class="m">777</span> -R /var/www/html/dvwa/config
 </code></pre></div><p>关于<code>reCAPTCHA key: Missing</code>，是调用google的验证码接口，用来做安全测试，但是调用接口需要梯子，本地测试，可以不填写，如果想体验，可百度自行替换。</p>
 <h3 id="4sqli-lab环境配置">4、SQLI-Lab环境配置</h3>
 <p>编辑配置文件<code>vim /var/www/html/sqli-labs/sql-connections/db-creds.inc</code>，填写数据库的用户名（<code>$dbuser</code>）密码（<code>$dbpass</code>）。</p>
-<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="nv">$dbuser</span> <span class="o">=</span><span class="s1">&#39;root&#39;</span><span class="p">;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="nv">$dbuser</span> <span class="o">=</span><span class="s1">&#39;root&#39;</span><span class="p">;</span>
 <span class="nv">$dbpass</span> <span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">;</span>
 <span class="nv">$dbname</span> <span class="o">=</span><span class="s2">&#34;security&#34;</span><span class="p">;</span>
 <span class="nv">$host</span> <span class="o">=</span> <span class="s1">&#39;localhost&#39;</span><span class="p">;</span>

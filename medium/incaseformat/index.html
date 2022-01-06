@@ -47,7 +47,7 @@
 				<nav class="site-nav hide-in-mobile">
 					
 				<a href="https://www.a1ee.cn/basic/">BASIC</a>
-				<a href="https://www.a1ee.cn/simaple/">SIMAPLE</a>
+				<a href="https://www.a1ee.cn/simple/">SIMPLE</a>
 				<a href="https://www.a1ee.cn/medium/">MEDIUM</a>
 				<a href="https://www.a1ee.cn/about-me/">ABOUT</a>
 
@@ -61,7 +61,7 @@
 	<div id="mobile-menu" class="animated fast">
 		<ul>
 			<li><a href="https://www.a1ee.cn/basic/">BASIC</a></li>
-			<li><a href="https://www.a1ee.cn/simaple/">SIMAPLE</a></li>
+			<li><a href="https://www.a1ee.cn/simple/">SIMPLE</a></li>
 			<li><a href="https://www.a1ee.cn/medium/">MEDIUM</a></li>
 			<li><a href="https://www.a1ee.cn/about-me/">ABOUT</a></li>
 		</ul>
@@ -83,7 +83,7 @@
 <p>这是我分析的第一个样本，其中一定会有遗漏的地方，以及牵强之处，希望大家多多批评指正。</p>
 <h2 id="1-行为捕获">1. 行为捕获<a href="#1-行为捕获" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>直接运行样本，并使用火绒剑进行行为捕获：</p>
-<pre><code>16:43:31:605,	tsay.exe,	1064:0,	1064,	EXEC_create,	C:\Users\ALEE\Desktop\incaseformat\tsay.exe,	parent_pid:4700 cmdline:'&quot;C:\Users\ALEE\Desktop\incaseformat\tsay.exe&quot; ' image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
+<pre tabindex="0"><code>16:43:31:605,	tsay.exe,	1064:0,	1064,	EXEC_create,	C:\Users\ALEE\Desktop\incaseformat\tsay.exe,	parent_pid:4700 cmdline:'&quot;C:\Users\ALEE\Desktop\incaseformat\tsay.exe&quot; ' image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
 16:43:31:745,	tsay.exe,	1064:0,	1064,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_5.82.19041.488_none_89e6152f0b32762e\comctl32.dll,	base:0x0000000074DB0000 size:0x0008D000 ,	0x00000000 [操作成功完成。  ],	
 16:43:31:823,	tsay.exe,	1064:0,	1064,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.19041.488_none_11b1e5df2ffd8627\comctl32.dll,	base:0x0000000073CB0000 size:0x00212000 ,	0x00000000 [操作成功完成。  ],	
 16:43:31:870,	tsay.exe,	1064:2276,	1064,	FILE_touch,	C:\windows\tsay.exe,	access:0x0017019F alloc_size:460288 attrib:0x00000020 share_access:0x00000000 disposition:0x00000002 options:0x00000044 ,	0x00000000 [操作成功完成。  ],	
@@ -94,7 +94,7 @@
 16:43:31:901,	tsay.exe,	1064:2276,	1064,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\RunOnce\msfsa,	type:0x00000001 datalen:40 data:'43 3A 5C 77 69 6E 64 6F 77 73 5C 74 73 61 79 2E ' ,	0x00000000 [操作成功完成。  ],	
 16:43:31:917,	tsay.exe,	1064:0,	1064,	EXEC_destroy,	C:\Users\ALEE\Desktop\incaseformat\tsay.exe,	parent_pid:4700 cmdline:'&quot;C:\Users\ALEE\Desktop\incaseformat\tsay.exe&quot; ' ,	0x00000000 [操作成功完成。  ],	
 </code></pre><p>将时间设置为1月13日，以管理员权限运行木马程序：</p>
-<pre><code>16:42:32:202,	tsay.exe,	2568:0,	0,	EXEC_create,	C:\Windows\system32\SystemSettingsAdminFlows.exe,	parent_pid:5808 cmdline:'&quot;C:\Windows\system32\SystemSettingsAdminFlows.exe&quot; SetDateTime' image_base:0x00007FF6B6C80000 image_size:0x00080000 ,	0x00000000 [操作成功完成。  ],	
+<pre tabindex="0"><code>16:42:32:202,	tsay.exe,	2568:0,	0,	EXEC_create,	C:\Windows\system32\SystemSettingsAdminFlows.exe,	parent_pid:5808 cmdline:'&quot;C:\Windows\system32\SystemSettingsAdminFlows.exe&quot; SetDateTime' image_base:0x00007FF6B6C80000 image_size:0x00080000 ,	0x00000000 [操作成功完成。  ],	
 16:42:32:499,	tsay.exe,	2568:0,	0,	EXEC_module_load,	C:\Windows\System32\vm3dum64_10.dll,	base:0x00007FFB01970000 size:0x00061000 ,	0x00000000 [操作成功完成。  ],	
 16:42:33:321,	tsay.exe,	2568:6180,	0,	REG_setval,	HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\bam\State\UserSettings\S-1-5-21-655661564-3040666061-2252561177-1000\\Device\HarddiskVolume3\Windows\System32\SystemSettingsAdminFlows.exe,	type:0x00000003 datalen:24 data:'28 BB 33 09 88 E9 D6 01 00 00 00 00 00 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
 16:42:33:321,	tsay.exe,	2568:0,	0,	EXEC_destroy,	C:\Windows\system32\SystemSettingsAdminFlows.exe,	parent_pid:5808 cmdline:'&quot;C:\Windows\system32\SystemSettingsAdminFlows.exe&quot; SetDateTime' ,	0x00000000 [操作成功完成。  ],	
@@ -162,7 +162,7 @@
 16:48:07:010,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Notifications\Data\418A073AA3BC3475,	type:0x00000003 datalen:446 data:'05 09 00 00 00 00 00 00 04 00 04 00 01 02 06 00 ' ,	0x00000000 [操作成功完成。  ],	
 16:48:07:072,	tsay.exe,	5748:0,	5748,	EXEC_destroy,	C:\Windows\tsay.exe,	parent_pid:4700 cmdline:'&quot;C:\Windows\tsay.exe&quot; ' ,	0x00000000 [操作成功完成。  ],	
 </code></pre><p>生成的ttry.exe文件的动作如下：</p>
-<pre><code>17:18:04:679,	ttry.exe,	9128:0,	9076,	EXEC_create,	C:\windows\ttry.exe,	parent_pid:9076 cmdline:'&quot;C:\windows\ttry.exe&quot; ' image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
+<pre tabindex="0"><code>17:18:04:679,	ttry.exe,	9128:0,	9076,	EXEC_create,	C:\windows\ttry.exe,	parent_pid:9076 cmdline:'&quot;C:\windows\ttry.exe&quot; ' image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
 17:18:04:710,	ttry.exe,	9128:0,	9076,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_5.82.19041.488_none_89e6152f0b32762e\comctl32.dll,	base:0x0000000075BA0000 size:0x0008D000 ,	0x00000000 [操作成功完成。  ],	
 17:18:04:757,	ttry.exe,	9128:0,	9076,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.19041.488_none_11b1e5df2ffd8627\comctl32.dll,	base:0x0000000074810000 size:0x00212000 ,	0x00000000 [操作成功完成。  ],	
 17:18:04:757,	ttry.exe,	9128:9132,	9076,	FILE_truncate,	C:\windows\tsay.exe,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
@@ -180,7 +180,7 @@
 17:18:06:757,	ttry.exe,	9128:9132,	9076,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\Hidden\SHOWALL\checkedvalue,	type:0x00000004 datalen:4 data:'00 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
 17:18:06:757,	ttry.exe,	9128:9132,	9076,	REG_rmval,	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\HideFileExt\checkedvalue,	keyname:'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\HideFileExt' ,	0x00000000 [操作成功完成。  ],	
 </code></pre><p>当时间调整为1月13日，运行ttry.exe动作如下：</p>
-<pre><code>17:25:44:420,	ttry.exe,	7808:588,	7808,	FILE_truncate,	D:\incaseformat.log,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
+<pre tabindex="0"><code>17:25:44:420,	ttry.exe,	7808:588,	7808,	FILE_truncate,	D:\incaseformat.log,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
 
 ......
 
@@ -198,7 +198,7 @@
 <p>在删除文件夹日期运行C:\windows\ttry.exe，将会新建incaseformat.log，并删除其他文件。</p>
 <h2 id="3样本分析">3.样本分析<a href="#3样本分析" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <h3 id="31样本信息">3.1样本信息<a href="#31样本信息" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
-<pre><code>C:\Users\ALEE\Desktop\incaseformat样本&gt;certutil -hashfile tsay.exe sha256
+<pre tabindex="0"><code>C:\Users\ALEE\Desktop\incaseformat样本&gt;certutil -hashfile tsay.exe sha256
 SHA256 的 tsay.exe 哈希:
 8c8793eb7c80a09e1542e424ea89c23c195d364892620562e06b3df602890929
 CertUtil: -hashfile 命令成功完成。
@@ -272,7 +272,7 @@ CertUtil: -hashfile 命令成功完成。
 	</main>
 
 	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
-		<p>&copy; 2021 <a href="https://www.a1ee.cn">alee</a></p>
+		<p>&copy; 2022 <a href="https://www.a1ee.cn">alee</a></p>
 	</footer>
 
 

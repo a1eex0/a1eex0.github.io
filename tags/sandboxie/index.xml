@@ -9,10 +9,10 @@
     <lastBuildDate>Wed, 01 Sep 2021 09:12:41 +0800</lastBuildDate><atom:link href="https://www.a1ee.cn/tags/sandboxie/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Cuckoo</title>
-      <link>https://www.a1ee.cn/simaple/cuckoo/</link>
+      <link>https://www.a1ee.cn/simple/cuckoo/</link>
       <pubDate>Wed, 01 Sep 2021 09:12:41 +0800</pubDate>
       
-      <guid>https://www.a1ee.cn/simaple/cuckoo/</guid>
+      <guid>https://www.a1ee.cn/simple/cuckoo/</guid>
       <description>Cuckoo 2.0.7 流程分析 Cuckoo官方说明中提到： Cuckoo Sandbox 由处理样本执行和分析的中央管理软件组成。 每个分析都在一个全新的、隔离的虚拟机或物理机中启动。Cu</description>
     </item>
     

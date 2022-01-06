@@ -6,40 +6,49 @@
     <description>Recent content in crack on alee</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 28 Dec 2020 14:08:52 +0800</lastBuildDate><atom:link href="https://www.a1ee.cn/tags/crack/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 06 Jan 2022 09:19:04 +0800</lastBuildDate><atom:link href="https://www.a1ee.cn/tags/crack/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>PEview</title>
+      <link>https://www.a1ee.cn/simple/peview/</link>
+      <pubDate>Thu, 06 Jan 2022 09:19:04 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/simple/peview/</guid>
+      <description>PEview 修正错误提醒 前言 在《逆向工程核心原理》作者的站点上下载的PEview，在点击特定树树项时运行会报错，这里将记录如何修正该错误： 开始 采用x3</description>
+    </item>
+    
     <item>
       <title>Xshell_6_plus</title>
-      <link>https://www.a1ee.cn/simaple/xshell_6_plus/</link>
+      <link>https://www.a1ee.cn/simple/xshell_6_plus/</link>
       <pubDate>Mon, 28 Dec 2020 14:08:52 +0800</pubDate>
       
-      <guid>https://www.a1ee.cn/simaple/xshell_6_plus/</guid>
+      <guid>https://www.a1ee.cn/simple/xshell_6_plus/</guid>
       <description>Xshell 6 plus 下载 官网下载 左边是需要输入注册码的，右边是30天的评估版，随意填写，使用临时邮箱就可以接收下载链接了，产品的下载链接路径是一样的，不同</description>
     </item>
     
     <item>
       <title>Awvs</title>
-      <link>https://www.a1ee.cn/simaple/awvs/</link>
+      <link>https://www.a1ee.cn/simple/awvs/</link>
       <pubDate>Mon, 28 Dec 2020 14:04:14 +0800</pubDate>
       
-      <guid>https://www.a1ee.cn/simaple/awvs/</guid>
+      <guid>https://www.a1ee.cn/simple/awvs/</guid>
       <description>AWVS 12 下载 下载试用版（2020-05-12：下载链接已失效，需要邮箱重新注册） 准备工作 安装好后，登录并扫描网站，在事件窗口会看到相关信息： 所有</description>
     </item>
     
     <item>
       <title>Winrar</title>
-      <link>https://www.a1ee.cn/simaple/winrar/</link>
+      <link>https://www.a1ee.cn/simple/winrar/</link>
       <pubDate>Mon, 28 Dec 2020 14:02:45 +0800</pubDate>
       
-      <guid>https://www.a1ee.cn/simaple/winrar/</guid>
+      <guid>https://www.a1ee.cn/simple/winrar/</guid>
       <description>WinRAR 官网下载WinRAR 寻找切入点 预览程序，寻找切入点： 两个点：一个是窗口上有 评估版本 字样，另一个是有广告弹窗。 我感觉从 setwindowtext 入手好像要简单一些。</description>
     </item>
     
     <item>
       <title>Sbulime_text3</title>
-      <link>https://www.a1ee.cn/simaple/sbulime_text3/</link>
+      <link>https://www.a1ee.cn/simple/sbulime_text3/</link>
       <pubDate>Mon, 28 Dec 2020 13:58:30 +0800</pubDate>
       
-      <guid>https://www.a1ee.cn/simaple/sbulime_text3/</guid>
+      <guid>https://www.a1ee.cn/simple/sbulime_text3/</guid>
       <description>Sublime Text3 入门级爆破 下载Sublime Text3 x64(3211)，需要的工具是看雪论坛的x64dbg。 讨厌的地方有两个：首页 、弹窗。 针对首页上的字样，在</description>
     </item>
     

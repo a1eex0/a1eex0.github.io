@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>NjRat on alee</title>
+    <link>https://www.a1ee.cn/tags/njrat/</link>
+    <description>Recent content in NjRat on alee</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 06 Jan 2022 09:10:58 +0800</lastBuildDate><atom:link href="https://www.a1ee.cn/tags/njrat/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>NjRat</title>
+      <link>https://www.a1ee.cn/medium/njrat/</link>
+      <pubDate>Thu, 06 Jan 2022 09:10:58 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/medium/njrat/</guid>
+      <description>NjRat 样本分析 1. 样本信息 NjRat (Bladabindi) 是一种 .NET RAT（远程访问木马），允许攻击者控制受感染的机器。 IOC 类别 特征值 MD5 556FE886EDD2DB888EE3A33A103C2364 SHA1 9D58E7B157FE41D86398FF587E10AE2FF3FB3EE9 SHA256 833F86074592648C0A758098E34AB605A2B922D94DBAB7141E2CE87ACEC03C35 C2 44gang44.duckdns.org:2222 2. 样本分析 采用dnSpy加载</description>
+    </item>
+    
+  </channel>
+</rss>

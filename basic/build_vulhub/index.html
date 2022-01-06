@@ -47,7 +47,7 @@
 				<nav class="site-nav hide-in-mobile">
 					
 				<a href="https://www.a1ee.cn/basic/">BASIC</a>
-				<a href="https://www.a1ee.cn/simaple/">SIMAPLE</a>
+				<a href="https://www.a1ee.cn/simple/">SIMPLE</a>
 				<a href="https://www.a1ee.cn/medium/">MEDIUM</a>
 				<a href="https://www.a1ee.cn/about-me/">ABOUT</a>
 
@@ -61,7 +61,7 @@
 	<div id="mobile-menu" class="animated fast">
 		<ul>
 			<li><a href="https://www.a1ee.cn/basic/">BASIC</a></li>
-			<li><a href="https://www.a1ee.cn/simaple/">SIMAPLE</a></li>
+			<li><a href="https://www.a1ee.cn/simple/">SIMPLE</a></li>
 			<li><a href="https://www.a1ee.cn/medium/">MEDIUM</a></li>
 			<li><a href="https://www.a1ee.cn/about-me/">ABOUT</a></li>
 		</ul>
@@ -78,7 +78,7 @@
 			<div class="content">
 				<h1 id="ubuntu-server-安装-vulhub">Ubuntu Server 安装 Vulhub<a href="#ubuntu-server-安装-vulhub" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
 <p>根据<a href="https://vulhub.org/">官方网站</a>的说明，需要安装<code>docker</code>和<code>docker-compose</code>，需要用<code>pip</code>安装<code>docker-compose</code>，官方的演示视频中使用的命令如下：</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># If you don&#39;t have a docker installed, you&#39;ll need to install docker</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># If you don&#39;t have a docker installed, you&#39;ll need to install docker</span>
 curl -s https://get.docker.com/ <span class="p">|</span> sh
 
 <span class="c1"># If you don&#39;t have a pip installed, you&#39;ll need to install pip</span>
@@ -105,7 +105,7 @@ docker-compose up -d
 <p>安装<code>pip</code>，命令：<code>curl -s https://bootstrap.pypa.io/get-pip.py | python3</code>，在本地网络环境下的<code>Ubuntu 18.04.5</code>中，很遗憾的无法正常执行该命令，取消-s参数后，将看到并未进行下载安装（猜测是网络原因导致的问题）：</p>
 <p><img src="/vulhub_images/20200827090852112_9538.png" alt=""></p>
 <p>于是只能采用apt命令安装，具体命令如下：</p>
-<pre><code>apt-get install python3-pip
+<pre tabindex="0"><code>apt-get install python3-pip
 </code></pre><p>安装完成以后的pip版本如下：</p>
 <p><img src="/vulhub_images/20200827100049007_28795.png" alt=""></p>
 <p>安装<code>docker-compose</code>，命令：<code>pip3 install docker-compose</code>，你可能会因为网络原因而失败很多次，我没有很好的建议，因为我的做法是不断的重复执行该条命令，由于pip安装的时候会将下载的包缓存到本地，所以我就利用这个特性，慢慢的把整个安装所需的包下载到了本地最后成功安装了，当前安装的版本如下：</p>
@@ -115,14 +115,14 @@ docker-compose up -d
 <h2 id="配置下载源">配置下载源<a href="#配置下载源" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>下载了vulhub的框架后，先不要进行实验，添加国内镜像地址，可以使下载镜像的时候，快上许多。
 创建daemon.json文件<code>vim /etc/docker/daemon.json</code>，再往里写入镜像地址，我这里用的中科大的地址：</p>
-<pre><code>{
+<pre tabindex="0"><code>{
 	&quot;registry-mirrors&quot;: [&quot;http://docker.mirrors.ustc.edu.cn&quot;]
 }
 </code></pre><p><img src="/vulhub_images/20201202101721106_19536.png" alt=""></p>
 <p>更新好了以后，需要重启一下docker：<code>systemctl restart docker</code></p>
 <h2 id="docker命令">docker命令<a href="#docker命令" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>整个vulhub实验中需要用到的docker命令很少，基础命令即可：</p>
-<pre><code>docker-compose build        当修改dockerfile或者docker-compose时，运行docker-compose build 重建镜像
+<pre tabindex="0"><code>docker-compose build        当修改dockerfile或者docker-compose时，运行docker-compose build 重建镜像
 docker-compose up -d        构建并启动容器（需要进入到容器目录）（-d表示后台运行）
 docker ps                   列出当前多有的容器及相关信息
 docker start/stop 容器名/id 启动/停止 指定容器
@@ -157,7 +157,7 @@ docker rmi 镜像名/id         删除指定镜像
 	</main>
 
 	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
-		<p>&copy; 2021 <a href="https://www.a1ee.cn">alee</a></p>
+		<p>&copy; 2022 <a href="https://www.a1ee.cn">alee</a></p>
 	</footer>
 
 
