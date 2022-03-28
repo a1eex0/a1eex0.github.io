@@ -83,7 +83,7 @@
 <p>这是我分析的第一个样本，其中一定会有遗漏的地方，以及牵强之处，希望大家多多批评指正。</p>
 <h2 id="1-行为捕获">1. 行为捕获<a href="#1-行为捕获" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>直接运行样本，并使用火绒剑进行行为捕获：</p>
-<pre tabindex="0"><code>16:43:31:605,	tsay.exe,	1064:0,	1064,	EXEC_create,	C:\Users\ALEE\Desktop\incaseformat\tsay.exe,	parent_pid:4700 cmdline:'&quot;C:\Users\ALEE\Desktop\incaseformat\tsay.exe&quot; ' image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
+<pre tabindex="0"><code>16:43:31:605,	tsay.exe,	1064:0,	1064,	EXEC_create,	C:\Users\ALEE\Desktop\incaseformat\tsay.exe,	parent_pid:4700 cmdline:&#39;&#34;C:\Users\ALEE\Desktop\incaseformat\tsay.exe&#34; &#39; image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
 16:43:31:745,	tsay.exe,	1064:0,	1064,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_5.82.19041.488_none_89e6152f0b32762e\comctl32.dll,	base:0x0000000074DB0000 size:0x0008D000 ,	0x00000000 [操作成功完成。  ],	
 16:43:31:823,	tsay.exe,	1064:0,	1064,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.19041.488_none_11b1e5df2ffd8627\comctl32.dll,	base:0x0000000073CB0000 size:0x00212000 ,	0x00000000 [操作成功完成。  ],	
 16:43:31:870,	tsay.exe,	1064:2276,	1064,	FILE_touch,	C:\windows\tsay.exe,	access:0x0017019F alloc_size:460288 attrib:0x00000020 share_access:0x00000000 disposition:0x00000002 options:0x00000044 ,	0x00000000 [操作成功完成。  ],	
@@ -91,14 +91,14 @@
 16:43:31:886,	tsay.exe,	1064:2276,	1064,	FILE_read,	C:\Users\ALEE\Desktop\incaseformat\tsay.exe,	offset:0x00000000 datalen:0x00020000 ,	0x00000000 [操作成功完成。  ],	
 16:43:31:901,	tsay.exe,	1064:2276,	1064,	FILE_write,	C:\windows\tsay.exe,	offset:0x00000000 datalen:0x00020000 ,	0x00000000 [操作成功完成。  ],	
 16:43:31:901,	tsay.exe,	1064:0,	1064,	FILE_modified,	C:\windows\tsay.exe,	,	0x00000000 [操作成功完成。  ],	
-16:43:31:901,	tsay.exe,	1064:2276,	1064,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\RunOnce\msfsa,	type:0x00000001 datalen:40 data:'43 3A 5C 77 69 6E 64 6F 77 73 5C 74 73 61 79 2E ' ,	0x00000000 [操作成功完成。  ],	
-16:43:31:917,	tsay.exe,	1064:0,	1064,	EXEC_destroy,	C:\Users\ALEE\Desktop\incaseformat\tsay.exe,	parent_pid:4700 cmdline:'&quot;C:\Users\ALEE\Desktop\incaseformat\tsay.exe&quot; ' ,	0x00000000 [操作成功完成。  ],	
+16:43:31:901,	tsay.exe,	1064:2276,	1064,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\RunOnce\msfsa,	type:0x00000001 datalen:40 data:&#39;43 3A 5C 77 69 6E 64 6F 77 73 5C 74 73 61 79 2E &#39; ,	0x00000000 [操作成功完成。  ],	
+16:43:31:917,	tsay.exe,	1064:0,	1064,	EXEC_destroy,	C:\Users\ALEE\Desktop\incaseformat\tsay.exe,	parent_pid:4700 cmdline:&#39;&#34;C:\Users\ALEE\Desktop\incaseformat\tsay.exe&#34; &#39; ,	0x00000000 [操作成功完成。  ],	
 </code></pre><p>将时间设置为1月13日，以管理员权限运行木马程序：</p>
-<pre tabindex="0"><code>16:42:32:202,	tsay.exe,	2568:0,	0,	EXEC_create,	C:\Windows\system32\SystemSettingsAdminFlows.exe,	parent_pid:5808 cmdline:'&quot;C:\Windows\system32\SystemSettingsAdminFlows.exe&quot; SetDateTime' image_base:0x00007FF6B6C80000 image_size:0x00080000 ,	0x00000000 [操作成功完成。  ],	
+<pre tabindex="0"><code>16:42:32:202,	tsay.exe,	2568:0,	0,	EXEC_create,	C:\Windows\system32\SystemSettingsAdminFlows.exe,	parent_pid:5808 cmdline:&#39;&#34;C:\Windows\system32\SystemSettingsAdminFlows.exe&#34; SetDateTime&#39; image_base:0x00007FF6B6C80000 image_size:0x00080000 ,	0x00000000 [操作成功完成。  ],	
 16:42:32:499,	tsay.exe,	2568:0,	0,	EXEC_module_load,	C:\Windows\System32\vm3dum64_10.dll,	base:0x00007FFB01970000 size:0x00061000 ,	0x00000000 [操作成功完成。  ],	
-16:42:33:321,	tsay.exe,	2568:6180,	0,	REG_setval,	HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\bam\State\UserSettings\S-1-5-21-655661564-3040666061-2252561177-1000\\Device\HarddiskVolume3\Windows\System32\SystemSettingsAdminFlows.exe,	type:0x00000003 datalen:24 data:'28 BB 33 09 88 E9 D6 01 00 00 00 00 00 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-16:42:33:321,	tsay.exe,	2568:0,	0,	EXEC_destroy,	C:\Windows\system32\SystemSettingsAdminFlows.exe,	parent_pid:5808 cmdline:'&quot;C:\Windows\system32\SystemSettingsAdminFlows.exe&quot; SetDateTime' ,	0x00000000 [操作成功完成。  ],	
-16:45:41:433,	tsay.exe,	2568:0,	2568,	EXEC_create,	C:\Windows\tsay.exe,	parent_pid:4700 cmdline:'&quot;C:\Windows\tsay.exe&quot; ' image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
+16:42:33:321,	tsay.exe,	2568:6180,	0,	REG_setval,	HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\bam\State\UserSettings\S-1-5-21-655661564-3040666061-2252561177-1000\\Device\HarddiskVolume3\Windows\System32\SystemSettingsAdminFlows.exe,	type:0x00000003 datalen:24 data:&#39;28 BB 33 09 88 E9 D6 01 00 00 00 00 00 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+16:42:33:321,	tsay.exe,	2568:0,	0,	EXEC_destroy,	C:\Windows\system32\SystemSettingsAdminFlows.exe,	parent_pid:5808 cmdline:&#39;&#34;C:\Windows\system32\SystemSettingsAdminFlows.exe&#34; SetDateTime&#39; ,	0x00000000 [操作成功完成。  ],	
+16:45:41:433,	tsay.exe,	2568:0,	2568,	EXEC_create,	C:\Windows\tsay.exe,	parent_pid:4700 cmdline:&#39;&#34;C:\Windows\tsay.exe&#34; &#39; image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
 16:45:41:464,	tsay.exe,	2568:0,	2568,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_5.82.19041.488_none_89e6152f0b32762e\comctl32.dll,	base:0x0000000074DB0000 size:0x0008D000 ,	0x00000000 [操作成功完成。  ],	
 16:45:41:511,	tsay.exe,	2568:0,	2568,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.19041.488_none_11b1e5df2ffd8627\comctl32.dll,	base:0x0000000073CB0000 size:0x00212000 ,	0x00000000 [操作成功完成。  ],	
 16:45:41:511,	tsay.exe,	2568:4468,	2568,	FILE_truncate,	C:\windows\tsay.exe,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
@@ -116,7 +116,7 @@
 16:45:41:527,	tsay.exe,	2568:4468,	2568,	FILE_truncate,	C:\windows\tsay.exe,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
 16:45:41:527,	tsay.exe,	2568:4468,	2568,	FILE_truncate,	C:\windows\tsay.exe,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
 16:45:41:527,	tsay.exe,	2568:4468,	2568,	FILE_truncate,	C:\windows\tsay.exe,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
-16:45:41:527,	tsay.exe,	2568:4468,	2568,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\RunOnce\msfsa,	type:0x00000001 datalen:40 data:'43 3A 5C 77 69 6E 64 6F 77 73 5C 74 73 61 79 2E ' ,	0x00000000 [操作成功完成。  ],	
+16:45:41:527,	tsay.exe,	2568:4468,	2568,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\RunOnce\msfsa,	type:0x00000001 datalen:40 data:&#39;43 3A 5C 77 69 6E 64 6F 77 73 5C 74 73 61 79 2E &#39; ,	0x00000000 [操作成功完成。  ],	
 16:45:41:527,	tsay.exe,	2568:4468,	2568,	FILE_touch,	C:\windows\ttry.exe,	access:0x0017019F alloc_size:460288 attrib:0x00000020 share_access:0x00000000 disposition:0x00000005 options:0x00000044 ,	0x00000000 [操作成功完成。  ],	
 16:45:41:527,	tsay.exe,	2568:4468,	2568,	FILE_touch,	C:\windows\ttry.exe,	access:0x00170197 alloc_size:460288 attrib:0x00000020 share_access:0x00000000 disposition:0x00000005 options:0x00000044 ,	0x00000000 [操作成功完成。  ],	
 16:45:41:527,	tsay.exe,	2568:4468,	2568,	FILE_touch,	C:\windows\ttry.exe,	access:0x00170196 alloc_size:460288 attrib:0x00000020 share_access:0x00000000 disposition:0x00000005 options:0x00000044 ,	0x00000000 [操作成功完成。  ],	
@@ -132,8 +132,8 @@
 16:45:41:527,	tsay.exe,	2568:4468,	2568,	FILE_touch,	C:\windows\ttry.exe,	access:0x00120197 alloc_size:460288 attrib:0x00000020 share_access:0x00000003 disposition:0x00000005 options:0x00000044 ,	0x00000000 [操作成功完成。  ],	
 16:45:41:527,	tsay.exe,	2568:4468,	2568,	FILE_touch,	C:\windows\ttry.exe,	access:0x00120197 alloc_size:460288 attrib:0x00000020 share_access:0x00000003 disposition:0x00000005 options:0x00000044 ,	0x00000000 [操作成功完成。  ],	
 16:45:41:527,	tsay.exe,	2568:4468,	2568,	FILE_touch,	C:\windows\ttry.exe,	access:0x00120196 alloc_size:460288 attrib:0x00000020 share_access:0x00000003 disposition:0x00000005 options:0x00000044 ,	0x00000000 [操作成功完成。  ],	
-16:45:41:589,	tsay.exe,	2568:0,	2568,	EXEC_destroy,	C:\Windows\tsay.exe,	parent_pid:4700 cmdline:'&quot;C:\Windows\tsay.exe&quot; ' ,	0x00000000 [操作成功完成。  ],	
-16:48:06:041,	tsay.exe,	5748:0,	5748,	EXEC_create,	C:\Windows\tsay.exe,	parent_pid:4700 cmdline:'&quot;C:\Windows\tsay.exe&quot; ' image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
+16:45:41:589,	tsay.exe,	2568:0,	2568,	EXEC_destroy,	C:\Windows\tsay.exe,	parent_pid:4700 cmdline:&#39;&#34;C:\Windows\tsay.exe&#34; &#39; ,	0x00000000 [操作成功完成。  ],	
+16:48:06:041,	tsay.exe,	5748:0,	5748,	EXEC_create,	C:\Windows\tsay.exe,	parent_pid:4700 cmdline:&#39;&#34;C:\Windows\tsay.exe&#34; &#39; image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
 16:48:06:135,	tsay.exe,	5748:0,	5748,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_5.82.19041.488_none_89e6152f0b32762e\comctl32.dll,	base:0x0000000074DB0000 size:0x0008D000 ,	0x00000000 [操作成功完成。  ],	
 16:48:06:197,	tsay.exe,	5748:0,	5748,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.19041.488_none_11b1e5df2ffd8627\comctl32.dll,	base:0x0000000073CB0000 size:0x00212000 ,	0x00000000 [操作成功完成。  ],	
 16:48:06:228,	tsay.exe,	5748:7604,	5748,	FILE_truncate,	C:\windows\tsay.exe,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
@@ -145,24 +145,24 @@
 16:48:06:228,	tsay.exe,	5748:7604,	5748,	FILE_truncate,	C:\windows\tsay.exe,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
 16:48:06:228,	tsay.exe,	5748:7604,	5748,	FILE_truncate,	C:\windows\tsay.exe,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
 16:48:06:228,	tsay.exe,	5748:7604,	5748,	FILE_truncate,	C:\windows\tsay.exe,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
-16:48:06:228,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\RunOnce\msfsa,	type:0x00000001 datalen:40 data:'43 3A 5C 77 69 6E 64 6F 77 73 5C 74 73 61 79 2E ' ,	0x00000000 [操作成功完成。  ],	
+16:48:06:228,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\RunOnce\msfsa,	type:0x00000001 datalen:40 data:&#39;43 3A 5C 77 69 6E 64 6F 77 73 5C 74 73 61 79 2E &#39; ,	0x00000000 [操作成功完成。  ],	
 16:48:06:228,	tsay.exe,	5748:7604,	5748,	FILE_touch,	C:\windows\ttry.exe,	access:0x0017019F alloc_size:460288 attrib:0x00000020 share_access:0x00000000 disposition:0x00000005 options:0x00000044 ,	0x00000000 [操作成功完成。  ],	
 16:48:06:244,	tsay.exe,	5748:7604,	5748,	FILE_truncate,	C:\windows\ttry.exe,	eof:0x00070600 ,	0x00000000 [操作成功完成。  ],	
 16:48:06:244,	tsay.exe,	5748:7604,	5748,	FILE_write,	C:\windows\ttry.exe,	offset:0x00000000 datalen:0x00020000 ,	0x00000000 [操作成功完成。  ],	
 16:48:06:244,	tsay.exe,	5748:0,	5748,	FILE_modified,	C:\windows\ttry.exe,	,	0x00000000 [操作成功完成。  ],	
-16:48:06:510,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\ProxyBypass,	type:0x00000004 datalen:4 data:'01 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-16:48:06:510,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\IntranetName,	type:0x00000004 datalen:4 data:'01 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-16:48:06:510,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\UNCAsIntranet,	type:0x00000004 datalen:4 data:'01 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-16:48:06:510,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\AutoDetect,	type:0x00000004 datalen:4 data:'00 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-16:48:06:526,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\ProxyBypass,	type:0x00000004 datalen:4 data:'01 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-16:48:06:526,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\IntranetName,	type:0x00000004 datalen:4 data:'01 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-16:48:06:526,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\UNCAsIntranet,	type:0x00000004 datalen:4 data:'01 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-16:48:06:526,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\AutoDetect,	type:0x00000004 datalen:4 data:'00 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-16:48:06:963,	tsay.exe,	5748:0,	5748,	PROC_exec,	C:\windows\ttry.exe,	target_pid:8840 cmdline:'&quot;C:\windows\ttry.exe&quot; ' ,	0x00000000 [操作成功完成。  ],	
-16:48:07:010,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Notifications\Data\418A073AA3BC3475,	type:0x00000003 datalen:446 data:'05 09 00 00 00 00 00 00 04 00 04 00 01 02 06 00 ' ,	0x00000000 [操作成功完成。  ],	
-16:48:07:072,	tsay.exe,	5748:0,	5748,	EXEC_destroy,	C:\Windows\tsay.exe,	parent_pid:4700 cmdline:'&quot;C:\Windows\tsay.exe&quot; ' ,	0x00000000 [操作成功完成。  ],	
+16:48:06:510,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\ProxyBypass,	type:0x00000004 datalen:4 data:&#39;01 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+16:48:06:510,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\IntranetName,	type:0x00000004 datalen:4 data:&#39;01 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+16:48:06:510,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\UNCAsIntranet,	type:0x00000004 datalen:4 data:&#39;01 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+16:48:06:510,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\AutoDetect,	type:0x00000004 datalen:4 data:&#39;00 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+16:48:06:526,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\ProxyBypass,	type:0x00000004 datalen:4 data:&#39;01 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+16:48:06:526,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\IntranetName,	type:0x00000004 datalen:4 data:&#39;01 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+16:48:06:526,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\UNCAsIntranet,	type:0x00000004 datalen:4 data:&#39;01 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+16:48:06:526,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\AutoDetect,	type:0x00000004 datalen:4 data:&#39;00 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+16:48:06:963,	tsay.exe,	5748:0,	5748,	PROC_exec,	C:\windows\ttry.exe,	target_pid:8840 cmdline:&#39;&#34;C:\windows\ttry.exe&#34; &#39; ,	0x00000000 [操作成功完成。  ],	
+16:48:07:010,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Notifications\Data\418A073AA3BC3475,	type:0x00000003 datalen:446 data:&#39;05 09 00 00 00 00 00 00 04 00 04 00 01 02 06 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+16:48:07:072,	tsay.exe,	5748:0,	5748,	EXEC_destroy,	C:\Windows\tsay.exe,	parent_pid:4700 cmdline:&#39;&#34;C:\Windows\tsay.exe&#34; &#39; ,	0x00000000 [操作成功完成。  ],	
 </code></pre><p>生成的ttry.exe文件的动作如下：</p>
-<pre tabindex="0"><code>17:18:04:679,	ttry.exe,	9128:0,	9076,	EXEC_create,	C:\windows\ttry.exe,	parent_pid:9076 cmdline:'&quot;C:\windows\ttry.exe&quot; ' image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
+<pre tabindex="0"><code>17:18:04:679,	ttry.exe,	9128:0,	9076,	EXEC_create,	C:\windows\ttry.exe,	parent_pid:9076 cmdline:&#39;&#34;C:\windows\ttry.exe&#34; &#39; image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
 17:18:04:710,	ttry.exe,	9128:0,	9076,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_5.82.19041.488_none_89e6152f0b32762e\comctl32.dll,	base:0x0000000075BA0000 size:0x0008D000 ,	0x00000000 [操作成功完成。  ],	
 17:18:04:757,	ttry.exe,	9128:0,	9076,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.19041.488_none_11b1e5df2ffd8627\comctl32.dll,	base:0x0000000074810000 size:0x00212000 ,	0x00000000 [操作成功完成。  ],	
 17:18:04:757,	ttry.exe,	9128:9132,	9076,	FILE_truncate,	C:\windows\tsay.exe,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
@@ -170,23 +170,23 @@
 17:18:04:757,	ttry.exe,	9128:9132,	9076,	FILE_read,	C:\windows\ttry.exe,	offset:0x00000000 datalen:0x00020000 ,	0x00000000 [操作成功完成。  ],	
 17:18:04:757,	ttry.exe,	9128:9132,	9076,	FILE_write,	C:\windows\tsay.exe,	offset:0x00000000 datalen:0x00020000 ,	0x00000000 [操作成功完成。  ],	
 17:18:04:757,	ttry.exe,	9128:0,	9076,	FILE_modified,	C:\windows\tsay.exe,	,	0x00000000 [操作成功完成。  ],	
-17:18:04:757,	ttry.exe,	9128:9132,	9076,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\RunOnce\msfsa,	type:0x00000001 datalen:40 data:'43 3A 5C 77 69 6E 64 6F 77 73 5C 74 73 61 79 2E ' ,	0x00000000 [操作成功完成。  ],	
+17:18:04:757,	ttry.exe,	9128:9132,	9076,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\RunOnce\msfsa,	type:0x00000001 datalen:40 data:&#39;43 3A 5C 77 69 6E 64 6F 77 73 5C 74 73 61 79 2E &#39; ,	0x00000000 [操作成功完成。  ],	
 17:18:05:741,	ttry.exe,	9128:9132,	9076,	FILE_touch,	D:\share.exe,	access:0x0017019F alloc_size:460288 attrib:0x00000020 share_access:0x00000000 disposition:0x00000002 options:0x00000064 ,	0x00000000 [操作成功完成。  ],	
 17:18:05:741,	ttry.exe,	9128:9132,	9076,	FILE_read,	C:\windows\ttry.exe,	offset:0x00000000 datalen:0x00020000 ,	0x00000000 [操作成功完成。  ],	
 17:18:05:741,	ttry.exe,	9128:9132,	9076,	FILE_write,	D:\share.exe,	offset:0x00000000 datalen:0x00020000 ,	0x00000000 [操作成功完成。  ],	
 17:18:05:741,	ttry.exe,	9128:0,	9076,	FILE_modified,	D:\share.exe,	,	0x00000000 [操作成功完成。  ],	
-17:18:06:757,	ttry.exe,	9128:9132,	9076,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\HideFileExt,	type:0x00000004 datalen:4 data:'01 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-17:18:06:757,	ttry.exe,	9128:9132,	9076,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Hidden,	type:0x00000004 datalen:4 data:'02 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-17:18:06:757,	ttry.exe,	9128:9132,	9076,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\Hidden\SHOWALL\checkedvalue,	type:0x00000004 datalen:4 data:'00 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-17:18:06:757,	ttry.exe,	9128:9132,	9076,	REG_rmval,	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\HideFileExt\checkedvalue,	keyname:'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\HideFileExt' ,	0x00000000 [操作成功完成。  ],	
+17:18:06:757,	ttry.exe,	9128:9132,	9076,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\HideFileExt,	type:0x00000004 datalen:4 data:&#39;01 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+17:18:06:757,	ttry.exe,	9128:9132,	9076,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Hidden,	type:0x00000004 datalen:4 data:&#39;02 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+17:18:06:757,	ttry.exe,	9128:9132,	9076,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\Hidden\SHOWALL\checkedvalue,	type:0x00000004 datalen:4 data:&#39;00 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+17:18:06:757,	ttry.exe,	9128:9132,	9076,	REG_rmval,	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\HideFileExt\checkedvalue,	keyname:&#39;HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\HideFileExt&#39; ,	0x00000000 [操作成功完成。  ],	
 </code></pre><p>当时间调整为1月13日，运行ttry.exe动作如下：</p>
 <pre tabindex="0"><code>17:25:44:420,	ttry.exe,	7808:588,	7808,	FILE_truncate,	D:\incaseformat.log,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
 
 ......
 
-17:25:53:524,	ttry.exe,	7808:588,	7808,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\HideFileExt,	type:0x00000004 datalen:4 data:'01 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-17:25:53:534,	ttry.exe,	7808:588,	7808,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Hidden,	type:0x00000004 datalen:4 data:'02 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-17:25:53:551,	ttry.exe,	7808:588,	7808,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\Hidden\SHOWALL\checkedvalue,	type:0x00000004 datalen:4 data:'00 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
+17:25:53:524,	ttry.exe,	7808:588,	7808,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\HideFileExt,	type:0x00000004 datalen:4 data:&#39;01 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+17:25:53:534,	ttry.exe,	7808:588,	7808,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Hidden,	type:0x00000004 datalen:4 data:&#39;02 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+17:25:53:551,	ttry.exe,	7808:588,	7808,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\Hidden\SHOWALL\checkedvalue,	type:0x00000004 datalen:4 data:&#39;00 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
 17:25:54:434,	ttry.exe,	7808:588,	7808,	FILE_remove,	D:\$RECYCLE.BIN\S-1-5-21-655661564-3040666061-2252561177-1000\desktop.ini,	,	0x00000000 [操作成功完成。  ],	
 17:25:54:443,	ttry.exe,	7808:588,	7808,	FILE_remove,	D:\3rd-party-licenses.txt,	,	0x00000000 [操作成功完成。  ],	
 17:25:54:447,	ttry.exe,	7808:588,	7808,	FILE_remove,	D:\ca-bundle.crt,	,	0x00000000 [操作成功完成。  ],	
@@ -212,7 +212,6 @@ C:\Windows&gt;certutil -hashfile ttry.exe sha256
 SHA256 的 ttry.exe 哈希:
 8c8793eb7c80a09e1542e424ea89c23c195d364892620562e06b3df602890929
 CertUtil: -hashfile 命令成功完成。
-
 </code></pre><h3 id="32查壳情况">3.2查壳情况<a href="#32查壳情况" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>查一下壳，无壳delphi。</p>
 <p><img src="/inc_images/2696940148582.png" alt=""></p>
@@ -277,7 +276,7 @@ CertUtil: -hashfile 命令成功完成。
 
 
 
-	<script src="https://www.a1ee.cn/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	<script src="https://www.a1ee.cn/js/bundle.min.8256b8724b9578bbdf6d6f04c894255bc760e78e8a2d60ec0a91ea993acd3b77.js" integrity="sha256-gla4ckuVeLvfbW8EyJQlW8dg546KLWDsCpHqmTrNO3c=" crossorigin="anonymous"></script>
 	
 
 </body>

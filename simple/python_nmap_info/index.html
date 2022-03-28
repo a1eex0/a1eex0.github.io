@@ -86,24 +86,24 @@ from time import time
 
 start_time = time()
 for i in range(1, len(sys.argv)):
-    flag = sys.argv[i].split('-')
-    if 'u' in flag:
+    flag = sys.argv[i].split(&#39;-&#39;)
+    if &#39;u&#39; in flag:
         scan_host = sys.argv[i + 1]
-    elif 'p' in flag:
+    elif &#39;p&#39; in flag:
         scan_ports = sys.argv[i + 1]
 try:
     nm = nmap.PortScanner()
 except:
-    print('python-nmap not found')
+    print(&#39;python-nmap not found&#39;)
     sys.exit(1)
 try:
     nm.scan(scan_host,scan_ports)
 except:
-    print('usage: nmap_scanner.py -u ip -p port')
+    print(&#39;usage: nmap_scanner.py -u ip -p port&#39;)
     sys.exit(1)
 print(nm.scaninfo())
 run_time = (time() - start_time)
-print(&quot;running time: %0.2f seconds.&quot; % run_time)
+print(&#34;running time: %0.2f seconds.&#34; % run_time)
 </code></pre><p>代码功能很简单，就是使用<code>-u</code>引入ip地址，<code>-p</code>引入扫描端口，然后就调用nmap进行扫描。</p>
 <h2 id="说明">说明<a href="#说明" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>针对该库，主要需要了解如下的一些输出形式：(<code>nm = nmap.PortScanner()</code>)</p>
@@ -122,7 +122,7 @@ print(&quot;running time: %0.2f seconds.&quot; % run_time)
 
 
 
-	<script src="https://www.a1ee.cn/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	<script src="https://www.a1ee.cn/js/bundle.min.8256b8724b9578bbdf6d6f04c894255bc760e78e8a2d60ec0a91ea993acd3b77.js" integrity="sha256-gla4ckuVeLvfbW8EyJQlW8dg546KLWDsCpHqmTrNO3c=" crossorigin="anonymous"></script>
 	
 
 </body>

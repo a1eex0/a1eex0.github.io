@@ -158,7 +158,7 @@ def Get_KEY_BUFFER():
     global KEY_BUFFER
     # 由RVA计算出函数的实际内存地址
     for s in idautils.Segments():
-        if idc.get_segm_name(s) == &quot;.text&quot;:
+        if idc.get_segm_name(s) == &#34;.text&#34;:
             resolve_func_ea = 0x71C + s
 
     # 获取函数交叉引用地址，这里只有一处交叉引用，可以不用判断
@@ -169,7 +169,7 @@ def Get_KEY_BUFFER():
     arg_list = [0, 0, 0]
     for i in range(0, 3):
         prev_instruction_ea = idc.prev_head(ref_ea)  # 获取交叉引用处的上一个指令地址
-        if idc.print_insn_mnem(prev_instruction_ea) == 'push':  # 获取该处的助记符，判断是否是push
+        if idc.print_insn_mnem(prev_instruction_ea) == &#39;push&#39;:  # 获取该处的助记符，判断是否是push
             arg_list[i] = idc.get_operand_value(prev_instruction_ea, 0)  # 获取第一个操作数
             ref_ea = prev_instruction_ea
 
@@ -180,17 +180,17 @@ def Get_KEY_BUFFER():
     arg2_ea = arg_list[1]
     length = arg_list[2]
     while arg1_ea &lt; arg_list[0] + length:
-        arg1.append(int.from_bytes(idaapi.get_bytes(arg1_ea, 4), 'little'))  # 以dword形式拷贝，并以小端模式转为int型
+        arg1.append(int.from_bytes(idaapi.get_bytes(arg1_ea, 4), &#39;little&#39;))  # 以dword形式拷贝，并以小端模式转为int型
         arg1_ea += 4
     while arg2_ea &lt; arg_list[1] + length:
-        arg2.append(int.from_bytes(idaapi.get_bytes(arg2_ea, 1), 'little'))  # 以byte形式拷贝，并以小端模式转为int型
+        arg2.append(int.from_bytes(idaapi.get_bytes(arg2_ea, 1), &#39;little&#39;))  # 以byte形式拷贝，并以小端模式转为int型
         arg2_ea += 1
 
     Resolve_Buffer(arg1, arg2, length)
 
 # 获取待解密内容
 def Get_Encrypted_Lib_Table():
-    LoadLibraryA_ea = idc.get_name_ea_simple(&quot;LoadLibraryA&quot;)
+    LoadLibraryA_ea = idc.get_name_ea_simple(&#34;LoadLibraryA&#34;)
     LoadLibraryA_ref = None
     if LoadLibraryA_ea != idaapi.BADADDR:
         for ref in idautils.CodeRefsTo(LoadLibraryA_ea, 1):
@@ -240,7 +240,7 @@ def Resolve_String(encrypted_string, length):
     if v4 != 0:
         encrypted_string = Decrypt_String(encrypted_string, v4)
 
-    return ''.join([chr(x) for x in encrypted_string])[:-1]
+    return &#39;&#39;.join([chr(x) for x in encrypted_string])[:-1]
 
 # 密钥存储数组
 KEY_BUFFER = []
@@ -248,8 +248,8 @@ KEY_BUFFER = []
 API_TABLE_start_ea = 0
 # 密文存储数据
 ENCRYPTED_LIB_TABLE = None
-Darkside_DLL_LIST = set(['ntdll', 'kernel32', 'advapi32', 'shell32', 'ole32', 'oleaut32', 'mpr',
-						 'iphlpapi', 'shlwapi', 'gdi32', 'user32', 'netapi32', 'wsock32', 'wininet', 'wtsapi32'])
+Darkside_DLL_LIST = set([&#39;ntdll&#39;, &#39;kernel32&#39;, &#39;advapi32&#39;, &#39;shell32&#39;, &#39;ole32&#39;, &#39;oleaut32&#39;, &#39;mpr&#39;,
+						 &#39;iphlpapi&#39;, &#39;shlwapi&#39;, &#39;gdi32&#39;, &#39;user32&#39;, &#39;netapi32&#39;, &#39;wsock32&#39;, &#39;wininet&#39;, &#39;wtsapi32&#39;])
 
 def Main():
     global KEY_BUFFER, API_TABLE_start_ea, ENCRYPTED_LIB_TABLE
@@ -260,7 +260,7 @@ def Main():
     Get_Encrypted_Lib_Table()
 
     ENCRYPTED_LIB_TABLE_counter = 0
-    length = int.from_bytes(ENCRYPTED_LIB_TABLE[ENCRYPTED_LIB_TABLE_counter:ENCRYPTED_LIB_TABLE_counter+4], 'little')
+    length = int.from_bytes(ENCRYPTED_LIB_TABLE[ENCRYPTED_LIB_TABLE_counter:ENCRYPTED_LIB_TABLE_counter+4], &#39;little&#39;)
     ENCRYPTED_LIB_TABLE_counter += 4
 
     curr_API_ea = API_TABLE_start_ea
@@ -270,13 +270,13 @@ def Main():
         resolved_API = Resolve_String(encrypted_string, length)
         print(resolved_API)
         if resolved_API not in Darkside_DLL_LIST:
-            idc.set_name(curr_API_ea, 'mw_' + resolved_API)
+            idc.set_name(curr_API_ea, &#39;mw_&#39; + resolved_API)
             curr_API_ea += 4
         ENCRYPTED_LIB_TABLE_counter += length
-        length = int.from_bytes(ENCRYPTED_LIB_TABLE[ENCRYPTED_LIB_TABLE_counter:ENCRYPTED_LIB_TABLE_counter + 4], 'little')
+        length = int.from_bytes(ENCRYPTED_LIB_TABLE[ENCRYPTED_LIB_TABLE_counter:ENCRYPTED_LIB_TABLE_counter + 4], &#39;little&#39;)
         ENCRYPTED_LIB_TABLE_counter += 4
 
-if __name__ == &quot;__main__&quot;:
+if __name__ == &#34;__main__&#34;:
     Main()
 </code></pre><h2 id="4-对比">4. 对比<a href="#4-对比" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>核心函数原始代码：</p>
@@ -654,7 +654,7 @@ if __name__ == &quot;__main__&quot;:
 
 
 
-	<script src="https://www.a1ee.cn/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	<script src="https://www.a1ee.cn/js/bundle.min.8256b8724b9578bbdf6d6f04c894255bc760e78e8a2d60ec0a91ea993acd3b77.js" integrity="sha256-gla4ckuVeLvfbW8EyJQlW8dg546KLWDsCpHqmTrNO3c=" crossorigin="anonymous"></script>
 	
 
 </body>

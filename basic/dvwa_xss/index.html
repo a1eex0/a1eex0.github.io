@@ -10,7 +10,7 @@
 <meta itemprop="name" content="Dvwa_xss">
 <meta itemprop="description" content="DVWA_Xss（跨站脚本攻击） 前言 这是一个简单又复杂的话题，简单是因为它的利用方式异常简单：插入一条引用外部js的代码即可；复杂是因为想要"><meta itemprop="datePublished" content="2020-12-28T13:46:53+08:00" />
 <meta itemprop="dateModified" content="2020-12-28T13:46:53+08:00" />
-<meta itemprop="wordCount" content="2757"><meta itemprop="image" content="https://www.a1ee.cn/bg.png">
+<meta itemprop="wordCount" content="2771"><meta itemprop="image" content="https://www.a1ee.cn/bg.png">
 <meta itemprop="keywords" content="dvwa," /><meta property="og:title" content="Dvwa_xss" />
 <meta property="og:description" content="DVWA_Xss（跨站脚本攻击） 前言 这是一个简单又复杂的话题，简单是因为它的利用方式异常简单：插入一条引用外部js的代码即可；复杂是因为想要" />
 <meta property="og:type" content="article" />
@@ -91,7 +91,7 @@
   &lt;title&gt;文档标题&lt;/title&gt;
  &lt;/head&gt;
  &lt;body&gt;
-  &lt;a href='www.a1ee.cn'&gt;我的链接&lt;/a&gt;
+  &lt;a href=&#39;www.a1ee.cn&#39;&gt;我的链接&lt;/a&gt;
   &lt;h1&gt;我的标题&lt;/h1&gt;
  &lt;/body&gt;
 &lt;/html&gt;
@@ -119,9 +119,9 @@
 <p><img src="/dvwa_images/20201012154055503_24494.png" alt=""></p>
 <p>过滤了<code>&lt;script</code>，但是还有很多可以用来进行测试的payload，例如：<code>&lt;a/href=javascript&amp;colon;alert(document.cookie)&gt;click</code>（该payload需要点击click才能触发）</p>
 <p>直接在url尾部添加payload，并不会正常的将代码插到可被正常解析的地方，反而是在<code>English</code>后面直接添加上了<code>click</code>：</p>
-<pre tabindex="0"><code>&lt;option value=&quot;English%3Ca/href=javascript:alert(document.cookie)%3Eclick&quot;&gt;Englishclick&lt;/option&gt;
+<pre tabindex="0"><code>&lt;option value=&#34;English%3Ca/href=javascript:alert(document.cookie)%3Eclick&#34;&gt;Englishclick&lt;/option&gt;
 </code></pre><p>根据代码前后关系，可闭合标签进行尝试，首先闭合<code>option</code>标签：</p>
-<pre tabindex="0"><code>&lt;option value=&quot;English%3C/option%3E%3Ca/href=javascript:alert(document.cookie)%3Eclick&quot;&gt;English&lt;/option&gt;
+<pre tabindex="0"><code>&lt;option value=&#34;English%3C/option%3E%3Ca/href=javascript:alert(document.cookie)%3Eclick&#34;&gt;English&lt;/option&gt;
 </code></pre><p>闭合代码被直接插入到了<code>English</code>后方，可是依旧没有正常解析，于是再向上闭合一个标签，发现可以被解析了，最终payload：<code>&lt;/option&gt;&lt;/select&gt;&lt;a/href=javascript&amp;colon;alert(document.cookie)&gt;click</code></p>
 <p>浏览器解析及触发结果如下：</p>
 <p><img src="/dvwa_images/20201012155803851_14535.png" alt=""></p>
@@ -130,7 +130,7 @@
 <p>从源码上看，对参数进行了校验，但是还是有一种方式可以绕过：<code>#&lt;script&gt;alert(1)&lt;/script&gt;</code></p>
 <p><img src="/dvwa_images/20201012172728622_28854.png" alt=""></p>
 <p>实际插入代码如下：</p>
-<pre tabindex="0"><code>&lt;option value=&quot;English#%3Cscript%3Ealert(1)%3C/script%3E&quot;&gt;English#&lt;script&gt;alert(1)&lt;/script&gt;&lt;/option&gt;
+<pre tabindex="0"><code>&lt;option value=&#34;English#%3Cscript%3Ealert(1)%3C/script%3E&#34;&gt;English#&lt;script&gt;alert(1)&lt;/script&gt;&lt;/option&gt;
 </code></pre><h3 id="impossible">Impossible<a href="#impossible" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>查看源码，前端代码并未做限制，但直接插入并没有正常弹窗，前端显示反而出现了编码字符，所以是后端进行了编码：</p>
 <p><img src="/dvwa_images/20201012173115486_61.png" alt=""></p>
@@ -140,7 +140,7 @@
 </blockquote>
 <h2 id="反射型xss">反射型xss<a href="#反射型xss" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <h3 id="low-1">LOW<a href="#low-1" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
-<p>直接输入测试payload出现弹窗：'<!-- raw HTML omitted -->alert(document.cookie)<!-- raw HTML omitted -->'</p>
+<p>直接输入测试payload出现弹窗：&rsquo;<!-- raw HTML omitted -->alert(document.cookie)<!-- raw HTML omitted -->'</p>
 <p><img src="/dvwa_images/20201012182022567_20638.png" alt=""></p>
 <h3 id="medium-1">Medium<a href="#medium-1" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>一样是过滤了<code>&lt;script&gt;</code>，采用不包含的测试payload即可：<code>&lt;img src=1 onerror=alert(document.cookie)&gt;</code></p>
@@ -201,7 +201,7 @@
 
 
 
-	<script src="https://www.a1ee.cn/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	<script src="https://www.a1ee.cn/js/bundle.min.8256b8724b9578bbdf6d6f04c894255bc760e78e8a2d60ec0a91ea993acd3b77.js" integrity="sha256-gla4ckuVeLvfbW8EyJQlW8dg546KLWDsCpHqmTrNO3c=" crossorigin="anonymous"></script>
 	
 
 </body>

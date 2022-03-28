@@ -10,7 +10,7 @@
 <meta itemprop="name" content="MountLocker">
 <meta itemprop="description" content="MountLocker 样本分析 样本信息 样本来源：MALWAREbazaar 相关报告：VirusTotal扫描报告 样本md5：3808F21E56DEDE99BC"><meta itemprop="datePublished" content="2021-11-01T15:45:13+08:00" />
 <meta itemprop="dateModified" content="2021-11-01T15:45:13+08:00" />
-<meta itemprop="wordCount" content="2718"><meta itemprop="image" content="https://www.a1ee.cn/bg.png">
+<meta itemprop="wordCount" content="2620"><meta itemprop="image" content="https://www.a1ee.cn/bg.png">
 <meta itemprop="keywords" content="MountLocker,Sample," /><meta property="og:title" content="MountLocker" />
 <meta property="og:description" content="MountLocker 样本分析 样本信息 样本来源：MALWAREbazaar 相关报告：VirusTotal扫描报告 样本md5：3808F21E56DEDE99BC" />
 <meta property="og:type" content="article" />
@@ -115,7 +115,7 @@
 <p>然后进行列表比对，杀死指定进程</p>
 <p><img src="/mountlocker_images/2802719119999.png" alt=""></p>
 <p>进程列表如下：</p>
-<pre tabindex="0"><code>&quot;msftesql.exe&quot;、&quot;sqlagent.exe&quot;、&quot;sqlbrowser.exe&quot;、&quot;sqlwriter.exe&quot;、&quot;oracle.exe&quot;、&quot;ocssd.exe&quot;、&quot;dbsnmp.exe&quot;、&quot;synctime.exe&quot;、&quot;agntsvc.exe&quot;、&quot;isqlplussvc.exe&quot;、&quot;xfssvccon.exe&quot;、&quot;sqlservr.exe&quot;、&quot;mydesktopservice.exe&quot;、&quot;ocautoupds.exe&quot;、&quot;encsvc.exe&quot;、&quot;firefoxconfig.exe&quot;、&quot;tbirdconfig.exe&quot;、&quot;mydesktopqos.exe&quot;、&quot;ocomm.exe&quot;、&quot;mysqld.exe&quot;、&quot;mysqld-nt.exe&quot;、&quot;mysqld-opt.exe&quot;、&quot;dbeng50.exe&quot;、&quot;sqbcoreservice.exe&quot;、&quot;excel.exe&quot;、&quot;infopath.exe&quot;、&quot;msaccess.exe&quot;、&quot;mspub.exe&quot;、&quot;onenote.exe&quot;、&quot;outlook.exe&quot;、&quot;powerpnt.exe&quot;、&quot;sqlservr.exe&quot;、&quot;thebat.exe&quot;、&quot;steam.exe&quot;、&quot;thebat64.exe&quot;、&quot;thunderbird.exe&quot;、&quot;visio.exe&quot;、&quot;winword.exe&quot;、&quot;wordpad.exe&quot;、&quot;QBW32.exe&quot;、&quot;QBW64.exe&quot;、&quot;ipython.exe&quot;、&quot;wpython.exe&quot;、&quot;python.exe&quot;、&quot;dumpcap.exe&quot;、&quot;procmon.exe&quot;、&quot;procmon64.exe&quot;、&quot;procexp.exe&quot;、&quot;procexp64.exe&quot;
+<pre tabindex="0"><code>&#34;msftesql.exe&#34;、&#34;sqlagent.exe&#34;、&#34;sqlbrowser.exe&#34;、&#34;sqlwriter.exe&#34;、&#34;oracle.exe&#34;、&#34;ocssd.exe&#34;、&#34;dbsnmp.exe&#34;、&#34;synctime.exe&#34;、&#34;agntsvc.exe&#34;、&#34;isqlplussvc.exe&#34;、&#34;xfssvccon.exe&#34;、&#34;sqlservr.exe&#34;、&#34;mydesktopservice.exe&#34;、&#34;ocautoupds.exe&#34;、&#34;encsvc.exe&#34;、&#34;firefoxconfig.exe&#34;、&#34;tbirdconfig.exe&#34;、&#34;mydesktopqos.exe&#34;、&#34;ocomm.exe&#34;、&#34;mysqld.exe&#34;、&#34;mysqld-nt.exe&#34;、&#34;mysqld-opt.exe&#34;、&#34;dbeng50.exe&#34;、&#34;sqbcoreservice.exe&#34;、&#34;excel.exe&#34;、&#34;infopath.exe&#34;、&#34;msaccess.exe&#34;、&#34;mspub.exe&#34;、&#34;onenote.exe&#34;、&#34;outlook.exe&#34;、&#34;powerpnt.exe&#34;、&#34;sqlservr.exe&#34;、&#34;thebat.exe&#34;、&#34;steam.exe&#34;、&#34;thebat64.exe&#34;、&#34;thunderbird.exe&#34;、&#34;visio.exe&#34;、&#34;winword.exe&#34;、&#34;wordpad.exe&#34;、&#34;QBW32.exe&#34;、&#34;QBW64.exe&#34;、&#34;ipython.exe&#34;、&#34;wpython.exe&#34;、&#34;python.exe&#34;、&#34;dumpcap.exe&#34;、&#34;procmon.exe&#34;、&#34;procmon64.exe&#34;、&#34;procexp.exe&#34;、&#34;procexp64.exe&#34;
 </code></pre><p><img src="/mountlocker_images/4202625116554.png" alt=""></p>
 <h3 id="加密文件">加密文件<a href="#加密文件" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>根据<code>/NOLOCK</code>参数，选择加密函数，默认是执行第一条：</p>
@@ -128,7 +128,7 @@
 <p><code>ResultCheckDir</code>文件夹检查，如果满足以下要求，则跳过该文件夹（保留基础服务）：</p>
 <p><img src="/mountlocker_images/2884701155729.png" alt=""></p>
 <p>查看<code>off_14000A100</code>内容得出<code>black_list</code>文件列表如下：</p>
-<pre tabindex="0"><code>&quot;:\\Windows\\&quot;,&quot;:\\System Volume Information\\&quot;,&quot;:\\$RECYCLE.BIN\\&quot;,&quot;:\\SYSTEM.SAV&quot;,&quot;:\\WINNT&quot;,&quot;:\\$WINDOWS.~BT\\&quot;,&quot;:\\Windows.old\\&quot;,&quot;:\\PerfLog\\&quot;,&quot;:\\Boot&quot;,&quot;:\\ProgramData\\Microsoft\\&quot;,&quot;:\\ProgramData\\Packages\\&quot;,&quot;$\\Windows\\&quot;,&quot;$\\System Volume Information\\&quot;,&quot;$\\$RECYCLE.BIN\\&quot;,&quot;$\\SYSTEM.SAV&quot;,&quot;$\\WINNT&quot;,&quot;$\\$WINDOWS.~BT\\&quot;,&quot;$\\Windows.old\\&quot;,&quot;$\\PerfLog\\&quot;,&quot;$\\Boot&quot;,&quot;$\\ProgramData\\Microsoft\\&quot;,&quot;$\\ProgramData\\Packages\\&quot;,&quot;\\WindowsApps\\&quot;,&quot;\\Microsoft\\Windows\\&quot;,&quot;\\Local\\Packages\\&quot;,&quot;\\Windows Defender&quot;,&quot;\\microsoft shared\\&quot;,&quot;\\Google\\Chrome\\&quot;,&quot;\\Mozilla Firefox\\&quot;,&quot;\\Mozilla\\Firefox\\&quot;,&quot;\\Internet Explorer\\&quot;,&quot;\\MicrosoftEdge\\&quot;,&quot;\\Tor Browser\\&quot;,&quot;\\AppData\\Local\\Temp\\&quot;
+<pre tabindex="0"><code>&#34;:\\Windows\\&#34;,&#34;:\\System Volume Information\\&#34;,&#34;:\\$RECYCLE.BIN\\&#34;,&#34;:\\SYSTEM.SAV&#34;,&#34;:\\WINNT&#34;,&#34;:\\$WINDOWS.~BT\\&#34;,&#34;:\\Windows.old\\&#34;,&#34;:\\PerfLog\\&#34;,&#34;:\\Boot&#34;,&#34;:\\ProgramData\\Microsoft\\&#34;,&#34;:\\ProgramData\\Packages\\&#34;,&#34;$\\Windows\\&#34;,&#34;$\\System Volume Information\\&#34;,&#34;$\\$RECYCLE.BIN\\&#34;,&#34;$\\SYSTEM.SAV&#34;,&#34;$\\WINNT&#34;,&#34;$\\$WINDOWS.~BT\\&#34;,&#34;$\\Windows.old\\&#34;,&#34;$\\PerfLog\\&#34;,&#34;$\\Boot&#34;,&#34;$\\ProgramData\\Microsoft\\&#34;,&#34;$\\ProgramData\\Packages\\&#34;,&#34;\\WindowsApps\\&#34;,&#34;\\Microsoft\\Windows\\&#34;,&#34;\\Local\\Packages\\&#34;,&#34;\\Windows Defender&#34;,&#34;\\microsoft shared\\&#34;,&#34;\\Google\\Chrome\\&#34;,&#34;\\Mozilla Firefox\\&#34;,&#34;\\Mozilla\\Firefox\\&#34;,&#34;\\Internet Explorer\\&#34;,&#34;\\MicrosoftEdge\\&#34;,&#34;\\Tor Browser\\&#34;,&#34;\\AppData\\Local\\Temp\\&#34;
 </code></pre><p>数据文件夹<code>&quot;Program Files&quot;</code>，<code>&quot;Program Files (x86)&quot;</code>，<code>&quot;ProgramData&quot;</code>，<code>&quot;SQL&quot;</code>：</p>
 <p><img src="/mountlocker_images/2166505156338.png" alt=""></p>
 <p><code>ResultCheckFile</code>文件名检查如下，如果文件小于最小，大于最大，或者是指定后缀名则跳过该文件：</p>
@@ -136,7 +136,7 @@
 <p>后缀名检查如下：</p>
 <p><img src="/mountlocker_images/5143325151055.png" alt=""></p>
 <p>查看数组可知<code>suffix_list</code>如下：</p>
-<pre tabindex="0"><code>&quot;exe&quot;,&quot;dll&quot;,&quot;sys&quot;,&quot;msi&quot;,&quot;mui&quot;,&quot;inf&quot;,&quot;cat&quot;,&quot;bat&quot;,&quot;cmd&quot;,&quot;ps1&quot;,&quot;vbs&quot;,&quot;ttf&quot;,&quot;fon&quot;,&quot;lnk&quot;
+<pre tabindex="0"><code>&#34;exe&#34;,&#34;dll&#34;,&#34;sys&#34;,&#34;msi&#34;,&#34;mui&#34;,&#34;inf&#34;,&#34;cat&#34;,&#34;bat&#34;,&#34;cmd&#34;,&#34;ps1&#34;,&#34;vbs&#34;,&#34;ttf&#34;,&#34;fon&#34;,&#34;lnk&#34;
 </code></pre><p>然后扫描文件，以<code>FindFirstFileW</code>和<code>FindNextFileW</code>来查找文件， 循环调用以确保所有文件夹都被扫描到：</p>
 <p><img src="/mountlocker_images/1884021169047.png" alt=""></p>
 <h4 id="文件加密流程">文件加密流程<a href="#文件加密流程" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
@@ -208,7 +208,7 @@ del %0
 
 
 
-	<script src="https://www.a1ee.cn/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	<script src="https://www.a1ee.cn/js/bundle.min.8256b8724b9578bbdf6d6f04c894255bc760e78e8a2d60ec0a91ea993acd3b77.js" integrity="sha256-gla4ckuVeLvfbW8EyJQlW8dg546KLWDsCpHqmTrNO3c=" crossorigin="anonymous"></script>
 	
 
 </body>

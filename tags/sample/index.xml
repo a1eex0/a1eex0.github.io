@@ -6,7 +6,52 @@
     <description>Recent content in Sample on alee</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 06 Jan 2022 09:10:58 +0800</lastBuildDate><atom:link href="https://www.a1ee.cn/tags/sample/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 28 Mar 2022 13:59:05 +0800</lastBuildDate><atom:link href="https://www.a1ee.cn/tags/sample/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Retefe</title>
+      <link>https://www.a1ee.cn/medium/retefe/</link>
+      <pubDate>Mon, 28 Mar 2022 13:59:05 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/medium/retefe/</guid>
+      <description>Retefe 样本分析 样本信息 Retefe是一种Windows银行木马，它还可以使用Windows PowerShell将其他恶意软件下载并安装到系统上。</description>
+    </item>
+    
+    <item>
+      <title>RATDispenser&#43;STRRAT</title>
+      <link>https://www.a1ee.cn/medium/ratdispenser&#43;strrat/</link>
+      <pubDate>Mon, 28 Mar 2022 13:53:10 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/medium/ratdispenser&#43;strrat/</guid>
+      <description>RATDispenser + STRRAT 样本分析 样本信息 RATDispenser用于在启动辅助恶意软件以建立对受感染设备的控制之前在系统上获得初始立足点。调查发现RATDis</description>
+    </item>
+    
+    <item>
+      <title>Raccoon</title>
+      <link>https://www.a1ee.cn/medium/raccoon/</link>
+      <pubDate>Mon, 28 Mar 2022 13:49:48 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/medium/raccoon/</guid>
+      <description>Raccoon 样本分析 1. 样本信息 Raccoon是一种信息窃取类型恶意软件，可作为恶意软件即服务使用。它可以通过订阅获得，每月收费 200 美元。Raccoon恶</description>
+    </item>
+    
+    <item>
+      <title>MuddyWater</title>
+      <link>https://www.a1ee.cn/medium/muddywater/</link>
+      <pubDate>Mon, 28 Mar 2022 13:46:05 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/medium/muddywater/</guid>
+      <description>MuddyWater 样本分析 样本信息 MuddyWater是一个伊朗威胁组织，主要针对中东国家，也针对欧洲和北美国家。该组织的受害者主要集中在电信、政府（IT 服</description>
+    </item>
+    
+    <item>
+      <title>AsyncRAT</title>
+      <link>https://www.a1ee.cn/medium/asyncrat/</link>
+      <pubDate>Mon, 28 Mar 2022 11:46:12 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/medium/asyncrat/</guid>
+      <description>AsyncRat 样本分析 1. 样本信息 AsyncRat是一种远程访问工具 (RAT)，旨在通过安全的加密连接远程监视和控制其他计算机。它是一个开源远程管理工具，</description>
+    </item>
+    
     <item>
       <title>NjRat</title>
       <link>https://www.a1ee.cn/medium/njrat/</link>

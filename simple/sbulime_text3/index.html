@@ -10,7 +10,7 @@
 <meta itemprop="name" content="Sbulime_text3">
 <meta itemprop="description" content="Sublime Text3 入门级爆破 下载Sublime Text3 x64(3211)，需要的工具是看雪论坛的x64dbg。 讨厌的地方有两个：首页 、弹窗。 针对首页上的字样，在"><meta itemprop="datePublished" content="2020-12-28T13:58:30+08:00" />
 <meta itemprop="dateModified" content="2020-12-28T13:58:30+08:00" />
-<meta itemprop="wordCount" content="2030"><meta itemprop="image" content="https://www.a1ee.cn/bg.png">
+<meta itemprop="wordCount" content="2036"><meta itemprop="image" content="https://www.a1ee.cn/bg.png">
 <meta itemprop="keywords" content="crack," /><meta property="og:title" content="Sbulime_text3" />
 <meta property="og:description" content="Sublime Text3 入门级爆破 下载Sublime Text3 x64(3211)，需要的工具是看雪论坛的x64dbg。 讨厌的地方有两个：首页 、弹窗。 针对首页上的字样，在" />
 <meta property="og:type" content="article" />
@@ -101,14 +101,14 @@
 <p><img src="/sublime_images/20191224174617929_31014.png" alt="关键位置"></p>
 <p>触发了断点，说明位置是正确的，观察上下文</p>
 <pre tabindex="0"><code>000000013F38098D   | 48:83EC 28            | sub rsp,28                         |
-000000013F380991   | 48:8D15 B6D95C00      | lea rdx,qword ptr ds:[13F94E34E]   | 000000013F94E34E:&quot;Hello! Thanks for trying out Sublime Text.\n\nThis is an unregistered evaluation version, and although the trial is untimed, a license must be purchased for continued use.\n\nWould you like to purchase a license now?&quot;
-000000013F380998   | 4C:8D05 B1DC5B00      | lea r8,qword ptr ds:[13F93E650]    | 000000013F93E650:&quot;This is an unregistered copy&quot;
-000000013F38099F   | 4C:8D0D 91675C00      | lea r9,qword ptr ds:[13F947137]    | 000000013F947137:&quot;Purchase&quot;
+000000013F380991   | 48:8D15 B6D95C00      | lea rdx,qword ptr ds:[13F94E34E]   | 000000013F94E34E:&#34;Hello! Thanks for trying out Sublime Text.\n\nThis is an unregistered evaluation version, and although the trial is untimed, a license must be purchased for continued use.\n\nWould you like to purchase a license now?&#34;
+000000013F380998   | 4C:8D05 B1DC5B00      | lea r8,qword ptr ds:[13F93E650]    | 000000013F93E650:&#34;This is an unregistered copy&#34;
+000000013F38099F   | 4C:8D0D 91675C00      | lea r9,qword ptr ds:[13F947137]    | 000000013F947137:&#34;Purchase&#34;
 000000013F3809A6   | 31C9                  | xor ecx,ecx                        |
 000000013F3809A8   | E8 9F9E1000           | call sublime_text_s.13F48A84C      |
 000000013F3809AD   | 84C0                  | test al,al                         |
 000000013F3809AF   | 74 10                 | je sublime_text_s.13F3809C1        |
-000000013F3809B1   | 48:8D0D 62D95B00      | lea rcx,qword ptr ds:[13F93E31A]   | 000000013F93E31A:&quot;https://www.sublimetext.com/buy&quot;
+000000013F3809B1   | 48:8D0D 62D95B00      | lea rcx,qword ptr ds:[13F93E31A]   | 000000013F93E31A:&#34;https://www.sublimetext.com/buy&#34;
 000000013F3809B8   | 48:83C4 28            | add rsp,28                         |
 000000013F3809BC   | E9 AD581000           | jmp sublime_text_s.13F48626E       |
 </code></pre><p>发现整段代码都是用来进行弹窗的，那么直接在代码起始地ret，就可以实现最小化修改了4</p>
@@ -186,7 +186,7 @@ je sublime_text.13F8A3D40      ;here
 <pre tabindex="0"><code>r15 and 0010b = 1
 r15 and 0100b = 1
 r15 and 10000b = 1
-</code></pre><p><strong>抛开最后 &lsquo;r13&rsquo; 与 &lsquo;eax&rsquo; 进行异或操作，观察 &lsquo;r13&rsquo; 的来源值为' rdi+8' ，&lsquo;rdi&rsquo; 等于 &lsquo;edx+4&rsquo; ，或者 &lsquo;edx&rsquo; ，&lsquo;edx&rsquo; 则等于 &lsquo;2h&rsquo; 或者 &lsquo;0h&rsquo; ，简单测试一下 &lsquo;[rax] = 1h&rsquo; ，则满足以下所有条件，且在异或操作时，&lsquo;eax&rsquo; 的值被赋值为了 &lsquo;0h&rsquo; ，对 &lsquo;r13&rsquo; 没有影响。</strong></p>
+</code></pre><p><strong>抛开最后 &lsquo;r13&rsquo; 与 &rsquo;eax&rsquo; 进行异或操作，观察 &lsquo;r13&rsquo; 的来源值为&rsquo; rdi+8&rsquo; ，&lsquo;rdi&rsquo; 等于 &rsquo;edx+4&rsquo; ，或者 &rsquo;edx&rsquo; ，&rsquo;edx&rsquo; 则等于 &lsquo;2h&rsquo; 或者 &lsquo;0h&rsquo; ，简单测试一下 &lsquo;[rax] = 1h&rsquo; ，则满足以下所有条件，且在异或操作时，&rsquo;eax&rsquo; 的值被赋值为了 &lsquo;0h&rsquo; ，对 &lsquo;r13&rsquo; 没有影响。</strong></p>
 <p>第八步：给关键地址下硬件写入断点，来定位它最开始被修改的地址；</p>
 <p><img src="/sublime_images/20191231220024707_2155.png" alt="第八步"></p>
 <p>第九步：重载、运行；</p>
@@ -249,7 +249,7 @@ r15 and 10000b = 1
 
 
 
-	<script src="https://www.a1ee.cn/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	<script src="https://www.a1ee.cn/js/bundle.min.8256b8724b9578bbdf6d6f04c894255bc760e78e8a2d60ec0a91ea993acd3b77.js" integrity="sha256-gla4ckuVeLvfbW8EyJQlW8dg546KLWDsCpHqmTrNO3c=" crossorigin="anonymous"></script>
 	
 
 </body>

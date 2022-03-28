@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#494f5c">
+	<meta name="msapplication-TileColor" content="#494f5c">
+<meta itemprop="name" content="MuddyWater">
+<meta itemprop="description" content="MuddyWater 样本分析 样本信息 MuddyWater是一个伊朗威胁组织，主要针对中东国家，也针对欧洲和北美国家。该组织的受害者主要集中在电信、政府（IT 服"><meta itemprop="datePublished" content="2022-03-28T13:46:05+08:00" />
+<meta itemprop="dateModified" content="2022-03-28T13:46:05+08:00" />
+<meta itemprop="wordCount" content="1080"><meta itemprop="image" content="https://www.a1ee.cn/bg.png">
+<meta itemprop="keywords" content="MuddyWater,Sample," /><meta property="og:title" content="MuddyWater" />
+<meta property="og:description" content="MuddyWater 样本分析 样本信息 MuddyWater是一个伊朗威胁组织，主要针对中东国家，也针对欧洲和北美国家。该组织的受害者主要集中在电信、政府（IT 服" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.a1ee.cn/medium/muddywater/" /><meta property="og:image" content="https://www.a1ee.cn/bg.png" /><meta property="article:section" content="medium" />
+<meta property="article:published_time" content="2022-03-28T13:46:05+08:00" />
+<meta property="article:modified_time" content="2022-03-28T13:46:05+08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://www.a1ee.cn/bg.png"/>
+
+<meta name="twitter:title" content="MuddyWater"/>
+<meta name="twitter:description" content="MuddyWater 样本分析 样本信息 MuddyWater是一个伊朗威胁组织，主要针对中东国家，也针对欧洲和北美国家。该组织的受害者主要集中在电信、政府（IT 服"/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<title>MuddyWater</title>
+	<link rel="stylesheet" href="https://www.a1ee.cn/css/style.min.eac77496566fd7d5768fd650ddb0b2b181ca6a2d7c5fdd6fe6b8ba4bf47e566f.css" integrity="sha256-6sd0llZv19V2j9ZQ3bCysYHKai18X91v5ri6S/R+Vm8=" crossorigin="anonymous">
+	<style>.bg-img {background-image: url('https://www.a1ee.cn/bg.png');}</style>
+</head>
+
+<body id="page">
+	
+	<header id="site-header" class="animated slideInUp">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="https://www.a1ee.cn">alee</a>
+				</div>
+				<nav class="site-nav hide-in-mobile">
+					
+				<a href="https://www.a1ee.cn/basic/">BASIC</a>
+				<a href="https://www.a1ee.cn/simple/">SIMPLE</a>
+				<a href="https://www.a1ee.cn/medium/">MEDIUM</a>
+				<a href="https://www.a1ee.cn/about-me/">ABOUT</a>
+
+				</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<button id="img-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-image"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></button><span class="hdr-social hide-in-mobile"><a href="https://github.com/a1eex0" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="https://www.a1ee.cn/basic/">BASIC</a></li>
+			<li><a href="https://www.a1ee.cn/simple/">SIMPLE</a></li>
+			<li><a href="https://www.a1ee.cn/medium/">MEDIUM</a></li>
+			<li><a href="https://www.a1ee.cn/about-me/">ABOUT</a></li>
+		</ul>
+	</div>
+
+
+	<div class="bg-img"></div>
+	<main class="site-main section-inner animated fadeIn faster">
+		<article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>Mar 28, 2022</span></div>
+				<h1>MuddyWater</h1>
+			</header>
+			<div class="content">
+				<h1 id="muddywater-样本分析">MuddyWater 样本分析<a href="#muddywater-样本分析" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
+<h2 id="样本信息">样本信息<a href="#样本信息" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p><code>MuddyWater</code>是一个伊朗威胁组织，主要针对中东国家，也针对欧洲和北美国家。该组织的受害者主要集中在电信、政府（IT 服务）和石油部门。该组织的活动以前与<code>FIN7</code>有关联，但据信该组织是一个独特的组织，可能受到间谍活动的驱使。</p>
+<p>文档内容如下：</p>
+<p><img src="/muddywater_images/313823013220146.png" alt=""></p>
+<p><strong>ioc</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">类别</th>
+<th style="text-align:left">特征值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">MD5</td>
+<td style="text-align:left">c9ab403bd43649b5fd57efac4bf83b7c</td>
+</tr>
+<tr>
+<td style="text-align:left">SHA1</td>
+<td style="text-align:left">d3d98b066011fea2f4f1b9eaab97b28591d50fbe</td>
+</tr>
+<tr>
+<td style="text-align:left">SHA256</td>
+<td style="text-align:left">ea24c5a8b976919d4c8c4779dc0b7ef887373f126c4732edf9023b827b4e4dc4</td>
+</tr>
+<tr>
+<td style="text-align:left">C2</td>
+<td style="text-align:left">192.227.147.152<!-- raw HTML omitted -->107.174.68.60</td>
+</tr>
+</tbody>
+</table>
+<h2 id="样本分析">样本分析<a href="#样本分析" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h3 id="文档宏分析">文档宏分析<a href="#文档宏分析" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p><code>doc</code>文档中包含了一个<code>VBA</code>脚本，该脚本中存在一些加解密过程，然后会生成<code>C:\ProgramData\Temp_WZW4.txt</code>和<code>%AppData%\Microsoft\Windows\Start Menu\Programs\Startup\Temp_WZW4.vbs</code>，当然了两者的内容是一致的：</p>
+<p><img src="/muddywater_images/283743213226439.png" alt=""></p>
+<h3 id="释放宏分析">释放宏分析<a href="#释放宏分析" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>上述宏可以通过<code>python</code>脚本来还原，获取释放的文件内容（<code>string.txt</code>中存放的是解密密钥和密文）：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">strfile</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="sa">r</span><span class="s2">&#34;string.txt&#34;</span><span class="p">,</span><span class="s2">&#34;r&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">strlist</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">strfile</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">strlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">keys</span> <span class="o">=</span> <span class="n">strlist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">tempValue</span> <span class="o">=</span> <span class="n">strlist</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">appdatapath</span> <span class="o">=</span> <span class="n">strlist</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">startpath</span> <span class="o">=</span> <span class="n">strlist</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">clearText</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">  <span class="n">key</span> <span class="o">=</span> <span class="n">keys</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">value</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">modifyText</span> <span class="o">=</span> <span class="n">clearText</span><span class="p">(</span><span class="n">tempValue</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">pathSave1</span> <span class="o">=</span> <span class="n">clearText</span><span class="p">(</span><span class="n">appdatapath</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">pathSave2</span> <span class="o">=</span> <span class="n">clearText</span><span class="p">(</span><span class="n">startpath</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">modifyText</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">pathSave1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">pathSave2</span><span class="p">)</span>
+</span></span></code></pre></div><p>现在我们获得了一个新的<code>VBScript</code>脚本缓存，根据原始文档宏的要求，替换<code>**</code>为换行符，然后美化一下格式，我们就得到了一个漂亮的<code>Temp_WZW4.vbs</code>，从代码上可以看出字符内容是经过加密的，不过我们可以直接应用作者的代码进行还原：</p>
+<p><img src="/muddywater_images/184322914235829.png" alt=""></p>
+<p>通过<code>WScript.Echo</code>输出显示，这样我们就能知道<code>C2</code>是：<code>192.227.147.152，107.174.68.60</code>；<code>&amp;l8x8ml=</code>对应的是：<code>&amp;status=</code>；<code>{&quot;&quot;61uuxiwR3lms8&quot;&quot;:</code>对应的是：<code>{&quot;commandResult&quot;:</code></p>
+<p>尽管<code>Temp_WZW4.vbs</code>已经很美观了，但为了阅读方便，我对它的函数名和变量名做了重定义，让我们从第一个函数开始看：</p>
+<p><img src="/muddywater_images/281532214239274.png" alt=""></p>
+<p>这里会和<code>C2</code>进行交互，执行<code>explorer.exe</code>命令，发出以下请求：</p>
+<pre tabindex="0"><code>Get ：/getCommand?guid=[uid]
+POST：/getTargetInfo?guid=[uid]&amp;status=[statusID]{&#34;commandResult&#34;:[CMD(responseGET)]}
+</code></pre><p>命令执行函数会创建一个新的文档用于暂存执行结果<code>c:\ProgramData\AvoU.txt</code>，并在函数结束时返回内容：</p>
+<p><img src="/muddywater_images/185053114231583.png" alt=""></p>
+<p>由于<code>C2</code>的<code>IP</code>地址有两个，所以存在一个设置<code>C2</code>地址的函数：</p>
+<p><img src="/muddywater_images/401123314249463.png" alt=""></p>
+<p>随机休眠函数则是如下实现的：</p>
+<p><img src="/muddywater_images/451063414247067.png" alt=""></p>
+<p><code>GET</code>请求函数如下：</p>
+<p><img src="/muddywater_images/265543614244569.png" alt=""></p>
+<p><code>POST</code>请求函数如下：</p>
+<p><img src="/muddywater_images/96743714225810.png" alt=""></p>
+<p>当状态码是<code>126</code>时，会存在一个交互处理函数，当输入<code>1</code>时，会获取<code>OS</code>的相关信息：</p>
+<p><img src="/muddywater_images/471374014248250.png" alt=""></p>
+<p>获取<code>OS</code>信息的函数如下：</p>
+<p><img src="/muddywater_images/290964214243386.png" alt=""></p>
+<h2 id="参考资料">参考资料<a href="#参考资料" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<pre tabindex="0"><code>https://attack.mitre.org/groups/G0069/
+https://app.any.run/tasks/39a7ba74-e232-42d0-98fe-9063a5be417b/
+https://www.virustotal.com/gui/file/ea24c5a8b976919d4c8c4779dc0b7ef887373f126c4732edf9023b827b4e4dc4
+https://twitter.com/ShadowChasing1/status/1475819281648553986
+</code></pre>
+			</div>
+			<hr class="post-end">
+			<footer class="post-info">
+				<p>
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://www.a1ee.cn/tags/muddywater">MuddyWater</a></span><span class="tag"><a href="https://www.a1ee.cn/tags/sample">Sample</a></span>
+				</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2022-03-28 13:46 &#43;0800</p>
+			</footer>
+		</article>
+		<div class="post-nav thin">
+			<a class="next-post" href="https://www.a1ee.cn/medium/raccoon/">
+				<span class="post-nav-label"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>&nbsp;</span><br><span>Raccoon</span>
+			</a>
+			<a class="prev-post" href="https://www.a1ee.cn/medium/asyncrat/">
+				<span class="post-nav-label">&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>AsyncRAT</span>
+			</a>
+		</div>
+		<div id="comments" class="thin">
+</div>
+	</main>
+
+	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+		<p>&copy; 2022 <a href="https://www.a1ee.cn">alee</a></p>
+	</footer>
+
+
+
+	<script src="https://www.a1ee.cn/js/bundle.min.8256b8724b9578bbdf6d6f04c894255bc760e78e8a2d60ec0a91ea993acd3b77.js" integrity="sha256-gla4ckuVeLvfbW8EyJQlW8dg546KLWDsCpHqmTrNO3c=" crossorigin="anonymous"></script>
+	
+
+</body>
+
+</html>

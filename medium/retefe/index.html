@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#494f5c">
+	<meta name="msapplication-TileColor" content="#494f5c">
+<meta itemprop="name" content="Retefe">
+<meta itemprop="description" content="Retefe 样本分析 样本信息 Retefe是一种Windows银行木马，它还可以使用Windows PowerShell将其他恶意软件下载并安装到系统上。"><meta itemprop="datePublished" content="2022-03-28T13:59:05+08:00" />
+<meta itemprop="dateModified" content="2022-03-28T13:59:05+08:00" />
+<meta itemprop="wordCount" content="1508"><meta itemprop="image" content="https://www.a1ee.cn/bg.png">
+<meta itemprop="keywords" content="Retefe,Sample," /><meta property="og:title" content="Retefe" />
+<meta property="og:description" content="Retefe 样本分析 样本信息 Retefe是一种Windows银行木马，它还可以使用Windows PowerShell将其他恶意软件下载并安装到系统上。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.a1ee.cn/medium/retefe/" /><meta property="og:image" content="https://www.a1ee.cn/bg.png" /><meta property="article:section" content="medium" />
+<meta property="article:published_time" content="2022-03-28T13:59:05+08:00" />
+<meta property="article:modified_time" content="2022-03-28T13:59:05+08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://www.a1ee.cn/bg.png"/>
+
+<meta name="twitter:title" content="Retefe"/>
+<meta name="twitter:description" content="Retefe 样本分析 样本信息 Retefe是一种Windows银行木马，它还可以使用Windows PowerShell将其他恶意软件下载并安装到系统上。"/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<title>Retefe</title>
+	<link rel="stylesheet" href="https://www.a1ee.cn/css/style.min.eac77496566fd7d5768fd650ddb0b2b181ca6a2d7c5fdd6fe6b8ba4bf47e566f.css" integrity="sha256-6sd0llZv19V2j9ZQ3bCysYHKai18X91v5ri6S/R+Vm8=" crossorigin="anonymous">
+	<style>.bg-img {background-image: url('https://www.a1ee.cn/bg.png');}</style>
+</head>
+
+<body id="page">
+	
+	<header id="site-header" class="animated slideInUp">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="https://www.a1ee.cn">alee</a>
+				</div>
+				<nav class="site-nav hide-in-mobile">
+					
+				<a href="https://www.a1ee.cn/basic/">BASIC</a>
+				<a href="https://www.a1ee.cn/simple/">SIMPLE</a>
+				<a href="https://www.a1ee.cn/medium/">MEDIUM</a>
+				<a href="https://www.a1ee.cn/about-me/">ABOUT</a>
+
+				</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<button id="img-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-image"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></button><span class="hdr-social hide-in-mobile"><a href="https://github.com/a1eex0" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="https://www.a1ee.cn/basic/">BASIC</a></li>
+			<li><a href="https://www.a1ee.cn/simple/">SIMPLE</a></li>
+			<li><a href="https://www.a1ee.cn/medium/">MEDIUM</a></li>
+			<li><a href="https://www.a1ee.cn/about-me/">ABOUT</a></li>
+		</ul>
+	</div>
+
+
+	<div class="bg-img"></div>
+	<main class="site-main section-inner animated fadeIn faster">
+		<article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>Mar 28, 2022</span></div>
+				<h1>Retefe</h1>
+			</header>
+			<div class="content">
+				<h1 id="retefe-样本分析">Retefe 样本分析<a href="#retefe-样本分析" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
+<h2 id="样本信息">样本信息<a href="#样本信息" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p><code>Retefe</code>是一种<code>Windows</code>银行木马，它还可以使用<code>Windows PowerShell</code>将其他恶意软件下载并安装到系统上。它的主要功能是协助攻击者窃取网上银行网站的凭据。它通常针对瑞士银行。恶意软件二进制文件本身主要是一个<code>Javascript</code>文件的释放器组件，该文件构建一个<code>PowerShell</code>文件，该文件又将多个工具加载到主机上，包括：<code>7zip</code>和<code>TOR</code>。<code>PowerShell</code>安装一个新的根证书，然后通过<code>TOR</code>将所有流量转发到攻击者控制的主机，以有效地进行<code>MITM TLS</code>流量。</p>
+<p><strong>IOC</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">类别</th>
+<th style="text-align:left">特征值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">SHA256</td>
+<td style="text-align:left">9bdc837b0ecdf2aac509e33b52531ac5d95b12558b71db8083b044afc7aedf94</td>
+</tr>
+<tr>
+<td style="text-align:left">SHA1</td>
+<td style="text-align:left">f0a8c72af4f0a8656f7b2fc53f64b2fa6a6a42b6</td>
+</tr>
+<tr>
+<td style="text-align:left">MD5</td>
+<td style="text-align:left">9b8771374f02f0357e23b312b6793a86</td>
+</tr>
+</tbody>
+</table>
+<h2 id="样本分析">样本分析<a href="#样本分析" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>样本是一个<code>Javascript</code>文件，文件经过了一些混淆，但<code>eval</code>函数很明显：</p>
+<p><img src="/retefe_images/367224816226655.png" alt=""></p>
+<p>通过构建一个本地包含文件来打印<code>eval</code>函数的加载内容：</p>
+<p><img src="/retefe_images/184185016246821.png" alt=""></p>
+<p>测试用的<code>js</code>中则将<code>eval</code>替换成<code>console.log</code>：</p>
+<p><img src="/retefe_images/431135116239490.png" alt=""></p>
+<p>然后我们就得到了一个隐藏的代码：</p>
+<p><img src="/retefe_images/207135216236045.png" alt=""></p>
+<p>从结构上看，这部分代码也是一个<code>eval</code>加载：</p>
+<p><img src="/retefe_images/269222009220363.png" alt=""></p>
+<p>同样的以<code>console.log</code>替换<code>eval</code>，我们得到了第二份加载代码：</p>
+<p><img src="/retefe_images/423882109238789.png" alt=""></p>
+<p>这个部分也是同样的<code>eval</code>：</p>
+<p><img src="/retefe_images/388592209226656.png" alt=""></p>
+<p>同样的以<code>console.log</code>替换<code>eval</code>，我们得到了第三份加载代码：</p>
+<p><img src="/retefe_images/257712309246822.png" alt=""></p>
+<p>第三份加载看起来正常多了，我们将其美化一下：</p>
+<p><img src="/retefe_images/20001610231800.png" alt=""></p>
+<p>里面包含了一些<code>base64</code>编码的内容，和一些函数类。</p>
+<p><code>Help</code>中提供二进制文件写入、随机数生成、随机字符串生成、字符过滤：</p>
+<p><img src="/retefe_images/176803010249680.png" alt=""></p>
+<p><code>C_IE</code>类提供了针对网络设置的一些功能：</p>
+<p><img src="/retefe_images/293193210247284.png" alt=""></p>
+<p>通过访问以下站点获取本机的公网<code>IP</code>：</p>
+<pre tabindex="0"><code>http://api.ipify.org/
+http://icanhazip.com/
+</code></pre><p>修改注册表<code>HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\AutoDetect</code>为<code>0</code>，关闭自动检测脚本；</p>
+<p>配置注册表<code>HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\AutoConfigURL</code>为<code>http://127.0.0.1:5555/{Help.GenStr(8)}.js?ip={GetIp()}</code>，设置代理脚本。</p>
+<p>其中存在一条赋值命令：<code>var bData = Base64.decode(arrayList.ps);</code>，然后将其保存在<code>%TEMP%</code>路径下，调用<code>powershell -ep Unrestricted -f</code>执行，<code>Base64.decode(arrayList.ps)</code>解密后代码如下：</p>
+<p><img src="/retefe_images/63342114226027.png" alt=""></p>
+<p>该<code>powershell</code>脚本的主要功能是证书添加：</p>
+<p><img src="/retefe_images/501172014244786.png" alt=""></p>
+<p>添加的证书则是<code>arrayList.cert</code>的解密内容：</p>
+<p><img src="/retefe_images/117832214248467.png" alt=""></p>
+<p>接下来是针对<code>firefox</code>的脚本配置：</p>
+<p><img src="/retefe_images/597272714243603.png" alt=""></p>
+<p>同样存在一个本地文件生成及执行：</p>
+<p><img src="/retefe_images/597362814237149.png" alt=""></p>
+<p>解密后的主要功能也是证书导入：</p>
+<p><img src="/retefe_images/328063114230283.png" alt=""></p>
+<p>导入函数与<code>IE</code>略有不同：</p>
+<p><img src="/retefe_images/169743314220813.png" alt=""></p>
+<p><code>C_TP</code>类同样是生成<code>powershell</code>脚本并执行：</p>
+<p><img src="/retefe_images/435210515223317.png" alt=""></p>
+<p>脚本功能则是下载<code>7zip</code>、<code>TOR</code>和<code>socat</code>，然后用<code>socat</code>转发流量到<code>tor</code>；</p>
+<p>下载 <code>7zip</code>：<code>https://chocolatey.org/7za.exe</code></p>
+<p><img src="/retefe_images/508333415225758.png" alt=""></p>
+<p>下载<code>taskscheduler</code>：<code>https://api.nuget.org/packages/taskscheduler.2.5.23.nupkg</code></p>
+<p><img src="/retefe_images/493634415252713.png" alt=""></p>
+<p>函数执行流程：</p>
+<p><img src="/retefe_images/152260915232264.png" alt=""></p>
+<p><code>tor</code>下载地址如下：</p>
+<pre tabindex="0"><code>https://torproject.urown.net/dist/torbrowser/7.0.6/tor-win32-0.3.1.7.zip
+https://dist.torproject.org/torbrowser/7.0.6/tor-win32-0.3.1.7.zip
+https://torproject.mirror.metalgamer.eu/dist/torbrowser/7.0.6/tor-win32-0.3.1.7.zip
+https://tor.ybti.net/dist/torbrowser/7.0.6/tor-win32-0.3.1.7.zip
+</code></pre><p><code>sockt</code>下载地址如下：</p>
+<pre tabindex="0"><code>https://github.com/StudioEtrange/socat-windows/archive/1.7.2.1.zip
+</code></pre><p><code>DOMAIN</code>列表如下：</p>
+<pre tabindex="0"><code>igs67efmlcucq57u.onion
+jotetnnmfzb42sdw.onion
+ou47twzxgnicn7ga.onion
+aulqkm5upaqmto3i.onion
+</code></pre><p>在整个调用过程中，依次执行了浏览器进程杀死，安装证书，检查安装情况并上传<code>log</code>：</p>
+<p><img src="/retefe_images/532925715234926.png" alt=""></p>
+<p>在<code>Func_LOG</code>函数中存在一处解密<code>arrayList.pslog</code>的行为，最终解密后的核心代码如下：</p>
+<p><img src="/retefe_images/502285915224224.png" alt=""></p>
+<p><code>CheckInstall</code>函数主要功能为收集当前主机信息，检查浏览器代理脚本情况：</p>
+<p><img src="/retefe_images/45160116220475.png" alt=""></p>
+<p><code>UploadLog</code>函数则是上传日志到目标<code>FTP</code>服务器：<code>ftp://rolf.buehlmann:Ridima65@82.220.2.66/web/sxerzere</code></p>
+<p><img src="/retefe_images/308920216220614.png" alt=""></p>
+<h2 id="参考资料">参考资料<a href="#参考资料" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<pre tabindex="0"><code>https://app.any.run/tasks/741aa9bc-8dce-44a9-b806-01f1b1f92cdd/
+https://www.youtube.com/watch?v=g8_t1WfObok
+</code></pre>
+			</div>
+			<hr class="post-end">
+			<footer class="post-info">
+				<p>
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://www.a1ee.cn/tags/retefe">Retefe</a></span><span class="tag"><a href="https://www.a1ee.cn/tags/sample">Sample</a></span>
+				</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2022-03-28 13:59 &#43;0800</p>
+			</footer>
+		</article>
+		<div class="post-nav thin">
+			<a class="prev-post" href="https://www.a1ee.cn/medium/ratdispenser&#43;strrat/">
+				<span class="post-nav-label">&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>RATDispenser&#43;STRRAT</span>
+			</a>
+		</div>
+		<div id="comments" class="thin">
+</div>
+	</main>
+
+	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+		<p>&copy; 2022 <a href="https://www.a1ee.cn">alee</a></p>
+	</footer>
+
+
+
+	<script src="https://www.a1ee.cn/js/bundle.min.8256b8724b9578bbdf6d6f04c894255bc760e78e8a2d60ec0a91ea993acd3b77.js" integrity="sha256-gla4ckuVeLvfbW8EyJQlW8dg546KLWDsCpHqmTrNO3c=" crossorigin="anonymous"></script>
+	
+
+</body>
+
+</html>

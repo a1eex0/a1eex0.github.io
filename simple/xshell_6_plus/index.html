@@ -98,14 +98,14 @@ https://cdn.netsarang.net/30486508/Xshell-6.0.0193p.exe    教育版
 <p><img src="/xshell6_images/20200410110002949_29237.png" alt=""></p>
 <p>这里就发现了一个长跳转，这个长跳转跳过了 <code>(Not Activated)</code> ，跳转上部是 <code>(Registered)</code> ，但这个跳转并未执行，那么就会到 <code>(Not Activated)</code> 赋值去。</p>
 <pre tabindex="0"><code>00F8F401 | FFB5 ACFBFFFF              | push dword ptr ss:[ebp-454]             |
-00F8F407 | 8B9D 9CFBFFFF              | mov ebx,dword ptr ss:[ebp-464]          | [ebp-464]:&amp;L&quot;alee\r\nnature\r\nLicense Type: Xmanager Power Suite  (Registered)\r\nNumber of Licenses: 999\r\n\r\n&quot;
+00F8F407 | 8B9D 9CFBFFFF              | mov ebx,dword ptr ss:[ebp-464]          | [ebp-464]:&amp;L&#34;alee\r\nnature\r\nLicense Type: Xmanager Power Suite  (Registered)\r\nNumber of Licenses: 999\r\n\r\n&#34;
 00F8F40D | FFB5 B8FBFFFF              | push dword ptr ss:[ebp-448]             |
-00F8F413 | FFB5 A0FBFFFF              | push dword ptr ss:[ebp-460]             | [ebp-460]:L&quot;Number of Licenses: 999\r\n&quot;
-00F8F419 | FFB5 B0FBFFFF              | push dword ptr ss:[ebp-450]             | [ebp-450]:L&quot;Xmanager Power Suite  (Registered)&quot;
-00F8F41F | FFB5 A8FBFFFF              | push dword ptr ss:[ebp-458]             | [ebp-458]:L&quot;nature\r\n&quot;
-00F8F425 | FFB5 A4FBFFFF              | push dword ptr ss:[ebp-45C]             | [ebp-45C]:L&quot;alee\r\n&quot;
-00F8F42B | 68 00780501                | push xshell.1057800                     | 1057800:L&quot;%s%sLicense Type: %s\r\n%s%s\r\n%s&quot;
-00F8F430 | 53                         | push ebx                                | ebx:&amp;L&quot;alee\r\nnature\r\nLicense Type: Xmanager Power Suite  (Registered)\r\nNumber of Licenses: 999\r\n\r\n&quot;
+00F8F413 | FFB5 A0FBFFFF              | push dword ptr ss:[ebp-460]             | [ebp-460]:L&#34;Number of Licenses: 999\r\n&#34;
+00F8F419 | FFB5 B0FBFFFF              | push dword ptr ss:[ebp-450]             | [ebp-450]:L&#34;Xmanager Power Suite  (Registered)&#34;
+00F8F41F | FFB5 A8FBFFFF              | push dword ptr ss:[ebp-458]             | [ebp-458]:L&#34;nature\r\n&#34;
+00F8F425 | FFB5 A4FBFFFF              | push dword ptr ss:[ebp-45C]             | [ebp-45C]:L&#34;alee\r\n&#34;
+00F8F42B | 68 00780501                | push xshell.1057800                     | 1057800:L&#34;%s%sLicense Type: %s\r\n%s%s\r\n%s&#34;
+00F8F430 | 53                         | push ebx                                | ebx:&amp;L&#34;alee\r\nnature\r\nLicense Type: Xmanager Power Suite  (Registered)\r\nNumber of Licenses: 999\r\n\r\n&#34;
 00F8F431 | FFD7                       | call edi                                |
 00F8F433 | 83C4 20                    | add esp,20                              |
 00F8F436 | FFD6                       | call esi                                |
@@ -120,7 +120,7 @@ https://cdn.netsarang.net/30486508/Xshell-6.0.0193p.exe    教育版
 00F8F45C | FF15 7C050401              | call dword ptr ds:[&lt;&amp;Ordinal#316&gt;]      |
 00F8F462 | 8D8D B4FBFFFF              | lea ecx,dword ptr ss:[ebp-44C]          |
 00F8F468 | FF15 7C050401              | call dword ptr ds:[&lt;&amp;Ordinal#316&gt;]      |
-00F8F46E | C645 FC 09                 | mov byte ptr ss:[ebp-4],9               | 9:'\t'
+00F8F46E | C645 FC 09                 | mov byte ptr ss:[ebp-4],9               | 9:&#39;\t&#39;
 00F8F472 | FFD6                       | call esi                                |
 00F8F474 | 8B40 04                    | mov eax,dword ptr ds:[eax+4]            |
 00F8F477 | 83B8 2C010000 00           | cmp dword ptr ds:[eax+12C],0            |
@@ -130,33 +130,33 @@ https://cdn.netsarang.net/30486508/Xshell-6.0.0193p.exe    教育版
 00F8F485 | 8D8D BCFBFFFF              | lea ecx,dword ptr ss:[ebp-444]          |
 00F8F48B | 83B8 30010000 01           | cmp dword ptr ds:[eax+130],1            |
 00F8F492 | 75 12                      | jne xshell.F8F4A6                       |
-00F8F494 | 68 40780501                | push xshell.1057840                     | 1057840:L&quot;(Activated Locally)&quot;
+00F8F494 | 68 40780501                | push xshell.1057840                     | 1057840:L&#34;(Activated Locally)&#34;
 00F8F499 | FF15 88050401              | call dword ptr ds:[&lt;&amp;Ordinal#1516&gt;]     |
-00F8F49F | 68 80780501                | push xshell.1057880                     | 1057880:L&quot;(Concurrent, Activated)&quot;
+00F8F49F | 68 80780501                | push xshell.1057880                     | 1057880:L&#34;(Concurrent, Activated)&#34;
 00F8F4A4 | EB 28                      | jmp xshell.F8F4CE                       |
-00F8F4A6 | 68 68780501                | push xshell.1057868                     | 1057868:L&quot;(Activated)&quot;
+00F8F4A6 | 68 68780501                | push xshell.1057868                     | 1057868:L&#34;(Activated)&#34;
 00F8F4AB | FF15 88050401              | call dword ptr ds:[&lt;&amp;Ordinal#1516&gt;]     |
-00F8F4B1 | 68 80780501                | push xshell.1057880                     | 1057880:L&quot;(Concurrent, Activated)&quot;
+00F8F4B1 | 68 80780501                | push xshell.1057880                     | 1057880:L&#34;(Concurrent, Activated)&#34;
 00F8F4B6 | EB 16                      | jmp xshell.F8F4CE                       |
-00F8F4B8 | 68 B0780501                | push xshell.10578B0                     | 10578B0:L&quot;(Not Activated)&quot;
+00F8F4B8 | 68 B0780501                | push xshell.10578B0                     | 10578B0:L&#34;(Not Activated)&#34;
 00F8F4BD | 8D8D BCFBFFFF              | lea ecx,dword ptr ss:[ebp-444]          |
 00F8F4C3 | FF15 88050401              | call dword ptr ds:[&lt;&amp;Ordinal#1516&gt;]     |
-00F8F4C9 | 68 D0780501                | push xshell.10578D0                     | 10578D0:L&quot;(Concurrent, Not Activated)&quot;
+00F8F4C9 | 68 D0780501                | push xshell.10578D0                     | 10578D0:L&#34;(Concurrent, Not Activated)&#34;
 00F8F4CE | 8D8D B4FBFFFF              | lea ecx,dword ptr ss:[ebp-44C]          |
 00F8F4D4 | FF15 88050401              | call dword ptr ds:[&lt;&amp;Ordinal#1516&gt;]     |
 00F8F4DA | FFB5 BCFBFFFF              | push dword ptr ss:[ebp-444]             |
-00F8F4E0 | 8BCB                       | mov ecx,ebx                             | ebx:&amp;L&quot;alee\r\nnature\r\nLicense Type: Xmanager Power Suite  (Registered)\r\nNumber of Licenses: 999\r\n\r\n&quot;
-00F8F4E2 | 68 08790501                | push xshell.1057908                     | 1057908:L&quot;(Registered)&quot;
+00F8F4E0 | 8BCB                       | mov ecx,ebx                             | ebx:&amp;L&#34;alee\r\nnature\r\nLicense Type: Xmanager Power Suite  (Registered)\r\nNumber of Licenses: 999\r\n\r\n&#34;
+00F8F4E2 | 68 08790501                | push xshell.1057908                     | 1057908:L&#34;(Registered)&#34;
 00F8F4E7 | FF15 84060401              | call dword ptr ds:[&lt;&amp;Ordinal#12595&gt;]    |
 00F8F4ED | FFB5 B4FBFFFF              | push dword ptr ss:[ebp-44C]             |
-00F8F4F3 | 8BCB                       | mov ecx,ebx                             | ebx:&amp;L&quot;alee\r\nnature\r\nLicense Type: Xmanager Power Suite  (Registered)\r\nNumber of Licenses: 999\r\n\r\n&quot;
-00F8F4F5 | 68 24790501                | push xshell.1057924                     | 1057924:L&quot;(Concurrent Registered)&quot;
+00F8F4F3 | 8BCB                       | mov ecx,ebx                             | ebx:&amp;L&#34;alee\r\nnature\r\nLicense Type: Xmanager Power Suite  (Registered)\r\nNumber of Licenses: 999\r\n\r\n&#34;
+00F8F4F5 | 68 24790501                | push xshell.1057924                     | 1057924:L&#34;(Concurrent Registered)&#34;
 00F8F4FA | FF15 84060401              | call dword ptr ds:[&lt;&amp;Ordinal#12595&gt;]    |
 00F8F500 | 8D8D B4FBFFFF              | lea ecx,dword ptr ss:[ebp-44C]          |
 00F8F506 | FF15 78050401              | call dword ptr ds:[&lt;&amp;Ordinal#1039&gt;]     |
 00F8F50C | 8D8D BCFBFFFF              | lea ecx,dword ptr ss:[ebp-444]          |
 00F8F512 | FF15 78050401              | call dword ptr ds:[&lt;&amp;Ordinal#1039&gt;]     |
-00F8F518 | 8D8D A8FBFFFF              | lea ecx,dword ptr ss:[ebp-458]          | [ebp-458]:L&quot;nature\r\n&quot;
+00F8F518 | 8D8D A8FBFFFF              | lea ecx,dword ptr ss:[ebp-458]          | [ebp-458]:L&#34;nature\r\n&#34;
 </code></pre><p>观察上下文，跳转判断来自 <code>cmp dword ptr ds:[eax+12C],0</code>，这里下断，将数据地址修改为1，再运行得出如下结果：</p>
 <p><img src="/xshell6_images/20200410111146785_7056.png" alt=""></p>
 <p>那么在这里下一个硬件存取断点，重载程序，观察断下的位置：
@@ -186,7 +186,7 @@ https://cdn.netsarang.net/30486508/Xshell-6.0.0193p.exe    教育版
 
 
 
-	<script src="https://www.a1ee.cn/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	<script src="https://www.a1ee.cn/js/bundle.min.8256b8724b9578bbdf6d6f04c894255bc760e78e8a2d60ec0a91ea993acd3b77.js" integrity="sha256-gla4ckuVeLvfbW8EyJQlW8dg546KLWDsCpHqmTrNO3c=" crossorigin="anonymous"></script>
 	
 
 </body>

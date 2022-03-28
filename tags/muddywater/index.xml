@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>MuddyWater on alee</title>
+    <link>https://www.a1ee.cn/tags/muddywater/</link>
+    <description>Recent content in MuddyWater on alee</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 28 Mar 2022 13:46:05 +0800</lastBuildDate><atom:link href="https://www.a1ee.cn/tags/muddywater/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MuddyWater</title>
+      <link>https://www.a1ee.cn/medium/muddywater/</link>
+      <pubDate>Mon, 28 Mar 2022 13:46:05 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/medium/muddywater/</guid>
+      <description>MuddyWater 样本分析 样本信息 MuddyWater是一个伊朗威胁组织，主要针对中东国家，也针对欧洲和北美国家。该组织的受害者主要集中在电信、政府（IT 服</description>
+    </item>
+    
+  </channel>
+</rss>

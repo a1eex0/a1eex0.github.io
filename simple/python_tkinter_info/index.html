@@ -10,7 +10,7 @@
 <meta itemprop="name" content="Python_tkinter_info">
 <meta itemprop="description" content="tkinter库说明 这是一个相对轻量化的GUI库，因为它是python的原生库，不需要额外的安装库文件，因此存在很强的可移植性。 但不建议用它"><meta itemprop="datePublished" content="2020-12-28T14:20:32+08:00" />
 <meta itemprop="dateModified" content="2020-12-28T14:20:32+08:00" />
-<meta itemprop="wordCount" content="1008"><meta itemprop="image" content="https://www.a1ee.cn/bg.png">
+<meta itemprop="wordCount" content="1016"><meta itemprop="image" content="https://www.a1ee.cn/bg.png">
 <meta itemprop="keywords" content="python," /><meta property="og:title" content="Python_tkinter_info" />
 <meta property="og:description" content="tkinter库说明 这是一个相对轻量化的GUI库，因为它是python的原生库，不需要额外的安装库文件，因此存在很强的可移植性。 但不建议用它" />
 <meta property="og:type" content="article" />
@@ -86,37 +86,37 @@ class Main_GUI():
 		self.window = window
 
 	def set_window_ui(self):
-		self.window.title('basic demo 小工具 by alee')	# ui标题
-		self.window.geometry('600x400+700+350')	# ui坐标，*x*（长宽）；+*+*（屏幕显示位置）
-		self.window.attributes('-alpha',0.9)	# 窗口属性，alpha是透明度，后面的小数是透明度设置（0-1）
+		self.window.title(&#39;basic demo 小工具 by alee&#39;)	# ui标题
+		self.window.geometry(&#39;600x400+700+350&#39;)	# ui坐标，*x*（长宽）；+*+*（屏幕显示位置）
+		self.window.attributes(&#39;-alpha&#39;,0.9)	# 窗口属性，alpha是透明度，后面的小数是透明度设置（0-1）
 		# grid方法:
 		# row 行号：
 		# column：列号
 		# rowspan：合并一列中的多个行单元
 		# columnspan：合并一个行中的多个列单元
 		# sticky：NSWE，上下左右对齐，左右居中则：E+W；上下居中则：N+S；全居中则：N+S+E+W
-		self.text_label_fill0 = Label(self.window, text='', width=1).grid(row=0, column=0)# 美化填充列
-		self.text_label1 = Label(self.window, text='input：',width=7, height=2).grid(row=0, column=1, sticky=E)# 显示文本
-		self.text_label_fill1 = Label(self.window, text='', width=1).grid(row=0, column=2)# 美化填充列
+		self.text_label_fill0 = Label(self.window, text=&#39;&#39;, width=1).grid(row=0, column=0)# 美化填充列
+		self.text_label1 = Label(self.window, text=&#39;input：&#39;,width=7, height=2).grid(row=0, column=1, sticky=E)# 显示文本
+		self.text_label_fill1 = Label(self.window, text=&#39;&#39;, width=1).grid(row=0, column=2)# 美化填充列
 		self.ip_addr_entry = Entry(self.window)# 输入框
 		self.ip_addr_entry.grid(row=0,column=3)# 格式在当前版本的库中必须换行，不然会报错
-		self.text_label_fill2 = Label(self.window, text='', width=1).grid(row=0, column=4)# 美化填充列
-		self.check_button1 = Button(self.window, text='output', command=self.Output).grid(row=0, column=5)
-		self.text_label_fill3 = Label(self.window, text='', width=1).grid(row=0, column=6)# 美化填充列
-		self.check_button2 = Button(self.window, text='message', command=self.Message).grid(row=0, column=7)
+		self.text_label_fill2 = Label(self.window, text=&#39;&#39;, width=1).grid(row=0, column=4)# 美化填充列
+		self.check_button1 = Button(self.window, text=&#39;output&#39;, command=self.Output).grid(row=0, column=5)
+		self.text_label_fill3 = Label(self.window, text=&#39;&#39;, width=1).grid(row=0, column=6)# 美化填充列
+		self.check_button2 = Button(self.window, text=&#39;message&#39;, command=self.Message).grid(row=0, column=7)
 		self.result_text = Text(self.window, width=60, height=20)# 文本输出框
 		self.result_text.grid(row=1, column=1, columnspan=7)# 格式在当前版本的库中必须换行，不然会报错
 
 	# 文本显示函数
 	def Output(self):
-		entry_data = self.ip_addr_entry.get()+'\n'
+		entry_data = self.ip_addr_entry.get()+&#39;\n&#39;
 		self.result_text.insert(END,entry_data)
 
 	# 弹窗函数
 	def Message(self):
-		tkinter.messagebox.showinfo('hi','This is a Demo Tool!')
+		tkinter.messagebox.showinfo(&#39;hi&#39;,&#39;This is a Demo Tool!&#39;)
 
-if __name__ == '__main__':
+if __name__ == &#39;__main__&#39;:
 	window = Tk()
 	GUI_HOME = Main_GUI(window)
 	GUI_HOME.set_window_ui()
@@ -135,43 +135,43 @@ class Main_GUI():
 		self.window = window
 
 	def set_window_ui(self):
-		self.window.title('easy demo 小工具 by alee')
-		self.window.geometry('500x500+700+350')
-		self.window.attributes('-alpha',0.9)
-		self.text_label_fill0 = Label(self.window, text='', width=1).grid(row=0, column=0)
-		self.text_label1 = Label(self.window, text='model:', height=3).grid(row=0, column=1, sticky=W+E)
+		self.window.title(&#39;easy demo 小工具 by alee&#39;)
+		self.window.geometry(&#39;500x500+700+350&#39;)
+		self.window.attributes(&#39;-alpha&#39;,0.9)
+		self.text_label_fill0 = Label(self.window, text=&#39;&#39;, width=1).grid(row=0, column=0)
+		self.text_label1 = Label(self.window, text=&#39;model:&#39;, height=3).grid(row=0, column=1, sticky=W+E)
 		self.cmb = ttk.Combobox(self.window, width=9)# 下拉菜单控件，需要先导入ttk库
-		self.cmb['value'] = ('model0','model1','model2','model3')# 下拉菜单列表内容
+		self.cmb[&#39;value&#39;] = (&#39;model0&#39;,&#39;model1&#39;,&#39;model2&#39;,&#39;model3&#39;)# 下拉菜单列表内容
 		self.cmb.current(0)# 指定默认显示在下拉框中的内容
 		self.cmb.grid(row=0, column=2, sticky=W)# 格式在当前版本的库中必须换行，不然会报错
-		self.check_button1 = Button(self.window, text='message', command=self.Message).grid(row=0, column=3)
+		self.check_button1 = Button(self.window, text=&#39;message&#39;, command=self.Message).grid(row=0, column=3)
 		self.result_text = Text(self.window, width=50, height=20)
 		self.result_text.grid(row=1, column=1, columnspan=3)
 		self.result_text.insert(END,banner)
-		self.text_label2 = Label(self.window, text='command:', height=3).grid(row=2, column=1, sticky=W)
+		self.text_label2 = Label(self.window, text=&#39;command:&#39;, height=3).grid(row=2, column=1, sticky=W)
 		self.command_entry = Entry(self.window, width=30)
 		self.command_entry.grid(row=2,column=2)
-		self.check_button2 = Button(self.window, text='run', command=self.Run, width=5).grid(row=2, column=3, sticky=W+E)
+		self.check_button2 = Button(self.window, text=&#39;run&#39;, command=self.Run, width=5).grid(row=2, column=3, sticky=W+E)
 
 	def FuncA(self,cmd):
-		entry_data = 'model:'+self.cmb.get()+'\nhi, your command is '+cmd+'\n'+'================================\n'
+		entry_data = &#39;model:&#39;+self.cmb.get()+&#39;\nhi, your command is &#39;+cmd+&#39;\n&#39;+&#39;================================\n&#39;
 		self.result_text.insert(END,entry_data)
 
 
 	def Run(self):
 		cmd = self.command_entry.get()
-		if cmd =='':
-			cmd = 'Null'
-		current_time = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
-		begin_data = '['+current_time+']'+'command: '+cmd+'\n'
+		if cmd ==&#39;&#39;:
+			cmd = &#39;Null&#39;
+		current_time = time.strftime(&#39;%Y-%m-%d %H:%M:%S&#39;,time.localtime(time.time()))
+		begin_data = &#39;[&#39;+current_time+&#39;]&#39;+&#39;command: &#39;+cmd+&#39;\n&#39;
 		self.result_text.insert(END,begin_data)
 		prt_funca = self.FuncA(cmd)
 
 	def Message(self):
-		tkinter.messagebox.showinfo('hi','This is a Demo Tool!')
+		tkinter.messagebox.showinfo(&#39;hi&#39;,&#39;This is a Demo Tool!&#39;)
 
-if __name__ == '__main__':
-	banner = '''
+if __name__ == &#39;__main__&#39;:
+	banner = &#39;&#39;&#39;
 ================================
     .___                     
   __| _/____   _____   ____  
@@ -180,7 +180,7 @@ if __name__ == '__main__':
 \\____ |\\___  &gt;__|_|  /\\____/ 
      \\/    \\/      \\/        
 ================================
-'''
+&#39;&#39;&#39;
 	window = Tk()
 	GUI_HOME = Main_GUI(window)
 	GUI_HOME.set_window_ui()
@@ -198,22 +198,22 @@ class Main_GUI():
 		self.window = window
 
 	def set_window_ui(self):
-		self.window.title('file demo 小工具 by alee')
-		self.window.geometry('470x80+700+350')
-		self.window.attributes('-alpha',0.9)
-		self.text_label_fill0 = Label(self.window, text='', width=1).grid(row=0, column=0)
-		self.text_label1 = Label(self.window, text='filepath:', height=3).grid(row=0, column=1, sticky=W+E)
+		self.window.title(&#39;file demo 小工具 by alee&#39;)
+		self.window.geometry(&#39;470x80+700+350&#39;)
+		self.window.attributes(&#39;-alpha&#39;,0.9)
+		self.text_label_fill0 = Label(self.window, text=&#39;&#39;, width=1).grid(row=0, column=0)
+		self.text_label1 = Label(self.window, text=&#39;filepath:&#39;, height=3).grid(row=0, column=1, sticky=W+E)
 		self.filepath_entry = Entry(self.window, width=30)
 		self.filepath_entry.grid(row=0, column=2)
-		self.text_label_fill0 = Label(self.window, text='', width=1).grid(row=0, column=3)
-		self.check_button1 = Button(self.window, text='open', command=self.OpenFile).grid(row=0, column=4)
+		self.text_label_fill0 = Label(self.window, text=&#39;&#39;, width=1).grid(row=0, column=3)
+		self.check_button1 = Button(self.window, text=&#39;open&#39;, command=self.OpenFile).grid(row=0, column=4)
 
 	def OpenFile(self):
 		self.file_path = filedialog.askopenfilename() # 获取本地文件路径，需要引入filedialog库
 		self.filepath_entry.delete(0,END)
 		self.filepath_entry.insert(END,self.file_path)
 
-if __name__ == '__main__':
+if __name__ == &#39;__main__&#39;:
 	window = Tk()
 	GUI_HOME = Main_GUI(window)
 	GUI_HOME.set_window_ui()
@@ -230,7 +230,7 @@ if __name__ == '__main__':
 
 
 
-	<script src="https://www.a1ee.cn/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	<script src="https://www.a1ee.cn/js/bundle.min.8256b8724b9578bbdf6d6f04c894255bc760e78e8a2d60ec0a91ea993acd3b77.js" integrity="sha256-gla4ckuVeLvfbW8EyJQlW8dg546KLWDsCpHqmTrNO3c=" crossorigin="anonymous"></script>
 	
 
 </body>

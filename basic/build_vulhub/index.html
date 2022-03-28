@@ -78,27 +78,27 @@
 			<div class="content">
 				<h1 id="ubuntu-server-安装-vulhub">Ubuntu Server 安装 Vulhub<a href="#ubuntu-server-安装-vulhub" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
 <p>根据<a href="https://vulhub.org/">官方网站</a>的说明，需要安装<code>docker</code>和<code>docker-compose</code>，需要用<code>pip</code>安装<code>docker-compose</code>，官方的演示视频中使用的命令如下：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># If you don&#39;t have a docker installed, you&#39;ll need to install docker</span>
-curl -s https://get.docker.com/ <span class="p">|</span> sh
-
-<span class="c1"># If you don&#39;t have a pip installed, you&#39;ll need to install pip</span>
-curl -s https://bootstrap.pypa.io/get-pip.py <span class="p">|</span> python3
-
-<span class="c1"># Use pip to install docker-compose</span>
-pip install docker-compose
-
-<span class="c1"># git clone vulhub source</span>
-git clone https://github.com/vulhub/vulhub
-
-<span class="c1"># Entry vulnerability directory</span>
-<span class="nb">cd</span> /path/to/vuln/
-
-<span class="c1"># Compile (optional)</span>
-docker-compose build
-
-<span class="c1"># Run</span>
-docker-compose up -d
-</code></pre></div><p><strong>注：由于网络环境的问题，部分命令采用了等级处理，详见下文。</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># If you don&#39;t have a docker installed, you&#39;ll need to install docker</span>
+</span></span><span class="line"><span class="cl">curl -s https://get.docker.com/ <span class="p">|</span> sh
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># If you don&#39;t have a pip installed, you&#39;ll need to install pip</span>
+</span></span><span class="line"><span class="cl">curl -s https://bootstrap.pypa.io/get-pip.py <span class="p">|</span> python3
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Use pip to install docker-compose</span>
+</span></span><span class="line"><span class="cl">pip install docker-compose
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># git clone vulhub source</span>
+</span></span><span class="line"><span class="cl">git clone https://github.com/vulhub/vulhub
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Entry vulnerability directory</span>
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> /path/to/vuln/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Compile (optional)</span>
+</span></span><span class="line"><span class="cl">docker-compose build
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Run</span>
+</span></span><span class="line"><span class="cl">docker-compose up -d
+</span></span></code></pre></div><p><strong>注：由于网络环境的问题，部分命令采用了等级处理，详见下文。</strong></p>
 <p>本地搭建的<code>Ubuntu Server</code>实机演示截图如下：
 安装<code>docker</code>，命令：<code>curl -s https://get.docker.com/ | sh</code></p>
 <p><img src="/vulhub_images/20200826174153268_13222.png" alt=""></p>
@@ -116,7 +116,7 @@ docker-compose up -d
 <p>下载了vulhub的框架后，先不要进行实验，添加国内镜像地址，可以使下载镜像的时候，快上许多。
 创建daemon.json文件<code>vim /etc/docker/daemon.json</code>，再往里写入镜像地址，我这里用的中科大的地址：</p>
 <pre tabindex="0"><code>{
-	&quot;registry-mirrors&quot;: [&quot;http://docker.mirrors.ustc.edu.cn&quot;]
+	&#34;registry-mirrors&#34;: [&#34;http://docker.mirrors.ustc.edu.cn&#34;]
 }
 </code></pre><p><img src="/vulhub_images/20201202101721106_19536.png" alt=""></p>
 <p>更新好了以后，需要重启一下docker：<code>systemctl restart docker</code></p>
@@ -162,7 +162,7 @@ docker rmi 镜像名/id         删除指定镜像
 
 
 
-	<script src="https://www.a1ee.cn/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	<script src="https://www.a1ee.cn/js/bundle.min.8256b8724b9578bbdf6d6f04c894255bc760e78e8a2d60ec0a91ea993acd3b77.js" integrity="sha256-gla4ckuVeLvfbW8EyJQlW8dg546KLWDsCpHqmTrNO3c=" crossorigin="anonymous"></script>
 	
 
 </body>
