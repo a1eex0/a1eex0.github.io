@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Serpent on alee</title>
+    <link>https://www.a1ee.cn/tags/serpent/</link>
+    <description>Recent content in Serpent on alee</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 17 May 2022 15:41:15 +0800</lastBuildDate><atom:link href="https://www.a1ee.cn/tags/serpent/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Serpent</title>
+      <link>https://www.a1ee.cn/medium/serpent/</link>
+      <pubDate>Tue, 17 May 2022 15:41:15 +0800</pubDate>
+      
+      <guid>https://www.a1ee.cn/medium/serpent/</guid>
+      <description>Serpent 样本分析 样本信息 Serpent是一个用Python编写的后门，用于攻击法国建筑、房地产和政府行业的实体。 IOC 类别 特征值 SHA256 8912f7255b8f091e90083e584709cf0c69a9b55e09587f5927c9ac39447d6a19 SHA1 2d6f1ed1236727b36a92dd44cd987c36d6fb7e35 MD5 321e04294c04db10d5dbf05051e540e2 样本分析 样</description>
+    </item>
+    
+  </channel>
+</rss>
